@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.bachelorthesisapp.presentation.viewmodel.MainViewModel
@@ -20,27 +21,33 @@ import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
+    val state = viewModel.activityState.collectAsStateWithLifecycle(UiState.Loading)
+
     LaunchedEffect(key1 = true) {
         viewModel.loadActivityData()
     }
+    MainScreenContent(state.value)
+
+}
+
+@Composable
+fun MainScreenContent(content: UiState<ActivityModel> = UiState.Loading){
     Scaffold(topBar = {
         AppBar(title = "Main Screen")
     }, content = {
         it
-        val state = viewModel.activityState.collectAsStateWithLifecycle()
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(10.dp)
         ) {
-            when (state.value) {
+            when (content) {
                 is UiState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
 
                 is UiState.Success -> {
-                    val successState = state.value as UiState.Success<ActivityModel>
-                    val activityData = successState.value
+                    val activityData = content.value
                     Text(text = activityData.name)
                     Text(text = activityData.type)
                     Text(text = activityData.participants.toString())
@@ -51,10 +58,27 @@ fun MainScreen(viewModel: MainViewModel) {
                 }
 
                 is UiState.Error -> {
-                    val errorState = state.value as UiState.Error
-                    Text(text = errorState.cause.toString())
+                    Text(text = content.cause.toString())
                 }
             }
         }
     })
+}
+
+@Preview
+@Composable
+fun PreviewMainScreen() {
+    MainScreenContent(
+        content = UiState.Success(
+            ActivityModel(
+                key = "foo",
+                link = "foo",
+                name = "foooo",
+                participants = 2,
+                price = 1.0,
+                type = "foo",
+                accessibility = 1.0,
+            )
+        )
+    )
 }

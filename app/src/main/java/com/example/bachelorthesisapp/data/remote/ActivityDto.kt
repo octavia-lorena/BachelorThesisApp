@@ -1,6 +1,6 @@
 package com.example.bachelorthesisapp.data.remote
 
-import com.example.bachelorthesisapp.presentation.viewmodel.model.ActivityModel
+import com.example.bachelorthesisapp.data.model.entities.ActivityEntity
 import com.squareup.moshi.Json
 
 data class ActivityDto(
@@ -12,16 +12,13 @@ data class ActivityDto(
     val link: String,
     val key: String,
     val accessibility: Double
-) {
-    fun toActivityModel(): ActivityModel {
-        return ActivityModel(
-            name = name,
-            type = type,
-            participants = participants,
-            price = price,
-            link = link,
-            key = key,
-            accessibility = accessibility
-        )
-    }
-}
+)
+fun ActivityDto.toEntity(): ActivityEntity = ActivityEntity(
+    key = key,
+    activity = name,
+    type = type,
+    participants = participants,
+    price = price,
+    link = link,
+    accessibility = accessibility
+)

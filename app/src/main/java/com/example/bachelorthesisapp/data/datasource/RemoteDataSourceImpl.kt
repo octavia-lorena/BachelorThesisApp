@@ -3,6 +3,7 @@ package com.example.bachelorthesisapp.data.datasource
 import android.util.Log
 import com.example.bachelorthesisapp.data.remote.ActivityDto
 import com.example.bachelorthesisapp.data.remote.Api
+import com.example.bachelorthesisapp.data.remote.BusinessDto
 import com.example.bachelorthesisapp.datasource.ApiResponse
 import com.example.bachelorthesisapp.datasource.RemoteDataSource
 import com.example.bachelorthesisapp.exception.NetworkCallException
@@ -27,6 +28,9 @@ class RemoteDataSourceImpl @Inject constructor(
         ApiResponse.Error(exception = ex)
     }
 
-    override suspend fun getActivityData(): ApiResponse<ActivityDto> =
-        handleApiResponse { api.getActivityData() }
+    override suspend fun getActivityData(): ActivityDto =
+        api.getActivityData()
+
+    override suspend fun getBusinessData(): List<BusinessDto> = api.getBusinessesData()
+    override suspend fun getBusinessDataByType(type: String): List<BusinessDto> = api.getBusinessesDataByType(type)
 }

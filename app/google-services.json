@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "112005914863",
+    "project_id": "eventspace-24f7d",
+    "storage_bucket": "eventspace-24f7d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112005914863:android:dd3a90a482d8f9377a3b1a",
+        "android_client_info": {
+          "package_name": "com.example.bachelorthesisapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112005914863-4p934kl1sckte3nrdlv6ho5p889fhmnv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bachelorthesisapp",
+            "certificate_hash": "66ae0d48ee431fbd4893fb7eaafe92fc0d1a7e60"
+          }
+        },
+        {
+          "client_id": "112005914863-e89t4ijl6hupn6q3f7uuec2kr8c7ac34.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYYtgzfEtP2h6RYNN-ynZJ8C5yKTz2BvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112005914863-e89t4ijl6hupn6q3f7uuec2kr8c7ac34.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

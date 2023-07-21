@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
 import kotlinx.coroutines.launch
 
@@ -25,7 +26,7 @@ fun FormTextField(
     value: String,
     onValueChange: (String) -> Unit,
     error: String?,
-    leadingIcon: @Composable () -> Unit,
+    leadingIcon: @Composable (() -> Unit)?,
     trailingIcon: @Composable (() -> Unit)?,
     keyboardType: KeyboardType,
     passwordVisible: Boolean = true
@@ -40,7 +41,7 @@ fun FormTextField(
             backgroundColor = Color.Transparent,
             focusedLabelColor = Color.Gray,
             unfocusedLabelColor = Color.Transparent,
-            focusedIndicatorColor = Ochre,
+            focusedIndicatorColor = Coral,
             unfocusedIndicatorColor = Color.Gray,
             cursorColor = Color.Gray
         ),

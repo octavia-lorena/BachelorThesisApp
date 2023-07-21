@@ -3,6 +3,9 @@ package com.example.bachelorthesisapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.bachelorthesisapp.data.dao.ActivitiesDao
+import com.example.bachelorthesisapp.data.dao.BusinessesDao
+import com.example.bachelorthesisapp.data.dao.EventsDao
+import com.example.bachelorthesisapp.data.dao.OfferPostsDao
 import com.example.bachelorthesisapp.data.database.EventSpaceDatabase
 import dagger.Module
 import dagger.Provides
@@ -28,6 +31,20 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun providesActivitiesDao(database: EventSpaceDatabase): ActivitiesDao = database.activitiesDao()
+    fun providesActivitiesDao(database: EventSpaceDatabase): ActivitiesDao =
+        database.activitiesDao()
+
+    @Provides
+    @Singleton
+    fun providesBusinessDao(database: EventSpaceDatabase): BusinessesDao = database.businessDao()
+
+    @Provides
+    @Singleton
+    fun providesPostDao(database: EventSpaceDatabase): OfferPostsDao = database.postsDao()
+
+    @Provides
+    @Singleton
+    fun providesEventsDao(database: EventSpaceDatabase): EventsDao = database.eventsDao()
+
 
 }

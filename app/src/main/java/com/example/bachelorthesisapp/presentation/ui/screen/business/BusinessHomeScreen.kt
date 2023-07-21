@@ -24,6 +24,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,7 +34,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.bachelorthesisapp.presentation.ui.components.AddPostFloatingButton
 import com.example.bachelorthesisapp.presentation.ui.components.BottomNavigationBarBusiness
+import com.example.bachelorthesisapp.presentation.ui.components.BusinessDrawerContent
 import com.example.bachelorthesisapp.presentation.ui.components.BusinessHomeAppBar
 import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
@@ -45,8 +48,10 @@ fun BusinessHomeScreen(
     authViewModel: AuthViewModel,
     navHostController: NavHostController,
 ) {
-   // val userFlow = authViewModel.userFlow.collectAsState()
+    // val userFlow = authViewModel.userFlow.collectAsState()
     val context = LocalContext.current
+    val scaffoldState = rememberScaffoldState()
+
     LaunchedEffect(key1 = context) {
 //        authViewModel.getBusinessById(uid)
 //        userFlow.value?.let {
@@ -55,7 +60,7 @@ fun BusinessHomeScreen(
     }
 
     Scaffold(
-        topBar = { BusinessHomeAppBar(title = "My Space") },
+        topBar = { BusinessHomeAppBar(title = "My Space", scaffoldState = scaffoldState) },
         bottomBar = {
             BottomNavigationBarBusiness(
                 navController = navHostController,
@@ -67,19 +72,17 @@ fun BusinessHomeScreen(
                 })
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = { Text(text = "NEW POST", color = Color.White) },
-                onClick = { /*TODO*/ },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "",
-                        tint = Color.White
-                    )
-                },
-                backgroundColor = Rose
+            AddPostFloatingButton(navHostController = navHostController)
+        },
+        scaffoldState = scaffoldState,
+        drawerContent = {
+            BusinessDrawerContent(
+                uid = uid,
+                authVM = authViewModel,
+                navController = navHostController
             )
         },
+        drawerGesturesEnabled = true,
         backgroundColor = Color.White
     ) { innerPadding ->
         Box(

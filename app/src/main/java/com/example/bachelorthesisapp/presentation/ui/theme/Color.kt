@@ -28,15 +28,28 @@ val IrisBlueDark = Color(0xFF5B64A2)
 val NavyBlue = Color(0xFF1D0455)
 val OffWhite = Color(0xFFDBD8D3)
 val Ochre = Color(0xFFDF971B)
+val OchreLight = Color(0xFFFDC96F)
+val OchreDark = Color(0xFFB47302)
 val ShadowBlack = Color(0x63000000)
 
 // EventSpace 2
 val YogurtWhite = Color(0xFFF0E9D1)
 val Rose = Color(0xFFFD5074)
+val RoseLight = Color(0xFFFFA8BA)
+val RoseDark = Color(0xFFE01B44)
 val NavyBlueDark = Color(0xFF060835)
 val Coral = Color(0xFFFF6F5D)
 val CoralLight = Color(0xFFFFB5AC)
 val Purple200 = Color(0xFFBB86FC)
+val WhiteTransparent = Color(0xC6FFFFFF)
+val Green = Color(0xFF4BF054)
+val GreenLight = Color(0xFF86E98C)
+val GreenDark = Color(0xFF25C42E)
+
+
+
+val cardCollapsedBackgroundColor = Color(0xFFBDE7EC)
+val cardExpandedBackgroundColor = Color(0xFFD1A3FF)
 
 
 

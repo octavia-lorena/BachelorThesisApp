@@ -456,7 +456,7 @@ class AuthViewModel @Inject constructor(
     }
 
 
-    private fun login(email: String, password: String) {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
             //_loginFlow.value = Resource.Loading()
             val result = authRepository.login(email, password)
@@ -472,10 +472,9 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    suspend fun getBusinessById(uid: String) {
-        val result = database.child(AuthRepository.BUSINESS_TABLE_NAME).child(uid).get().await()
-        val resultValue = result.value as HashMap<*, *>
 
+    fun signOut(){
+        authRepository.signOut()
     }
 
     sealed class ValidationEvent {

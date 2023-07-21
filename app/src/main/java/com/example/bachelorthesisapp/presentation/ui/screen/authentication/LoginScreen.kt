@@ -66,9 +66,12 @@ fun LoginScreenContent(
     val scope = rememberCoroutineScope()
     val loginFlow = authViewModel.loginFlow.collectAsState()
 
-    Box {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         Image(
-            painter = painterResource(id = R.drawable.login1),
+            painter = painterResource(id = R.drawable.login2),
             contentDescription = "background",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
@@ -78,9 +81,9 @@ fun LoginScreenContent(
         ) { innerPadding ->
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(
-                        top = 100.dp,
+                        top = 145.dp,
                         start = 25.dp,
                         end = 25.dp,
                         bottom = innerPadding.calculateBottomPadding()
@@ -254,7 +257,39 @@ fun LoginScreenContent(
                     SubmitButton(
                         onClick = {
                             scope.launch {
-                                authViewModel.onLoginEvent(LoginEvent.Submit)
+                                //  authViewModel.onLoginEvent(LoginEvent.Submit)
+                                authViewModel.login("mariapop@gmail.com", "mariapass")
+                                loginFlow.value?.let {
+                                    when (it) {
+                                        is Resource.Success -> {
+                                            Log.d("LOGIN", it.data.toString())
+                                            delay(2000L)
+                                            if (it.data.type == "clients") {
+                                                navController.navigate(
+                                                    "home_client/${it.data.id}"
+                                                )
+                                            } else if (it.data.type == "businesses") {
+                                                navController.navigate(
+                                                    "home_business/${it.data.id}"
+                                                )
+                                            }
+                                        }
+
+                                        is Resource.Error -> Toast.makeText(
+                                            context,
+                                            "Error",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        is Resource.Loading -> Toast.makeText(
+                                            context,
+                                            "Loading... ${it.data.toString()}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+
+                                    }
+                                }
                             }
                         },
                         text = "Sign In"

@@ -2,8 +2,11 @@ package com.example.bachelorthesisapp.data.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.bachelorthesisapp.data.model.converters.BusinessTypeConverter
 
 @Entity(tableName = "businesses")
+@TypeConverters(BusinessTypeConverter::class)
 data class BusinessEntity(
     @PrimaryKey(autoGenerate = false)
     override var id: String,

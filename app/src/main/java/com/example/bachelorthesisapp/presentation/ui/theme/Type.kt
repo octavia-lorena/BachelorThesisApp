@@ -26,6 +26,11 @@ val Typography = Typography(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Bold,
         fontSize = 25.sp,
+        shadow = Shadow(
+            color = ShadowBlack,
+            offset = Offset(3.0f, 3.0f),
+            blurRadius = 4.0f
+        )
     ),
     h2 = TextStyle(
         fontFamily = Montserrat,
@@ -82,7 +87,14 @@ val Typography = Typography(
             offset = Offset(3.0f, 2.0f),
             blurRadius = 6.0f
         )
-    )
+    ),
+    caption = TextStyle(
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        color = Color.DarkGray,
+        // shadow = Shadow(color = ShadowBlack, blurRadius = 3f, offset = Offset(2f, 2f))
+    ),
     /* Other default text styles to override
     button = TextStyle(
         fontFamily = FontFamily.Default,

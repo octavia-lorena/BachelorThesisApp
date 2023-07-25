@@ -9,5 +9,7 @@ sealed class CreateEventEvent {
     data class GuestNumberChanged(val guestNumber: String) : CreateEventEvent()
     data class BudgetChanged(val budget: String) : CreateEventEvent()
     data class VendorsChanged(val vendors: String): CreateEventEvent()
+
+    object PartialSubmit: CreateEventEvent()
     object Submit : CreateEventEvent()
 }

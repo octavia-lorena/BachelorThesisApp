@@ -293,39 +293,15 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun submitBusinessRegisterForm() {
-//        val nameResult =
-//            businessRegisterValidator.validateName(registerBusinessState.name)
-//        val emailResult = businessRegisterValidator.validateEmail(registerBusinessState.email)
-//        val passwordResult =
-//            businessRegisterValidator.validatePassword(registerBusinessState.password)
-//        val confirmPasswordResult = businessRegisterValidator.validateConfirmPassword(
-//            registerBusinessState.password,
-//            registerBusinessState.confirmPassword
-//        )
-//        val phoneNumberResult =
-//            businessRegisterValidator.validatePhoneNumber(registerBusinessState.phoneNumber)
-//        val typeResult = businessRegisterValidator.validateType(registerBusinessState.type)
         val addressResult = businessRegisterValidator.validateAddress(registerBusinessState.address)
         val cityResult = businessRegisterValidator.validateAddress(registerBusinessState.city)
 
         val hasError = listOf(
-//            nameResult,
-//            emailResult,
-//            typeResult,
-//            passwordResult,
-//            confirmPasswordResult,
-//            phoneNumberResult,
             addressResult,
             cityResult
         ).any { !it.success }
         if (hasError) {
             registerBusinessState = registerBusinessState.copy(
-//                nameError = nameResult.errorMessage,
-//                typeError = typeResult.errorMessage,
-//                emailError = emailResult.errorMessage,
-//                passwordError = passwordResult.errorMessage,
-//                confirmPasswordError = confirmPasswordResult.errorMessage,
-//                phoneNumberError = phoneNumberResult.errorMessage,
                 addressError = addressResult.errorMessage,
                 cityError = cityResult.errorMessage
             )
@@ -371,18 +347,6 @@ class AuthViewModel @Inject constructor(
             register(email, password, BUSINESS_TABLE_NAME, user)
             delay(4000L)
             validationBusinessRegisterEventChannel.send(ValidationEvent.Success)
-//            val businessOwner = BusinessOwnerData(
-//                id = uid ?: "",
-//                name = name,
-//                type = businessType,
-//                phoneNumber = phoneNumber,
-//                email = email,
-//                address = address,
-//                lat = lat,
-//                lng = lng
-//            )
-//            Log.d("BUSINESS", businessOwner.toString())
-//            authRepository.addBusinessOwner(businessOwner)
 
             registerBusinessState = registerBusinessState.copy(
                 name = "",

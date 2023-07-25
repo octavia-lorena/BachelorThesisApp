@@ -19,25 +19,40 @@ class CreateEventFormValidator {
         return ValidationResult(success = true)
     }
 
-    fun validatePhotos(photos: String): ValidationResult {
-        if (photos.isEmpty())
-            return ValidationResult(false, "Photos cannot be blank.")
-        val photosStr = photos.split(";")
-        if (photosStr.size < 3)
-            return ValidationResult(false, "You must insert at least 3 photos.")
+    fun validateType(type: String): ValidationResult {
+        if (type.isEmpty())
+            return ValidationResult(false, "Type cannot be blank.")
         return ValidationResult(success = true)
     }
 
-    fun validatePrice(price: String): ValidationResult {
-        if (price.isEmpty())
-            return ValidationResult(false, "Price cannot be blank.")
-        val priceValue = price.toIntOrNull()
-        if (priceValue == null)
-            return ValidationResult(false, "Invalid numeric format.")
-        else {
-            if (priceValue <= 0)
-                return ValidationResult(false, "Price cannot be <= 0")
-        }
+    fun validateDate(date: String): ValidationResult {
+        if (date.isEmpty())
+            return ValidationResult(false, "Date cannot be blank.")
         return ValidationResult(success = true)
     }
+
+    fun validateTime(time: String): ValidationResult {
+        if (time.isEmpty())
+            return ValidationResult(false, "Time cannot be blank.")
+        return ValidationResult(success = true)
+    }
+
+    fun validateGuestNumber(guestNr: String): ValidationResult {
+        if (guestNr.isEmpty())
+            return ValidationResult(false, "Guest number cannot be blank.")
+        return ValidationResult(success = true)
+    }
+
+    fun validateBudget(budget: String): ValidationResult {
+        if (budget.isEmpty())
+            return ValidationResult(false, "Budget cannot be blank.")
+        return ValidationResult(success = true)
+    }
+
+    fun validateVendors(vendors: String): ValidationResult {
+        if (vendors.isEmpty())
+            return ValidationResult(false, "Vendors cannot be blank.")
+        return ValidationResult(success = true)
+    }
+
 }

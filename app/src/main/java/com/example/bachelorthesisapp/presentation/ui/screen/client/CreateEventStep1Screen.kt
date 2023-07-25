@@ -51,14 +51,29 @@ import com.example.bachelorthesisapp.presentation.ui.components.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.WhiteTransparent
+import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 
 @Composable
 fun CreateEventsStep1Screen(
+    uid: String,
     clientViewModel: ClientViewModel,
     navHostController: NavHostController
 ) {
     val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+    LaunchedEffect(key1 = context) {
+        clientViewModel.validationCreateEventEvents.collect { event ->
+            when (event) {
+                is ClientViewModel.ValidationEvent.Success -> {
+                    navHostController.navigate("create_event_step2/$uid")
+                }
+
+                else -> Toast.makeText(context, "Error", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
 
     Box {
 //        Image(
@@ -299,7 +314,9 @@ fun CreateEventStep1ScreenContent(
         // SUBMIT BUTTON
         item {
             SubmitButton(
-                onClick = { navController.navigate(Routes.CreateEventStep2Screen.route) },
+                onClick = {
+                    clientViewModel.onCreateEventEvent(CreateEventEvent.PartialSubmit)
+                },
                 text = stringResource(R.string.Next)
             )
         }

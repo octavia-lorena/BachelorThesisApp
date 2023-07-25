@@ -27,6 +27,7 @@ import com.example.bachelorthesisapp.presentation.ui.screen.business.UpdateOffer
 import com.example.bachelorthesisapp.presentation.ui.screen.client.ClientHomeScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.client.CreateEventsStep1Screen
 import com.example.bachelorthesisapp.presentation.ui.screen.client.CreateEventsStep2Screen
+import com.example.bachelorthesisapp.presentation.ui.screen.client.EventDetailsScreen
 import com.example.bachelorthesisapp.presentation.ui.theme.EventPlannerProjectTheme
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
@@ -156,17 +157,31 @@ fun EventPlannerProjectDirection() {
             )
         }
         composable(
-            route = Routes.CreateEventStep1Screen.route,
-        ) {
+            route = "create_event_step1/{uid}",
+            arguments = listOf(navArgument("uid") { type = NavType.StringType })
+        ) { backStackEntry ->
             CreateEventsStep1Screen(
+                uid = backStackEntry.arguments?.getString("uid")!!,
                 navHostController = navController,
                 clientViewModel = clientViewModel
             )
         }
         composable(
-            route = Routes.CreateEventStep2Screen.route,
-        ) {
+            route = "create_event_step2/{uid}",
+            arguments = listOf(navArgument("uid") { type = NavType.StringType })
+        ) { backStackEntry ->
             CreateEventsStep2Screen(
+                uid = backStackEntry.arguments?.getString("uid")!!,
+                navHostController = navController,
+                clientViewModel = clientViewModel
+            )
+        }
+        composable(
+            route = "event_details/{eventId}",
+            arguments = listOf(navArgument("eventId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            EventDetailsScreen(
+                eventId = backStackEntry.arguments?.getInt("eventId")!!,
                 navHostController = navController,
                 clientViewModel = clientViewModel
             )

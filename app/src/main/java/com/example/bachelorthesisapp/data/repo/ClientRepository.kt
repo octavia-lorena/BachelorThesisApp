@@ -1,8 +1,10 @@
 package com.example.bachelorthesisapp.data.repo
 
 import android.util.Log
+import com.example.bachelorthesisapp.data.datasource.BusinessLocalDataSource
 import com.example.bachelorthesisapp.data.datasource.EventsLocalDataSource
 import com.example.bachelorthesisapp.data.datasource.RemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
 import com.example.bachelorthesisapp.data.model.entities.Event
 import com.example.bachelorthesisapp.data.model.entities.EventStatus
 import com.example.bachelorthesisapp.data.remote.Resource
@@ -16,9 +18,9 @@ import java.time.LocalDate
 
 class ClientRepository @Inject constructor(
     private val eventsLocalDataSource: EventsLocalDataSource,
+    private val businessLocalDataSource: BusinessLocalDataSource,
     private val remoteDataSource: RemoteDataSourceImpl,
 ) {
-
 
     // EVENTS FLOW
     private val _eventFlow = MutableSharedFlow<Resource<List<Event>>>()
@@ -43,6 +45,14 @@ class ClientRepository @Inject constructor(
     // EVENTS PAST FLOW
     private val _eventPastFlow = MutableSharedFlow<Resource<List<Event>>>()
     val eventPastFlow: Flow<Resource<List<Event>>> = _eventPastFlow
+
+    // EVENT RESULT FLOW
+    private val _eventResultFlow = MutableSharedFlow<Resource<Event>>()
+    val eventResultFlow: Flow<Resource<Event>> = _eventResultFlow
+
+    // EVENTS PAST FLOW
+    private val _businessFlow = MutableSharedFlow<Resource<List<BusinessEntity>>>()
+    val businessFlow: Flow<Resource<List<BusinessEntity>>> = _businessFlow
 
 
     private suspend fun fetchEvents() = networkCall(
@@ -201,5 +211,95 @@ class ClientRepository @Inject constructor(
             )
         }
     )
+
+    suspend fun createEvent(event: Event) {
+        try {
+            _eventResultFlow.emit(Resource.Loading())
+            val result = remoteDataSource.addEvent(event)
+            _eventResultFlow.emit(Resource.Success(result.toEntity()))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("CREATE_EVENT", e.stackTraceToString())
+            _eventResultFlow.emit(Resource.Error(e))
+
+        }
+    }
+
+    suspend fun deleteAllEvents() {
+        eventsLocalDataSource.deleteAllEntities()
+    }
+
+    suspend fun fetchBusinesses() = networkCall(
+        localSource = {
+            businessLocalDataSource.getAllEntities()
+        },
+        remoteSource = {
+            remoteDataSource.getBusinessData().also { Log.d("BUSINESSES_REMOTE", it.toString()) }
+        },
+        compareData = { remoteBusiness, localBusiness ->
+            if (remoteBusiness != localBusiness) {
+                val entities = remoteBusiness.map { it.toEntity() }
+                businessLocalDataSource.repopulateEntities(entities)
+            }
+        },
+        onResult = {
+                businesses ->
+            _businessFlow.emit(
+                when (businesses) {
+                    is Resource.Error -> {
+                        Log.d("BUSINESSES", "ERROR")
+                        Resource.Error<Exception>(businesses.exception)
+                        val businessesList =
+                            businessLocalDataSource.getAllEntities()
+                        Resource.Success(businessesList)
+                    }
+
+                    is Resource.Loading -> Resource.Loading()
+                    is Resource.Success -> {
+                        Log.d("BUSINESSES", "SUCCESS")
+                        Resource.Success(businesses.data
+                            .map { it.toEntity() })
+                    }
+                }
+            )
+        }
+    )
+
+
+    suspend fun fetchBusinessesByType(businessType: String) = networkCall(
+        localSource = {
+            businessLocalDataSource.getBusinessesByType(businessType)
+                .also { Log.d("FILTER_VENDORS", "local $it") }
+        },
+        remoteSource = {
+            remoteDataSource.getBusinessDataByType(businessType)
+                .also { Log.d("FILTER_VENDORS", "remote $it") }
+        },
+        compareData = { _, _ ->
+            fetchBusinesses()
+            delay(2000L)
+        },
+        onResult = { businesses ->
+            _businessFlow.emit(
+                when (businesses) {
+                    is Resource.Error -> {
+                        Log.d("BUSINESSES", "ERROR")
+                        Resource.Error<Exception>(businesses.exception)
+                        val businessesList =
+                            businessLocalDataSource.getBusinessesByType(businessType)
+                        Resource.Success(businessesList
+                            .filter { it.businessType.name == businessType })
+                    }
+
+                    is Resource.Loading -> Resource.Loading()
+                    is Resource.Success -> {
+                        Log.d("BUSINESSES", "SUCCESS")
+                        Resource.Success(businesses.data
+                            .map { it.toEntity() }
+                            .filter { it.businessType.name == businessType })
+                    }
+                }
+            )
+        })
 
 }

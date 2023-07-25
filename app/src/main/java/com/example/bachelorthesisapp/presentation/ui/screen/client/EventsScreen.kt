@@ -1,13 +1,9 @@
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
@@ -20,30 +16,24 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.EventStatus
-import com.example.bachelorthesisapp.data.model.entities.EventType
 import com.example.bachelorthesisapp.presentation.ui.components.BottomNavigationBarClient
 import com.example.bachelorthesisapp.presentation.ui.components.BusinessHomeAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.ClientDrawerContent
 import com.example.bachelorthesisapp.presentation.ui.components.CreateEventFloatingButton
-import com.example.bachelorthesisapp.presentation.ui.components.UpcomingEventsExpandableCard
+import com.example.bachelorthesisapp.presentation.ui.components.PlanningEventsScreenContent
 import com.example.bachelorthesisapp.presentation.ui.components.TabItem
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
+import com.example.bachelorthesisapp.presentation.ui.components.UpcomingEventsScreenContent
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -77,12 +67,8 @@ fun EventsScreen(
             title = "Upcoming",
             icon = Icons.Filled.Upcoming,
             screen = {
-                EventsScreenContent(
+                UpcomingEventsScreenContent(
                     contentEvents = eventUpcomingState.value,
-//                    onPostClick = onPostClick,
-//                    cardsViewModel = cardsViewModel,
-//                    clientViewModel = clientViewModel,
-//                    navHostController = navHostController
                 )
             }
         ),
@@ -90,17 +76,13 @@ fun EventsScreen(
             title = "Planning",
             icon = Icons.Filled.NextPlan,
             screen = {
-                EventsScreenContent(
+                PlanningEventsScreenContent(
                     contentEvents = eventPlanningState.value,
-//                    onPostClick = onPostClick,
-//                    cardsViewModel = cardsViewModel,
-//                    clientViewModel = clientViewModel,
-//                    navHostController = navHostController
+                    navHostController = navHostController
                 )
             }
-        ),
-
         )
+    )
 
     Scaffold(
         topBar = {
@@ -120,7 +102,7 @@ fun EventsScreen(
                 })
         },
         floatingActionButton = {
-            CreateEventFloatingButton(navHostController = navHostController)
+            CreateEventFloatingButton(navHostController = navHostController, uid = uid)
         },
         scaffoldState = scaffoldState,
         drawerContent = {
@@ -165,79 +147,6 @@ fun EventsScreen(
                 tabs[pagerState.currentPage].screen()
             }
 
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Preview
-@Composable
-fun EventsScreenContent(
-    contentEvents: UiState<List<Event>> = UiState.Success(
-        listOf(
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-22"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            ),
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-22"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            )
-        )
-    ),
-
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 65.dp)
-    ) {
-        when (contentEvents) {
-            is UiState.Loading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    backgroundColor = Rose,
-                    color = CoralLight
-                )
-            }
-
-            is UiState.Success -> {
-                val eventList = contentEvents.value
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(0.dp)
-                        .fillMaxSize(),
-                ) {
-                    items(eventList.size) { index ->
-                        val event = eventList[index]
-                        UpcomingEventsExpandableCard(event = event)
-                    }
-                }
-            }
-
-            is UiState.Error -> {
-                Text(text = contentEvents.cause.toString())
-            }
         }
     }
 }

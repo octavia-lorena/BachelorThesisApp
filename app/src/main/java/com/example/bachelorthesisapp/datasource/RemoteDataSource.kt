@@ -24,4 +24,5 @@ interface RemoteDataSource {
     suspend fun getEventDataByOrganizerId(organizerId: String): List<EventDto>
 
 
+    suspend fun addEvent(event: Event): EventDto
 }

@@ -57,13 +57,16 @@ fun <T> LargeDropdownMenu(
             onClick = onClick,
         )
     },
-    painterResource: Int
+    painterResource: Int,
+    textColor: Color = Color.DarkGray,
+    iconColor: Color = Color.DarkGray
+
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = modifier.height(IntrinsicSize.Min)) {
         TextField(
-            label = { Text(label, color = Color.DarkGray) },
+            label = { Text(label, color = textColor) },
             //value = state.type,
             value = items.getOrNull(selectedIndex)?.let { selectedItemToString(it) } ?: "",
             enabled = enabled,
@@ -71,7 +74,8 @@ fun <T> LargeDropdownMenu(
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = painterResource),
-                    contentDescription = ""
+                    contentDescription = "",
+                    tint = iconColor
                 )
             },
             trailingIcon = {

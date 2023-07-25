@@ -1,5 +1,6 @@
 package com.example.bachelorthesisapp.data.model.converters
 
+import android.util.Log
 import androidx.room.TypeConverter
 import com.example.bachelorthesisapp.data.model.entities.BusinessType
 import com.example.bachelorthesisapp.data.model.entities.EventStatus
@@ -13,24 +14,35 @@ class EventConverter {
     fun eventTypeToString(eventType: EventType): String = eventType.name
 
     @TypeConverter
-    fun fromVendors(vendors: Map<BusinessType, Int?>): String {
-        val sortedMap: TreeMap<BusinessType, Int?> = TreeMap(vendors)
-        return sortedMap.keys.joinToString(separator = ",").plus("<divider>")
+    fun fromVendors(vendors: Map<BusinessType, Int>): String {
+        val vendorsStringKey = vendors.map { Pair(it.key.name, it.value) }.toMap()
+        val sortedMap: TreeMap<String, Int?> = TreeMap(vendorsStringKey)
+        val result = sortedMap.keys.joinToString(separator = ",").plus("<divider>")
             .plus(sortedMap.values.joinToString(separator = ","))
+        Log.d("MAP", result)
+        return result
     }
 
     @TypeConverter
-    fun toVendors(string: String): Map<BusinessType, Int?> {
-        return string.split("<divider>").run {
-            val keys = getOrNull(0)?.split(",")
-                ?.map { value -> enumValues<BusinessType>().first { it.name == value } }
-            val values = getOrNull(1)?.split(",")?.map { it.toInt() }
-            val res = hashMapOf<BusinessType, Int?>()
-            keys?.forEachIndexed { index, s ->
-                res[s] = values?.getOrNull(index)
+    fun toVendors(string: String): Map<BusinessType, Int> {
+        val businessTypes = enumValues<BusinessType>()
+        if (string.isNotEmpty())
+            return string.split("<divider>").run {
+                val keys = getOrNull(0)?.split(",")
+                    ?.map { value -> businessTypes.first { it.name == value } }
+
+                val values = getOrNull(1)?.split(",")?.map { value ->
+                    value.toInt()
+                }
+                val res = hashMapOf<BusinessType, Int>()
+                keys?.forEachIndexed { index, s ->
+                    if (values != null) {
+                        res[s] = values[index]
+                    }
+                }
+                res
             }
-            res
-        }
+        return emptyMap()
     }
 
     @TypeConverter

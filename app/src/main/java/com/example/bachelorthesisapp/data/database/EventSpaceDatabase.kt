@@ -17,7 +17,7 @@ import com.example.bachelorthesisapp.data.model.entities.PostComment
         BusinessEntity::class,
         OfferPost::class,
         Event::class],
-    version = 10
+    version = 12
 )
 abstract class EventSpaceDatabase : RoomDatabase() {
     companion object {

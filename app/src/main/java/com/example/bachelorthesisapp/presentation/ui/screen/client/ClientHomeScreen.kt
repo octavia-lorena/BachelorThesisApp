@@ -106,7 +106,7 @@ fun ClientHomeScreen(
                 })
         },
         floatingActionButton = {
-            CreateEventFloatingButton(navHostController = navHostController)
+            CreateEventFloatingButton(navHostController = navHostController, uid = uid)
         },
         scaffoldState = scaffoldState,
         drawerContent = {

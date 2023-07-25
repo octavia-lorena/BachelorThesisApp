@@ -7,10 +7,8 @@ import com.example.bachelorthesisapp.data.model.converters.EventConverter
 import java.time.LocalDate
 import java.util.Calendar
 
-@Entity(tableName = "events")
-@TypeConverters(EventConverter::class)
-data class Event(
-    @PrimaryKey(autoGenerate = true)
+
+data class EventData(
     val id: Int,
     val organizerId: String,
     val name: String,
@@ -21,6 +19,21 @@ data class Event(
     val guestNumber: Int,
     val budget: Int,
     val cost: Int,
-    val vendors: Map<BusinessType, Int>,
+    val vendors: Map<String, Int>,
     val status: EventStatus
+)
+
+fun Event.toEventData() = EventData(
+    id = id,
+    organizerId = organizerId,
+    name = name,
+    description = description,
+    type = type,
+    date = date,
+    time = time,
+    guestNumber = guestNumber,
+    budget = budget,
+    cost = cost,
+    vendors = vendors.map { Pair(it.key.name, it.value) }.toMap(),
+    status = status
 )

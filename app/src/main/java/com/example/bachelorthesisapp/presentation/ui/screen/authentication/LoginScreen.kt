@@ -126,7 +126,7 @@ fun LoginScreenContent(
 
                                         is Resource.Loading -> Toast.makeText(
                                             context,
-                                            "Loading... ${it.data.toString()}",
+                                            "Loading...",
                                             Toast.LENGTH_SHORT
                                         ).show()
 
@@ -257,8 +257,8 @@ fun LoginScreenContent(
                     SubmitButton(
                         onClick = {
                             scope.launch {
-                                //  authViewModel.onLoginEvent(LoginEvent.Submit)
-                                authViewModel.login("mariapop@gmail.com", "mariapass")
+                                authViewModel.onLoginEvent(LoginEvent.Submit)
+                                //authViewModel.login("mariapop@gmail.com", "mariapass")
                                 loginFlow.value?.let {
                                     when (it) {
                                         is Resource.Success -> {
@@ -283,7 +283,7 @@ fun LoginScreenContent(
 
                                         is Resource.Loading -> Toast.makeText(
                                             context,
-                                            "Loading... ${it.data.toString()}",
+                                            "Loading...",
                                             Toast.LENGTH_SHORT
                                         ).show()
 

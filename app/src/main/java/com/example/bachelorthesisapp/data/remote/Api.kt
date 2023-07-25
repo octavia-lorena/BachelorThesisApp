@@ -1,5 +1,7 @@
 package com.example.bachelorthesisapp.data.remote
 
+import com.example.bachelorthesisapp.data.model.entities.Event
+import com.example.bachelorthesisapp.data.model.entities.EventData
 import com.example.bachelorthesisapp.data.model.entities.OfferPost
 import retrofit2.Response
 import retrofit2.http.Body
@@ -25,17 +27,24 @@ interface Api {
     @GET("/business")
     suspend fun getBusinessesData(): List<BusinessDto>
 
-    @GET("/business/type")
-    suspend fun getBusinessesDataByType(type: String): List<BusinessDto>
+    @GET("/business/type/{type}")
+    suspend fun getBusinessesDataByType(
+        @Path(
+            value = "type",
+            encoded = true
+        ) type: String
+    ): List<BusinessDto>
 
     @GET("/posts")
     suspend fun getPostsData(): List<OfferPostDto>
 
     @GET("/post/{id}")
-    suspend fun getPostsDataById( @Path(
-        value = "id",
-        encoded = true
-    ) postId: Int): OfferPostDto
+    suspend fun getPostsDataById(
+        @Path(
+            value = "id",
+            encoded = true
+        ) postId: Int
+    ): OfferPostDto
 
     @GET("/posts/{id}")
     suspend fun getPostsDataByBusinessId(
@@ -84,4 +93,7 @@ interface Api {
             encoded = true
         ) eventId: Int
     ): EventDto
+
+    @POST("/event")
+    suspend fun addEvent(@Body event: EventData): EventDto
 }

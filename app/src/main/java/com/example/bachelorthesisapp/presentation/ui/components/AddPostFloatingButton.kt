@@ -33,12 +33,12 @@ fun AddPostFloatingButton(navHostController: NavHostController) {
 }
 
 @Composable
-fun CreateEventFloatingButton(navHostController: NavHostController) {
+fun CreateEventFloatingButton(navHostController: NavHostController, uid: String) {
     ExtendedFloatingActionButton(
         text = { Text(text = "CREATE EVENT", color = Color.White) },
         onClick = {
             // Navigate to Create Event Screen
-            navHostController.navigate(Routes.CreateEventStep1Screen.route)
+            navHostController.navigate("create_event_step1/$uid")
         },
         icon = {
             Icon(

@@ -3,6 +3,7 @@ package com.example.bachelorthesisapp.data.datasource
 import android.util.Log
 import com.example.bachelorthesisapp.data.model.entities.Event
 import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.model.entities.toEventData
 import com.example.bachelorthesisapp.data.remote.ActivityDto
 import com.example.bachelorthesisapp.data.remote.Api
 import com.example.bachelorthesisapp.data.remote.BusinessDto
@@ -61,6 +62,12 @@ class RemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getEventDataByOrganizerId(organizerId: String): List<EventDto> =
         api.getEventDataByOrganizerId(organizerId)
+
+    override suspend fun addEvent(event: Event): EventDto {
+        Log.d("NEW_EVENT", "API: ${event.toEventData()}")
+        return api.addEvent(event.toEventData())
+    }
+
 
 
 }

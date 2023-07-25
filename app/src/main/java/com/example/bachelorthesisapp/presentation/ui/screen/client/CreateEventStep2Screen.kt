@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.model.entities.BusinessType
@@ -52,15 +53,45 @@ import com.example.bachelorthesisapp.presentation.ui.components.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.FormTextField
 import com.example.bachelorthesisapp.presentation.ui.components.LargeDropdownMenu
 import com.example.bachelorthesisapp.presentation.ui.components.SubmitButton
+import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.WhiteTransparent
+import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
+import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import kotlinx.coroutines.delay
 
 @Composable
 fun CreateEventsStep2Screen(
-    clientViewModel: ClientViewModel, navHostController: NavHostController
+    uid: String,
+    clientViewModel: ClientViewModel,
+    navHostController: NavHostController
 ) {
     val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+    val eventState =
+        clientViewModel.eventResultState.collectAsStateWithLifecycle(UiState.Loading)
+
+    LaunchedEffect(eventState.value) {
+        clientViewModel.validationCreateEventEvents.collect { event ->
+            when (event) {
+                is ClientViewModel.ValidationEvent.Success -> {
+                    Toast.makeText(
+                        context, "Successful registration!", Toast.LENGTH_SHORT
+                    ).show()
+                    delay(3000L)
+                    val result =
+                        navHostController.navigate("home_client/$uid") {
+                            popUpTo("home_client/$uid") { inclusive = false }
+                        }
+                    Log.d("POP", result.toString())
+
+                }
+
+                else -> Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Box {
 //        Image(
@@ -151,6 +182,7 @@ fun CreateEventStep2ScreenContent(
         horizontalAlignment = Alignment.Start
     ) {
         // VENDORS ITEM
+        // TODO: vendor suggestions for each event type
         item {
             var selectedIndex by remember { mutableStateOf(-1) }
             val options = enumValues<BusinessType>()
@@ -274,10 +306,23 @@ fun CreateEventStep2ScreenContent(
 
         // SUBMIT BUTTON
         item {
-            SubmitButton(
-                onClick = { clientViewModel.onCreateEventEvent(CreateEventEvent.Submit) },
-                text = stringResource(R.string.Submit)
-            )
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SubmitButton(
+                    onClick = {
+                        navController.popBackStack()
+                    },
+                    text = stringResource(R.string.Previous)
+                )
+                Spacer(modifier = Modifier.width(30.dp))
+                SubmitButton(
+                    onClick = { clientViewModel.onCreateEventEvent(CreateEventEvent.Submit) },
+                    text = stringResource(R.string.Submit)
+                )
+            }
+
         }
     }
 }

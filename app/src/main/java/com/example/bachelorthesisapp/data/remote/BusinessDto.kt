@@ -6,7 +6,6 @@ import com.example.bachelorthesisapp.data.model.entities.BusinessType
 import com.squareup.moshi.Json
 
 data class BusinessDto(
-    @Json(name = "business")
     val id: String,
     val businessName: String,
     val username: String,

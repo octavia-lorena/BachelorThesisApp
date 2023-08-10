@@ -3,6 +3,7 @@ package com.example.bachelorthesisapp.data.model.converters
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.room.TypeConverter
+import com.example.bachelorthesisapp.data.model.entities.Rating
 
 class PhotosConverter {
 
@@ -23,4 +24,16 @@ class PhotosConverter {
 
     @TypeConverter
     fun stringToUri(string: String): Uri = string.toUri()
+
+    @TypeConverter
+    fun ratingToString(rating: Rating) = "${rating.value};${rating.voterCount}"
+
+    @TypeConverter
+    fun stringToRating(string: String): Rating {
+        val elements = string.split(";")
+        return Rating(
+            value = elements[0].toDouble(),
+            voterCount = elements[1].toInt()
+        )
+    }
 }

@@ -14,10 +14,12 @@ data class BusinessEntity(
     override var username: String,
     override var email: String,
     override var password: String,
+    override var profilePicture: String?,
     var businessType: BusinessType,
     var city: String,
     var address: String,
     var lat: Double?,
     var lng: Double?,
-    var phoneNumber: String
+    var phoneNumber: String,
+    var deviceToken: String?,
 ) : UserEntity()

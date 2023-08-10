@@ -12,7 +12,7 @@ interface IAuthRepository {
         userType: String,
         userEntity: UserEntity
     ): Resource<FirebaseUser>
-    suspend fun login(email: String, password: String): Resource<UserModel>
+    suspend fun login(email: String, password: String):Resource<UserModel>
     fun isUserLoggedIn(): Boolean
     fun signOut()
     fun getUserId(): String

@@ -12,7 +12,7 @@ class OfferPostVenue(
     val description: String,
     val images: List<Uri>,
     val price: Int,
-    val rating: Double,
+    val rating: Rating,
     var maxCapacity: Int
 ) : OfferPostGeneric(
     id = id,

@@ -2,13 +2,17 @@ package com.example.bachelorthesisapp.data.repo
 
 import android.util.Log
 import com.example.bachelorthesisapp.data.datasource.BusinessLocalDataSource
+import com.example.bachelorthesisapp.data.datasource.BusinessRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.datasource.EventRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.datasource.PostRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.datasource.PostsLocalDataSource
-import com.example.bachelorthesisapp.data.datasource.RemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.datasource.RequestRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
 import com.example.bachelorthesisapp.data.model.entities.OfferPost
 import com.example.bachelorthesisapp.data.remote.Resource
 import com.example.bachelorthesisapp.data.remote.networkCall
 import com.example.bachelorthesisapp.data.remote.toEntity
+import com.example.bachelorthesisapp.data.repo.firebase.PushNotification
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +21,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 class BusinessRepository @Inject constructor(
     private val businessLocalDataSource: BusinessLocalDataSource,
     private val postsLocalDataSource: PostsLocalDataSource,
-    private val remoteDataSource: RemoteDataSourceImpl,
+    private val businessRemoteDataSource: BusinessRemoteDataSourceImpl,
+    private val postRemoteDataSource: PostRemoteDataSourceImpl,
+    private val eventRemoteDataSource: EventRemoteDataSourceImpl,
+    private val requestRemoteDataSource: RequestRemoteDataSourceImpl
 ) {
 
     // BUSINESS FLOW
@@ -41,7 +48,7 @@ class BusinessRepository @Inject constructor(
 
     suspend fun fetchBusinesses() = networkCall(
         localSource = { businessLocalDataSource.getAllEntities() },
-        remoteSource = { remoteDataSource.getBusinessData() },
+        remoteSource = { businessRemoteDataSource.getAllBusiness() },
         compareData = { remoteBusiness, localBusiness ->
             if (remoteBusiness != localBusiness) {
                 val businessEntities = remoteBusiness.map { it.toEntity() }
@@ -61,7 +68,7 @@ class BusinessRepository @Inject constructor(
 
     suspend fun fetchBusinessesByType(type: String) = networkCall(
         localSource = { businessLocalDataSource.getBusinessesByType(type) },
-        remoteSource = { remoteDataSource.getBusinessData() },
+        remoteSource = { businessRemoteDataSource.getAllBusiness() },
         compareData = { remoteBusiness, localBusiness ->
             if (remoteBusiness != localBusiness) {
                 val businessEntities = remoteBusiness.map { it.toEntity() }
@@ -81,7 +88,7 @@ class BusinessRepository @Inject constructor(
 
     suspend fun fetchAllPosts() = networkCall(
         localSource = { postsLocalDataSource.getAllEntities() },
-        remoteSource = { remoteDataSource.getPostData() },
+        remoteSource = { postRemoteDataSource.getAllPost() },
         compareData = { remoteBusiness, localBusiness ->
             if (remoteBusiness != localBusiness) {
                 Log.d("POSTS", "data updates")
@@ -107,8 +114,8 @@ class BusinessRepository @Inject constructor(
 
     suspend fun fetchPostsByBusinessId(businessId: String) = networkCall(
         localSource = { postsLocalDataSource.getPostsByBusinessId(businessId) },
-        remoteSource = { remoteDataSource.getPostDataByBusinessId(businessId) },
-        compareData = { remoteBusiness, localBusiness ->
+        remoteSource = { postRemoteDataSource.getPostByBusinessId(businessId) },
+        compareData = { _, _ ->
             fetchAllPosts()
         },
         onResult = { activity ->
@@ -130,8 +137,10 @@ class BusinessRepository @Inject constructor(
 
     suspend fun fetchPostById(postId: Int) = networkCall(
         localSource = { postsLocalDataSource.getEntity(postId.toString()) },
-        remoteSource = { remoteDataSource.getPostDataById(postId) },
-        compareData = { remoteBusiness, localBusiness ->
+        remoteSource = { postRemoteDataSource.getPostById(postId) },
+        compareData = { _, _ ->
+//            fetchAllPosts()
+//            delay(2000L)
         },
         onResult = { post ->
             //fetchAllPosts()
@@ -158,7 +167,7 @@ class BusinessRepository @Inject constructor(
     suspend fun addPost(post: OfferPost) {
         try {
             _postResultFlow.emit(Resource.Loading())
-            val result = remoteDataSource.addPost(post)
+            val result = postRemoteDataSource.addPost(post)
             _postResultFlow.emit(Resource.Success(result.toEntity()))
         } catch (e: Exception) {
             e.printStackTrace()
@@ -170,7 +179,7 @@ class BusinessRepository @Inject constructor(
     suspend fun deletePost(post: OfferPost) {
         try {
             _postResultFlow.emit(Resource.Loading())
-            val result = remoteDataSource.deletePost(post.id)
+            val result = postRemoteDataSource.deletePost(post.id)
             fetchPostsByBusinessId(post.businessId)
             _postResultFlow.emit(Resource.Success(result.toEntity()))
         } catch (e: Exception) {
@@ -189,7 +198,7 @@ class BusinessRepository @Inject constructor(
     ) {
         try {
             _postResultFlow.emit(Resource.Loading())
-            val result = remoteDataSource.updatePost(id, title, description, photos, price)
+            val result = postRemoteDataSource.updatePost(id, title, description, photos, price)
             _postResultFlow.emit(Resource.Success(result.toEntity()))
         } catch (e: Exception) {
             Log.d("UPDATE_ERROR", e.stackTraceToString())
@@ -198,5 +207,39 @@ class BusinessRepository @Inject constructor(
         }
     }
 
+    suspend fun setVendorValue(eventId: Int, category: String, postId: Int) {
+        try {
+            eventRemoteDataSource.setVendorForCategory(eventId, category, postId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun setEventCost(eventId: Int, price: Int){
+        try {
+            eventRemoteDataSource.setEventCost(eventId = eventId, price = price)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun deleteRequest(requestId: Int) {
+        try {
+            requestRemoteDataSource.deleteRequest(requestId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun deleteAppointment(requestId: Int) {
+        try {
+            requestRemoteDataSource.deleteAppointment(requestId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun sendNotification(pushNotification: PushNotification) =
+        businessRemoteDataSource.sendNotification(pushNotification)
 
 }

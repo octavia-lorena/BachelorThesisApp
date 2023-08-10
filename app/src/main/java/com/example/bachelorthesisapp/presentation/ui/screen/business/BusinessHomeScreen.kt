@@ -1,65 +1,86 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.business
 
-import android.util.Log
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.presentation.ui.components.AddPostFloatingButton
-import com.example.bachelorthesisapp.presentation.ui.components.BottomNavigationBarBusiness
-import com.example.bachelorthesisapp.presentation.ui.components.BusinessDrawerContent
-import com.example.bachelorthesisapp.presentation.ui.components.BusinessHomeAppBar
-import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
+import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
+import com.example.bachelorthesisapp.data.model.entities.Event
+import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessDrawerContent
+import com.example.bachelorthesisapp.presentation.ui.components.business.CompletedAppointmentsCard
+import com.example.bachelorthesisapp.presentation.ui.components.business.RequestsCard
+import com.example.bachelorthesisapp.presentation.ui.components.business.TodayAppointmentsCard
+import com.example.bachelorthesisapp.presentation.ui.components.business.UpcomingAppointmentsCard
+import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostFloatingButton
+import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarBusiness
+import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
+import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
+import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 
 @Composable
 fun BusinessHomeScreen(
     uid: String,
     authViewModel: AuthViewModel,
     navHostController: NavHostController,
+    askNotificationPermissionCall: () -> Unit,
+    clientViewModel: ClientViewModel
 ) {
-    // val userFlow = authViewModel.userFlow.collectAsState()
+    askNotificationPermissionCall()
+    authViewModel.subscribeToTopic(uid)
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
 
+    val requestsState =
+        clientViewModel.requestsState.collectAsStateWithLifecycle(UiState.Loading)
+    val appointmentsState =
+        clientViewModel.appointmentsState.collectAsStateWithLifecycle(UiState.Loading)
+    val eventsState =
+        clientViewModel.eventState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+    val postsState =
+        clientViewModel.postsState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+
     LaunchedEffect(key1 = context) {
-//        authViewModel.getBusinessById(uid)
-//        userFlow.value?.let {
-//            Log.d("USER", it.toString())
-//        }
+        clientViewModel.loadRequests(uid)
+        clientViewModel.loadAllPosts()
+        clientViewModel.loadAllEvents()
     }
 
     Scaffold(
+        modifier = Modifier.animateContentSize(
+            animationSpec = tween(
+                durationMillis = 300,
+                easing = LinearOutSlowInEasing
+            )
+        ),
         topBar = { BusinessHomeAppBar(title = "My Space", scaffoldState = scaffoldState) },
         bottomBar = {
             BottomNavigationBarBusiness(
@@ -89,8 +110,23 @@ fun BusinessHomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = innerPadding.calculateBottomPadding(), top = 10.dp)
+//                .animateContentSize(
+//                    animationSpec = tween(
+//                        durationMillis = 300,
+//                        easing = LinearOutSlowInEasing
+//                    )
+//                ),
         ) {
-            BusinessHomeScreenContent()
+            BusinessHomeScreenContent(
+                businessId = uid,
+                postContent = postsState.value,
+                eventContent = eventsState.value,
+                appointmentsContent = appointmentsState.value,
+                requestsContent = requestsState.value,
+                onUpcomingCardClick = { navHostController.navigate("appointments/$uid") },
+                onRequestsCardClick = { navHostController.navigate("requests/$uid") },
+                onFeedCardClick = { navHostController.navigate("posts_business/$uid") }
+            )
         }
     }
 }
@@ -98,77 +134,89 @@ fun BusinessHomeScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
-fun BusinessHomeScreenContent() {
+fun BusinessHomeScreenContent(
+    businessId: String = "",
+    requestsContent: UiState<List<AppointmentRequest>> = UiState.Loading,
+    appointmentsContent: UiState<List<AppointmentRequest>> = UiState.Loading,
+    postContent: UiState<List<OfferPost>> = UiState.Loading,
+    eventContent: UiState<List<Event>> = UiState.Loading,
+    onUpcomingCardClick: () -> Unit = {},
+    onRequestsCardClick: () -> Unit = {},
+    onFeedCardClick: () -> Unit = {}
+
+) {
     LazyColumn(
         modifier = Modifier
-            .padding(15.dp)
+            .padding(start = 15.dp, end = 15.dp)
             .fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
-            Card(
-                modifier = Modifier
-                    .height(180.dp)
-                    .fillMaxWidth(),
-                backgroundColor = OffWhite
-            ) {
-                Text(text = "TODAY")
-            }
-            Spacer(modifier = Modifier.height(20.dp))
+            TodayAppointmentsCard(
+                businessId = businessId,
+                contentAppointmentsToday = appointmentsContent,
+                contentEvents = eventContent,
+                contentPosts = postContent
+            )
+            Spacer(modifier = Modifier.height(15.dp))
         }
         item {
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(2),
                 modifier = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth(),
-                verticalItemSpacing = 10.dp,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    .height(290.dp)
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 10.dp),
+                verticalItemSpacing = 15.dp,
+                horizontalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 item {
-                    Card(
-                        modifier = Modifier
-                            .height(150.dp)
-                            .fillMaxWidth(),
-                        backgroundColor = OffWhite
-
-                    ) {
-                        Text(text = "UPCOMING")
-                    }
+                    UpcomingAppointmentsCard(
+                        businessId = businessId,
+                        contentAppointmentsUpcoming = appointmentsContent,
+                        contentPosts = postContent,
+                        contentEvents = eventContent,
+                        onCardClick = onUpcomingCardClick
+                    )
                 }
                 item {
-                    Card(
-                        modifier = Modifier
-                            .height(70.dp)
-                            .fillMaxWidth(),
-                        backgroundColor = OffWhite
-
-                    ) {
-                        Text(text = "REQUESTS")
-                    }
+                    RequestsCard(
+                        businessId = businessId,
+                        contentRequests = requestsContent,
+                        contentPosts = postContent,
+                        onCardClick = onRequestsCardClick
+                    )
                 }
                 item {
-                    Card(
-                        modifier = Modifier
-                            .height(70.dp)
-                            .fillMaxWidth(),
-                        backgroundColor = OffWhite
-
-                    ) {
-                        Text(text = "COMPLETED")
-                    }
+                    CompletedAppointmentsCard(
+                        businessId = businessId,
+                        contentAppointments = appointmentsContent,
+                        contentPosts = postContent,
+                        contentEvents = eventContent,
+                    )
                 }
             }
+            Spacer(modifier = Modifier.height(20.dp))
         }
         item {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(63.dp)
-                    .padding(top = 10.dp, bottom = 10.dp),
-                backgroundColor = OffWhite
-
+                    .padding(top = 10.dp, bottom = 10.dp)
+                    .clickable { onFeedCardClick() },
+                backgroundColor = Color.White,
+                elevation = 10.dp,
+                shape = RoundedCornerShape(30.dp)
             ) {
-                Text(text = "MY FEED")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "MY FEED")
+                }
+
             }
         }
 

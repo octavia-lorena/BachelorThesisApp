@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,17 +28,19 @@ import com.example.bachelorthesisapp.data.model.entities.BusinessType
 import com.example.bachelorthesisapp.data.model.entities.Event
 import com.example.bachelorthesisapp.data.model.entities.EventStatus
 import com.example.bachelorthesisapp.data.model.entities.EventType
-import com.example.bachelorthesisapp.presentation.ui.components.BusinessSecondaryAppBar
-import com.example.bachelorthesisapp.presentation.ui.components.EventDetailsBackdrop
+import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.remote.Resource
+import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
+import com.example.bachelorthesisapp.presentation.ui.components.client.EventDetailsBackdrop
+import com.example.bachelorthesisapp.presentation.ui.components.client.EventDetailsScreenContent
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
+import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueDark
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
@@ -45,21 +48,32 @@ fun EventDetailsScreen(
     eventId: Int, clientViewModel: ClientViewModel, navHostController: NavHostController
 ) {
 
-    val currentEvent =
-        clientViewModel.eventCurrentState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
-
+    val currentEvent by remember {
+        clientViewModel.eventCurrentState
+    }
     val businessList by
-        clientViewModel.businessesState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+    clientViewModel.businessesByTypeState.collectAsStateWithLifecycle(
+        initialValue = UiState.Success(
+            emptyList()
+        )
+    )
+    val postsState by clientViewModel.postsState.collectAsStateWithLifecycle(
+        initialValue = UiState.Loading
+    )
     val loadingState by clientViewModel.isLoading.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState)
 
     var businessType by remember {
         mutableStateOf("")
     }
+    val scope = rememberCoroutineScope()
 
-    val context = LocalContext.current
-    LaunchedEffect(key1 = businessType) {
+    LaunchedEffect(key1 = null) {
         clientViewModel.findEventById(eventId)
+        clientViewModel.loadAllPosts()
+    }
+
+    LaunchedEffect(key1 = businessType, key2 = currentEvent) {
         if (businessType == "") {
             Log.d("FILTER_VENDORS", "LEe $businessType")
             clientViewModel.loadBusinesses()
@@ -70,86 +84,63 @@ fun EventDetailsScreen(
         }
     }
 
-    when (currentEvent.value) {
-        is UiState.Loading -> {
+    when (currentEvent) {
+        is Resource.Loading -> {
             CircularProgressIndicator(backgroundColor = Rose, color = CoralLight)
         }
 
-        is UiState.Success -> {
-            val event = (currentEvent.value as UiState.Success<Event>).value
+        is Resource.Success -> {
+            val event = (currentEvent as Resource.Success<Event>).data
+            LaunchedEffect(Unit) {
+                clientViewModel.setUpdateEventState(event)
+            }
             Scaffold(
                 topBar = {
                     BusinessSecondaryAppBar(
-                        title = event.name, navController = navHostController
+                        title = event.name,
+                        navController = navHostController,
+                        backgroundColor = IrisBlueDark,
+                        elevation = 0.dp
                     )
                 }, drawerGesturesEnabled = true, backgroundColor = Color.White
             ) { innerPadding ->
                 SwipeRefresh(
                     state = swipeRefreshState,
                     onRefresh = {
-                        clientViewModel.findEventById(eventId)
+                        scope.launch {
+                            clientViewModel.findEventById(eventId)
+                        }
                     }
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(bottom = innerPadding.calculateBottomPadding(), top = 10.dp)
+                            .padding(bottom = innerPadding.calculateBottomPadding(), top = 0.dp)
                     ) {
-                        EventDetailsScreenContent(
-                            event = event,
-                            businessState = businessList,
-                            onBusinessTypeFilterClick = { type ->
-                                Log.d("FILTER_VENDORS", type)
-                                businessType = type
-                                clientViewModel.findBusinessesByType(type)
-                            },
-                            onBusinessTypePostClick = {}
-                        )
+                        if (postsState is UiState.Success<List<OfferPost>>) {
+                            EventDetailsScreenContent(
+                                event = event,
+                                businessState = businessList,
+                                onBusinessTypeFilterClick = { type ->
+                                    Log.d("FILTER_VENDORS", type)
+                                    businessType = type
+                                    clientViewModel.findBusinessesByType(type)
+                                },
+                                onBusinessTypePostClick = {},
+                                onBusinessClick = { businessId -> navHostController.navigate("business_profile/$businessId/$eventId") },
+                                onCityClicked = { city -> clientViewModel.findBusinessesByCity(city) },
+                                postsList = (postsState as UiState.Success<List<OfferPost>>).value,
+                                onEditClick = { eventId -> navHostController.navigate("update_event/$eventId") },
+                                onPublishClick = { eventId -> clientViewModel.publishEvent(eventId) }
+                            )
+                        }
+
                     }
                 }
 
             }
         }
 
-        is UiState.Error -> {}
+        is Resource.Error -> {}
     }
-
-
-}
-
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
-@Preview(showSystemUi = true)
-@Composable
-fun EventDetailsScreenContent(
-    event: Event = Event(
-        1,
-        "",
-        "A+B Wedding",
-        "A classy wedding, bla bla, family and friends, love and marriage bla bla",
-        EventType.Wedding,
-        LocalDate.parse("2023-07-25"),
-        "13:30",
-        100,
-        1000,
-        500,
-        mapOf(
-            Pair(BusinessType.Beauty, -1),
-            Pair(BusinessType.CakeShop, 2),
-            Pair(BusinessType.Florist, -1),
-            Pair(BusinessType.Venue, -1),
-            Pair(BusinessType.DecorDesign, 2),
-            Pair(BusinessType.Entertainment, -1),
-            Pair(BusinessType.Musician, -1),
-            Pair(BusinessType.PhotoVideo, 2)
-        ),
-        EventStatus.Planning
-    ),
-    businessState: UiState<List<BusinessEntity>> = UiState.Loading,
-    onBusinessTypeFilterClick: (String) -> Unit = {},
-    onBusinessTypePostClick: () -> Unit = {},
-) {
-    EventDetailsBackdrop(
-        event = event, onBusinessTypeFilterClick = onBusinessTypeFilterClick,
-        businessState = businessState
-    )
 }

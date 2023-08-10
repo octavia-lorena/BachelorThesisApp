@@ -1,6 +1,7 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.authentication
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,11 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.model.events.ClientRegisterEvent
-import com.example.bachelorthesisapp.presentation.ui.components.BottomClickableText
-import com.example.bachelorthesisapp.presentation.ui.components.ErrorText
-import com.example.bachelorthesisapp.presentation.ui.components.FormTextField
-import com.example.bachelorthesisapp.presentation.ui.components.SubmitButton
+import com.example.bachelorthesisapp.presentation.ui.components.common.BottomClickableText
+import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
+import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
+import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.NavyBlue
 import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
@@ -50,15 +54,15 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
 
 
     Box {
-//        Image(
-//            painter = painterResource(id = R.drawable.main_background),
-//            contentDescription = "",
-//            modifier = Modifier.fillMaxSize(),
-//            contentScale = ContentScale.FillBounds
-//
-//        )
+        Image(
+            painter = painterResource(id = R.drawable.login_gradient_background2),
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+
+        )
         Scaffold(
-            backgroundColor = OffWhite
+            backgroundColor = Color.Transparent
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -100,8 +104,14 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Welcome to Event Space! Unleash your creativity and organize the event of your dreams.")
+                    Text(text = "Welcome to Event Space! Unleash your creativity and organize the event of your dreams.",
+                    color = Color.White)
                     Spacer(modifier = Modifier.height(10.dp))
+                    BottomClickableText(
+                        text = "Already have an account? Sign In here.",
+                        onClick = { navController.navigate(Routes.LoginScreen.route) },
+                        color = Coral
+                    )
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -329,12 +339,7 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                                 },
                                 text = "Sign Up"
                             )
-                            Spacer(modifier = Modifier.height(40.dp))
-                            BottomClickableText(
-                                text = "Already have an account? Sign In here.",
-                                onClick = { navController.navigate(Routes.LoginScreen.route) },
-                                color = NavyBlue
-                            )
+                            Spacer(modifier = Modifier.height(50.dp))
                         }
                     }
                 }

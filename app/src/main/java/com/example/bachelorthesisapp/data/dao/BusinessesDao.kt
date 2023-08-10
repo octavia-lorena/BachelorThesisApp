@@ -25,4 +25,7 @@ abstract class BusinessesDao: BaseDao<BusinessEntity> {
 
     @Query("SELECT * FROM businesses WHERE `businessType` = :type")
     abstract suspend fun getBusinessesByType(type: String): List<BusinessEntity>
+
+    @Query("SELECT * FROM businesses WHERE `city` = :city")
+    abstract suspend fun getBusinessesByCity(city: String): List<BusinessEntity>
 }

@@ -11,4 +11,6 @@
     <string name="Budget">Budget</string>
     <string name="Next">Next</string>
     <string name="Previous">Previous</string>
+    <string name="Name">Name</string>
+    <string name="Update">Update</string>
 </resources>

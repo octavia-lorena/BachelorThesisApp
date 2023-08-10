@@ -1,7 +1,15 @@
 package com.example.bachelorthesisapp.di
 
-import com.example.bachelorthesisapp.data.datasource.RemoteDataSourceImpl
-import com.example.bachelorthesisapp.datasource.RemoteDataSource
+import com.example.bachelorthesisapp.data.datasource.BusinessRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.datasource.ClientRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.datasource.EventRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.datasource.PostRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.datasource.RequestRemoteDataSourceImpl
+import com.example.bachelorthesisapp.datasource.BusinessRemoteDataSource
+import com.example.bachelorthesisapp.datasource.ClientRemoteDataSource
+import com.example.bachelorthesisapp.datasource.EventRemoteDataSource
+import com.example.bachelorthesisapp.datasource.PostRemoteDataSource
+import com.example.bachelorthesisapp.datasource.RequestRemoteDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,5 +22,22 @@ abstract class RemoteModule {
 
     @Binds
     @Singleton
-    abstract fun bindRemoteDataSource(remoteDataSourceImpl: RemoteDataSourceImpl): RemoteDataSource
+    abstract fun bindBusinessRemoteDataSource(remoteDataSourceImpl: BusinessRemoteDataSourceImpl): BusinessRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindPostRemoteDataSource(remoteDataSourceImpl: PostRemoteDataSourceImpl): PostRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindEventRemoteDataSource(remoteDataSourceImpl: EventRemoteDataSourceImpl): EventRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindRequestRemoteDataSource(remoteDataSourceImpl: RequestRemoteDataSourceImpl): RequestRemoteDataSource
+    @Binds
+    @Singleton
+    abstract fun bindClientRemoteDataSource(remoteDataSourceImpl: ClientRemoteDataSourceImpl): ClientRemoteDataSource
+
+
 }

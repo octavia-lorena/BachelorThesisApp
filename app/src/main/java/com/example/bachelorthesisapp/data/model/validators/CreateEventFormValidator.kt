@@ -34,6 +34,19 @@ class CreateEventFormValidator {
     fun validateTime(time: String): ValidationResult {
         if (time.isEmpty())
             return ValidationResult(false, "Time cannot be blank.")
+        if (time.length != 5) {
+            return ValidationResult(false, "Invalid time format.")
+        }
+        if (time[2] != ':') {
+            return ValidationResult(false, "Invalid time format.")
+        }
+        val parts = time.split(':')
+        if (parts[0].length != 2 && parts[1].length != 2) {
+            return ValidationResult(false, "Invalid time format.")
+        }
+        if (parts[0].toIntOrNull() == null && parts[1].toIntOrNull() == null) {
+            return ValidationResult(false, "Invalid time format.")
+        }
         return ValidationResult(success = true)
     }
 

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,13 +41,14 @@ import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.model.events.LoginEvent
 import com.example.bachelorthesisapp.data.remote.Resource
-import com.example.bachelorthesisapp.presentation.ui.components.BottomClickableText
-import com.example.bachelorthesisapp.presentation.ui.components.ErrorText
-import com.example.bachelorthesisapp.presentation.ui.components.FormTextField
-import com.example.bachelorthesisapp.presentation.ui.components.SubmitButton
+import com.example.bachelorthesisapp.presentation.ui.components.common.BottomClickableText
+import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
+import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
+import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
+import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -64,6 +64,7 @@ fun LoginScreenContent(
 ) {
     val userType = authViewModel.userTypeState.collectAsStateWithLifecycle(initialValue = "")
     val scope = rememberCoroutineScope()
+    val loginState = authViewModel.loginState1.collectAsStateWithLifecycle(UiState.Loading)
     val loginFlow = authViewModel.loginFlow.collectAsState()
 
     Box(
@@ -71,7 +72,7 @@ fun LoginScreenContent(
             .fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.login2),
+            painter = painterResource(id = R.drawable.register_gradient_background),
             contentDescription = "background",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
@@ -89,7 +90,7 @@ fun LoginScreenContent(
                         bottom = innerPadding.calculateBottomPadding()
                     )
             ) {
-                val state = authViewModel.loginState
+                val loginFormState = authViewModel.loginState
                 val context = LocalContext.current
                 LaunchedEffect(key1 = context) {
                     authViewModel.validationLoginEvents.collect { event ->
@@ -101,38 +102,6 @@ fun LoginScreenContent(
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                delay(2000L)
-                                loginFlow.value?.let {
-                                    when (it) {
-                                        is Resource.Success -> {
-                                            Log.d("LOGIN", it.data.toString())
-                                            delay(2000L)
-                                            if (it.data.type == "clients") {
-                                                navController.navigate(
-                                                    "home_client/${it.data.id}"
-                                                )
-                                            } else if (it.data.type == "businesses") {
-                                                navController.navigate(
-                                                    "home_business/${it.data.id}"
-                                                )
-                                            }
-                                        }
-
-                                        is Resource.Error -> Toast.makeText(
-                                            context,
-                                            "Error",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-
-                                        is Resource.Loading -> Toast.makeText(
-                                            context,
-                                            "Loading...",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-
-
-                                    }
-                                }
                             }
 
                             is AuthViewModel.ValidationEvent.Failure -> Toast.makeText(
@@ -155,13 +124,13 @@ fun LoginScreenContent(
                     Text(
                         text = "EVENT SPACE",
                         style = Typography.h1,
-                        color = Color.Black
+                        color = Color.White
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "Welcome back!",
                         style = Typography.body2,
-                        color = Color.Black
+                        color = Color.White
                     )
                     Spacer(modifier = Modifier.height(35.dp))
                     Column(
@@ -173,7 +142,7 @@ fun LoginScreenContent(
                     ) {
                         Text(
                             text = "Login",
-                            color = Color.Black,
+                            color = Color.White,
                             style = Typography.h2
 
                         )
@@ -181,7 +150,7 @@ fun LoginScreenContent(
                         // EMAIL FIELD
                         FormTextField(
                             labelText = "Email",
-                            value = state.email,
+                            value = loginFormState.email,
                             onValueChange = {
                                 scope.launch {
                                     authViewModel.onLoginEvent(
@@ -191,7 +160,7 @@ fun LoginScreenContent(
                                     )
                                 }
                             },
-                            error = state.emailError,
+                            error = loginFormState.emailError,
                             keyboardType = KeyboardType.Text,
                             leadingIcon = {
                                 Icon(
@@ -202,8 +171,8 @@ fun LoginScreenContent(
                             },
                             trailingIcon = null
                         )
-                        if (state.emailError != null) {
-                            ErrorText(text = state.emailError.toString())
+                        if (loginFormState.emailError != null) {
+                            ErrorText(text = loginFormState.emailError.toString())
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                         var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -212,7 +181,7 @@ fun LoginScreenContent(
                         // PASSWORD FIELD
                         FormTextField(
                             labelText = "Password",
-                            value = state.password,
+                            value = loginFormState.password,
                             onValueChange = {
                                 scope.launch {
                                     authViewModel.onLoginEvent(
@@ -223,7 +192,7 @@ fun LoginScreenContent(
                                 }
 
                             },
-                            error = state.passwordError,
+                            error = loginFormState.passwordError,
                             leadingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_lock_24),
@@ -249,8 +218,8 @@ fun LoginScreenContent(
                             keyboardType = KeyboardType.Password,
                             passwordVisible = passwordVisible
                         )
-                        if (state.passwordError != null) {
-                            ErrorText(text = state.passwordError.toString())
+                        if (loginFormState.passwordError != null) {
+                            ErrorText(text = loginFormState.passwordError.toString())
                         }
                     }
                     Spacer(modifier = Modifier.height(0.dp))
@@ -258,11 +227,27 @@ fun LoginScreenContent(
                         onClick = {
                             scope.launch {
                                 authViewModel.onLoginEvent(LoginEvent.Submit)
-                                //authViewModel.login("mariapop@gmail.com", "mariapass")
-                                loginFlow.value?.let {
+                                delay(7000L)
+//                                when (val loginContent = loginState.value) {
+                                loginFlow.value.let {
                                     when (it) {
+                                        is Resource.Loading -> {
+                                            Log.d("LOGIN", "LOADING")
+                                            Toast.makeText(
+                                                context,
+                                                "Loadingg...",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+
                                         is Resource.Success -> {
-                                            Log.d("LOGIN", it.data.toString())
+                                            Log.d("LOGIN", "SUCCESS")
+
+                                            Toast.makeText(
+                                                context,
+                                                "Success...",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                             delay(2000L)
                                             if (it.data.type == "clients") {
                                                 navController.navigate(
@@ -275,19 +260,17 @@ fun LoginScreenContent(
                                             }
                                         }
 
-                                        is Resource.Error -> Toast.makeText(
-                                            context,
-                                            "Error",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        is Resource.Error -> {
+                                            Log.d("LOGIN", "ERROR")
 
-                                        is Resource.Loading -> Toast.makeText(
-                                            context,
-                                            "Loading...",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                            Toast.makeText(
+                                                context,
+                                                "Error",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
 
-
+                                        else -> {}
                                     }
                                 }
                             }
@@ -324,7 +307,7 @@ fun LoginScreenContent(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(90.dp))
+                    Spacer(modifier = Modifier.height(120.dp))
                     BottomClickableText(
                         text = "New to Event Space? Create an account here.",
                         onClick = { navController.navigate(Routes.MainRegisterScreen.route) },

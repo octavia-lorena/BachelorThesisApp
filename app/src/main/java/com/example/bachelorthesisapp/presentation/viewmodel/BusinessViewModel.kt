@@ -1,12 +1,16 @@
 package com.example.bachelorthesisapp.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
+import com.example.bachelorthesisapp.data.model.entities.Event
 import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.model.entities.Rating
 import com.example.bachelorthesisapp.data.model.events.CreatePostEvent
 import com.example.bachelorthesisapp.data.model.events.UpdatePostEvent
 import com.example.bachelorthesisapp.data.model.states.CreatePostFormState
@@ -16,6 +20,8 @@ import com.example.bachelorthesisapp.data.model.validators.UpdatePostFormValidat
 import com.example.bachelorthesisapp.data.remote.Resource
 import com.example.bachelorthesisapp.data.repo.BusinessRepository
 import com.example.bachelorthesisapp.data.repo.auth.AuthRepository
+import com.example.bachelorthesisapp.data.repo.firebase.NotificationData
+import com.example.bachelorthesisapp.data.repo.firebase.PushNotification
 import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -103,10 +109,6 @@ class BusinessViewModel @Inject constructor(
                 validatePriceCreatePostForm()
             }
 
-            is CreatePostEvent.RatingChanged -> {
-                createPostState = createPostState.copy(rating = event.rating)
-            }
-
             is CreatePostEvent.Submit -> {
                 submitCreatePostForm()
             }
@@ -136,9 +138,6 @@ class BusinessViewModel @Inject constructor(
                 validatePriceUpdatePostForm()
             }
 
-            is UpdatePostEvent.RatingChanged -> {
-                updatePostState = updatePostState.copy(rating = event.rating)
-            }
 
             is UpdatePostEvent.Submit -> {
                 submitUpdatePostForm()
@@ -381,7 +380,7 @@ class BusinessViewModel @Inject constructor(
         val price = updatePostState.price
 
         viewModelScope.launch {
-            updatePost(id,title, description, images, price)
+            updatePost(id, title, description, images, price)
             delay(2000L)
             postResultState.collect {
                 when (it) {
@@ -417,7 +416,15 @@ class BusinessViewModel @Inject constructor(
         viewModelScope.launch {
             val imagesList = images.split(";").map { it.toUri() }
             val businessId = authRepository.currentUser?.uid!!
-            val post = OfferPost(0, businessId, title, description, imagesList, price.toInt(), 0.0)
+            val post = OfferPost(
+                0,
+                businessId,
+                title,
+                description,
+                imagesList,
+                price.toInt(),
+                Rating(0.0, 0)
+            )
             businessRepository.addPost(post)
         }
     }
@@ -431,7 +438,6 @@ class BusinessViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val imagesList = images.split(";")
-            val businessId = authRepository.currentUser?.uid!!
             businessRepository.updatePost(id, title, description, imagesList, price.toInt())
         }
     }
@@ -461,6 +467,42 @@ class BusinessViewModel @Inject constructor(
             delay(1000L)
         }
 
+    }
+
+    private fun sendNotification(pushNotification: PushNotification) {
+        viewModelScope.launch {
+            try {
+                val response = businessRepository.sendNotification(pushNotification)
+                Log.d("TAG", "SUCCESS ${response.raw().body.toString()}")
+            } catch (e: Exception) {
+                Log.e("TAG", "Error: ${e.stackTraceToString()}")
+            }
+        }
+    }
+
+    fun cancelAppointment(
+        requestId: Int,
+        business: BusinessEntity,
+        event: Event,
+        post: OfferPost,
+        clientDeviceId: String
+    ) {
+        viewModelScope.launch {
+            // delete request
+            businessRepository.deleteAppointment(requestId)
+            // update event - set vendor value for the category to -1, reset the event cost <- cost - post.price
+            businessRepository.setVendorValue(event.id, business.businessType.name, -1)
+            businessRepository.setEventCost(event.id, -post.price)
+
+        }
+        sendNotification(
+            PushNotification(
+                data = NotificationData(
+                    "Canceled appointment",
+                    "${business.businessName}, ${business.businessType} canceled the appointment for ${event.name}, with ${post.title}"
+                ), to = clientDeviceId
+            )
+        )
     }
 
     sealed class ValidationEvent {

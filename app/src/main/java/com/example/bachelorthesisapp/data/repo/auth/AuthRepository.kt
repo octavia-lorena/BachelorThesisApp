@@ -1,6 +1,8 @@
 package com.example.bachelorthesisapp.data.repo.auth
 
 import android.util.Log
+import com.example.bachelorthesisapp.data.datasource.BusinessRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.datasource.ClientRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.model.entities.UserEntity
 import com.example.bachelorthesisapp.data.model.entities.UserModel
 import com.example.bachelorthesisapp.data.model.entities.toUserModel
@@ -12,6 +14,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,6 +22,8 @@ import java.lang.Exception
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
+    private val businessRemoteDataSource: BusinessRemoteDataSourceImpl,
+    private val clientRemoteDataSource: ClientRemoteDataSourceImpl
 ) : IAuthRepository {
 
     companion object {
@@ -33,19 +38,43 @@ class AuthRepository @Inject constructor(
     private val _userType = MutableSharedFlow<String>()
     val userType: Flow<String> = _userType
 
+    private val _loginFlow = MutableSharedFlow<Resource<UserModel>>()
+    val loginFlow: Flow<Resource<UserModel>> = _loginFlow
+
     val currentUser: FirebaseUser?
         get() = auth.currentUser
 
     override suspend fun login(email: String, password: String): Resource<UserModel> {
         return try {
+            //  _loginFlow.emit(Resource.Loading())
             val result = auth.signInWithEmailAndPassword(email, password).await()
+            delay(1000L)
             val userModel = result.user?.toUserModel()!!
             val userType = getUserType(userModel.id)
             delay(2000L)
             userModel.type = userType
+            // Updating the user's device token
+            val deviceToken = Firebase.messaging.token.await()
+            userModel.deviceToken = deviceToken
+            when (userModel.type) {
+                "clients" -> clientRemoteDataSource.updateClientDeviceToken(
+                    userModel.id,
+                    deviceToken
+                )
+
+                "businesses" -> businessRemoteDataSource.updateBusinessDeviceToken(
+                    userModel.id,
+                    deviceToken
+                )
+
+            }
+
+            delay(3000L)
             Log.d("LOGIN", userModel.toString())
+            _loginFlow.emit(Resource.Success(userModel))
             Resource.Success(userModel)
         } catch (e: Exception) {
+            _loginFlow.emit(Resource.Error(e))
             Resource.Error(e)
         }
     }

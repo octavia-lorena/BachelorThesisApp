@@ -1,63 +1,53 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.client
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material.Card
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.Badge
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bachelorthesisapp.data.model.entities.Event
 import com.example.bachelorthesisapp.data.model.entities.EventStatus
 import com.example.bachelorthesisapp.data.model.entities.EventType
-import com.example.bachelorthesisapp.presentation.ui.components.BottomNavigationBarClient
-import com.example.bachelorthesisapp.presentation.ui.components.BusinessHomeAppBar
-import com.example.bachelorthesisapp.presentation.ui.components.ClientDrawerContent
-import com.example.bachelorthesisapp.presentation.ui.components.CreateEventFloatingButton
-import com.example.bachelorthesisapp.presentation.ui.components.PastEventsCard
-import com.example.bachelorthesisapp.presentation.ui.components.PlanningEventsCard
-import com.example.bachelorthesisapp.presentation.ui.components.TodayEventsCard
-import com.example.bachelorthesisapp.presentation.ui.components.UpcomingEventsCard
-import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
+import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarClient
+import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
+import com.example.bachelorthesisapp.presentation.ui.components.business.ClientDrawerContent
+import com.example.bachelorthesisapp.presentation.ui.components.common.CreateEventFloatingButton
+import com.example.bachelorthesisapp.presentation.ui.components.client.PastEventsCard
+import com.example.bachelorthesisapp.presentation.ui.components.client.PlanningEventsCard
+import com.example.bachelorthesisapp.presentation.ui.components.client.TodayEventsCard
+import com.example.bachelorthesisapp.presentation.ui.components.client.UpcomingEventsCard
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import java.time.Instant
+import com.google.android.material.search.SearchView.Behavior
+import com.google.android.material.search.SearchView.GONE
+import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.Period
-import kotlin.time.Duration.Companion.days
 
 @Composable
 fun ClientHomeScreen(
@@ -65,7 +55,10 @@ fun ClientHomeScreen(
     authViewModel: AuthViewModel,
     clientViewModel: ClientViewModel,
     navHostController: NavHostController,
+    askNotificationPermissionCall: () -> Unit
 ) {
+    askNotificationPermissionCall()
+    authViewModel.subscribeToTopic(uid)
     val eventState =
         clientViewModel.eventState.collectAsStateWithLifecycle(UiState.Loading)
     val eventPlanningState =
@@ -79,9 +72,10 @@ fun ClientHomeScreen(
 
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = context) {
-        clientViewModel.loadEventData()
+        clientViewModel.loadAllEventsByOrganizerId()
     }
 
     val loadingState by clientViewModel.isLoading.collectAsState()
@@ -122,7 +116,9 @@ fun ClientHomeScreen(
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = {
-                clientViewModel.loadEventData()
+                scope.launch {
+                    clientViewModel.loadAllEventsByOrganizerId()
+                }
             }
         ) {
             Box(
@@ -134,7 +130,9 @@ fun ClientHomeScreen(
                     contentEventsUpcoming = eventUpcomingState.value,
                     contentEventsToday = eventTodayState.value,
                     contentEventsPlanning = eventPlanningState.value,
-                    contentEventsPast = eventPastState.value
+                    contentEventsPast = eventPastState.value,
+                    onUpcomingCardClick = { navHostController.navigate("events/$uid") },
+                    onPlanningCardClick = { navHostController.navigate("events/$uid") }
                 )
             }
         }
@@ -283,12 +281,16 @@ fun ClientHomeScreenContent(
             )
         )
     ),
-    contentEventsPast: UiState<List<Event>> = UiState.Loading
+    contentEventsPast: UiState<List<Event>> = UiState.Loading,
+    onUpcomingCardClick: () -> Unit = {},
+    onPlanningCardClick: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier
             .padding(start = 15.dp, end = 15.dp)
             .fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
             TodayEventsCard(contentEventsToday)
@@ -300,15 +302,18 @@ fun ClientHomeScreenContent(
                 modifier = Modifier
                     .height(290.dp)
                     .fillMaxWidth()
-                    .padding(top = 2.dp, bottom = 0.dp),
+                    .padding(top = 5.dp, bottom = 0.dp),
                 verticalItemSpacing = 15.dp,
                 horizontalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 item {
-                    UpcomingEventsCard(contentEventsUpcoming = contentEventsUpcoming)
+                    UpcomingEventsCard(
+                        contentEventsUpcoming = contentEventsUpcoming,
+                        onCardClick = onUpcomingCardClick
+                    )
                 }
                 item {
-                    PlanningEventsCard(contentEventsPlanning = contentEventsPlanning)
+                    PlanningEventsCard(contentEventsPlanning = contentEventsPlanning, onCardClick = onPlanningCardClick)
                 }
                 item {
                     PastEventsCard(contentEventsPast = contentEventsPast)

@@ -1,6 +1,5 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.business
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -26,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
 import com.example.bachelorthesisapp.data.model.events.UpdatePostEvent
-import com.example.bachelorthesisapp.presentation.ui.components.BusinessSecondaryAppBar
-import com.example.bachelorthesisapp.presentation.ui.components.ErrorText
-import com.example.bachelorthesisapp.presentation.ui.components.FormTextField
-import com.example.bachelorthesisapp.presentation.ui.components.SubmitButton
+import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
+import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
+import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
+import com.example.bachelorthesisapp.presentation.ui.components.common.GalleryImagePicker
+import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 
@@ -41,7 +40,6 @@ fun UpdateOfferPostScreen(
     navController: NavHostController,
     businessViewModel: BusinessViewModel
 ) {
-    val state = businessViewModel.postResultState.collectAsStateWithLifecycle(UiState.Loading)
     val scaffoldState = rememberScaffoldState()
 
     Box {
@@ -52,7 +50,7 @@ fun UpdateOfferPostScreen(
             contentScale = ContentScale.FillBounds
         )
         Scaffold(
-            topBar = { BusinessSecondaryAppBar(title = "New Post", navController = navController) },
+            topBar = { BusinessSecondaryAppBar(title = "Edit Post Details", navController = navController) },
             scaffoldState = scaffoldState,
 //        drawerContent = {
 //            BusinessDrawerContent(uid, authVM, navController)
@@ -70,7 +68,7 @@ fun UpdateOfferPostScreen(
                         end = 20.dp
                     )
             ) {
-                UpdateOfferPostScreenContent(postId, state.value, businessViewModel, navController)
+                UpdateOfferPostScreenContent(postId, businessViewModel, navController)
             }
         }
     }
@@ -79,7 +77,6 @@ fun UpdateOfferPostScreen(
 @Composable
 fun UpdateOfferPostScreenContent(
     postId: Int,
-    content: UiState<OfferPost> = UiState.Loading,
     businessViewModel: BusinessViewModel,
     navController: NavHostController
 ) {

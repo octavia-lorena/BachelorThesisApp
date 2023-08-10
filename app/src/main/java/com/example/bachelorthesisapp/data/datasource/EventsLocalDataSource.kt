@@ -32,6 +32,4 @@ class EventsLocalDataSource @Inject constructor(
 
     suspend fun getEventsByOrganizerId(key: String): List<Event> =
         eventsDao.getEventsByOrganizerId(key)
-
-
 }

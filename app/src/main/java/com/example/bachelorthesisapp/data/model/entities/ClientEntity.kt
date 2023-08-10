@@ -14,5 +14,7 @@ data class ClientEntity(
     override var email: String,
     override var password: String,
     override var username: String,
-    val phoneNumber: String,
+    override var profilePicture: String?,
+    val phoneNumber: String?,
+    var deviceToken: String?,
 ) : UserEntity()

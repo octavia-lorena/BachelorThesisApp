@@ -52,9 +52,14 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 15.sp,
     ),
+    h6 = TextStyle(
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.Medium,
+        fontSize = 17.sp
+    ),
     body1 = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.Bold,
         fontSize = 18.sp
     ),
     body2 = TextStyle(
@@ -67,15 +72,15 @@ val Typography = Typography(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
-        color = NavyBlue,
-       // shadow = Shadow(color = ShadowBlack, blurRadius = 3f, offset = Offset(2f, 2f))
+        color = Color.Black,
+        // shadow = Shadow(color = ShadowBlack, blurRadius = 3f, offset = Offset(2f, 2f))
     ),
     subtitle2 = TextStyle(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        color = Color.Gray,
-       // shadow = Shadow(color = ShadowBlack, blurRadius = 3f, offset = Offset(2f, 2f))
+        fontSize = 15.sp,
+        color = Color.Black,
+        // shadow = Shadow(color = ShadowBlack, blurRadius = 3f, offset = Offset(2f, 2f))
     ),
     button = TextStyle(
         fontFamily = Montserrat,

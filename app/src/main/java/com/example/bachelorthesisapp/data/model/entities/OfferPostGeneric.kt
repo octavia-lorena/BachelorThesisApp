@@ -11,5 +11,5 @@ abstract class OfferPostGeneric(
     description: String,
     images: List<Uri>,
     price: Int,
-    rating: Double,
+    rating: Rating,
 )

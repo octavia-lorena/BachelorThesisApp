@@ -23,16 +23,23 @@ import com.example.bachelorthesisapp.data.model.validators.LoginFormValidator
 import com.example.bachelorthesisapp.data.remote.Resource
 import com.example.bachelorthesisapp.data.repo.auth.AuthRepository
 import com.example.bachelorthesisapp.data.repo.auth.await
+import com.example.bachelorthesisapp.data.repo.firebase.FirebaseMessageService
+import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,7 +58,6 @@ class AuthViewModel @Inject constructor(
     private var database: DatabaseReference =
         Firebase.database.getReference(AuthRepository.USERS_TABLE_NAME)
 
-
     // LOGIN STATE
     var loginState by mutableStateOf(LoginFormState())
     private val loginValidator: LoginFormValidator = LoginFormValidator()
@@ -61,6 +67,10 @@ class AuthViewModel @Inject constructor(
     // LOGIN FLOW
     private var _loginFlow = MutableStateFlow<Resource<UserModel>?>(Resource.Loading())
     val loginFlow: StateFlow<Resource<UserModel>?> = _loginFlow
+
+    // LOADING STATE
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     // CLIENT REGISTER STATE
     var registerClientState by mutableStateOf(ClientRegisterFormState())
@@ -75,6 +85,24 @@ class AuthViewModel @Inject constructor(
     private val validationBusinessRegisterEventChannel = Channel<ValidationEvent>()
     val validationBusinessRegisterEvents = validationBusinessRegisterEventChannel.receiveAsFlow()
 
+    val loginState1: Flow<UiState<UserModel>> = authRepository.loginFlow.map { userModel ->
+        when (userModel) {
+            is Resource.Error -> {
+                _isLoading.value = false
+                UiState.Error(userModel.exception)
+            }
+
+            is Resource.Loading -> {
+                _isLoading.value = true
+                UiState.Loading
+            }
+
+            is Resource.Success -> {
+                _isLoading.value = false
+                UiState.Success(userModel.data)
+            }
+        }
+    }
 
     val currentUser: FirebaseUser?
         get() = authRepository.currentUser
@@ -213,13 +241,28 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             login(email, password)
             delay(3000L)
-            validationLoginEventChannel.send(ValidationEvent.Success)
+//            loginState1.collectLatest {
+//                when (it) {
+//                    is UiState.Loading -> {}
+//                    is UiState.Success -> {
+//                        validationLoginEventChannel.send(ValidationEvent.Success)
+//                        delay(2000L)
+
+//                    }
+//
+//                    is UiState.Error -> {
+//                        validationLoginEventChannel.send(ValidationEvent.Failure)
+//                    }
+//                }
+//            }
             loginState = loginState.copy(
                 email = "",
                 emailError = null,
                 password = "",
                 passwordError = null
             )
+            validationLoginEventChannel.send(ValidationEvent.Success)
+
         }
     }
 
@@ -270,7 +313,9 @@ class AuthViewModel @Inject constructor(
                 email = email,
                 phoneNumber = phoneNumber,
                 password = password,
-                username = username
+                username = username,
+                profilePicture = "",
+                deviceToken = Firebase.messaging.token.await()
             )
             register(email, password, CLIENTS_TABLE_NAME, user)
             validationClientRegisterEventChannel.send(ValidationEvent.Success)
@@ -341,7 +386,9 @@ class AuthViewModel @Inject constructor(
                     lng = longitude,
                     email = email,
                     password = password,
-                    username = username
+                    username = username,
+                    profilePicture = "",
+                    deviceToken = Firebase.messaging.token.await()
                 )
             Log.d("REGISTER", user.toString())
             register(email, password, BUSINESS_TABLE_NAME, user)
@@ -420,12 +467,10 @@ class AuthViewModel @Inject constructor(
     }
 
 
-    fun login(email: String, password: String) {
+    private fun login(email: String, password: String) {
         viewModelScope.launch {
-            //_loginFlow.value = Resource.Loading()
+//            _loginFlow.value = Resource.Loading()
             val result = authRepository.login(email, password)
-            delay(1500L)
-            Log.d("LOGIN", result.toString())
             _loginFlow.value = result
         }
     }
@@ -437,8 +482,19 @@ class AuthViewModel @Inject constructor(
     }
 
 
-    fun signOut(){
+    fun signOut() {
         authRepository.signOut()
+    }
+
+    fun subscribeToTopic(uid: String) {
+        Log.d("TOKEN", FirebaseMessageService.token!!)
+        Firebase.messaging.subscribeToTopic("/topics/$uid")
+            .addOnCompleteListener { task ->
+                var msg = "Subscribed"
+                if (!task.isSuccessful) {
+                    msg = "Subscribe failed"
+                }
+            }
     }
 
     sealed class ValidationEvent {

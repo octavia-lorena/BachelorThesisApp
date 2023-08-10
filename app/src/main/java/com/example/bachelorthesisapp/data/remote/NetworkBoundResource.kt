@@ -9,6 +9,8 @@ suspend inline fun <ResultType, RequestType> networkCall(
 ) {
     onResult(
         try {
+            Resource.Loading(null)
+
             val localData = localSource()
             val remoteData = remoteSource()
 

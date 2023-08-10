@@ -16,7 +16,7 @@ class OfferPost(
     val description: String,
     val images: List<Uri>,
     val price: Int,
-    val rating: Double,
+    val rating: Rating,
 ) : OfferPostGeneric(
     id = id,
     businessId = businessId,

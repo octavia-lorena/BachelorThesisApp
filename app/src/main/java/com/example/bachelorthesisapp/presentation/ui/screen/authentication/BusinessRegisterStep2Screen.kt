@@ -1,6 +1,7 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.authentication
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -15,15 +16,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.material.Text
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.model.events.BusinessRegisterEvent
-import com.example.bachelorthesisapp.presentation.ui.components.ErrorText
-import com.example.bachelorthesisapp.presentation.ui.components.FormTextField
-import com.example.bachelorthesisapp.presentation.ui.components.SubmitButton
+import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
+import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
+import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
@@ -37,15 +39,15 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
 
 
     Box {
-//        Image(
-//            painter = painterResource(id = R.drawable.main_background),
-//            contentDescription = "",
-//            modifier = Modifier.fillMaxSize(),
-//            contentScale = ContentScale.FillBounds
-//
-//        )
+        Image(
+            painter = painterResource(id = R.drawable.login_gradient_background2),
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+
+        )
         Scaffold(
-            backgroundColor = Color.White
+            backgroundColor = Color.Transparent
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -184,7 +186,8 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                         item {
                             Text(
                                 text = "Optionally, you can provide more details about your location, so that clients can find you easier on the map.",
-                                style = Typography.subtitle1
+                                style = Typography.subtitle1,
+                                color = Color.White
                             )
                         }
                         // LAT-LNG FIELD
@@ -196,9 +199,11 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                                     label = { Text(text = "Latitude", color = Color.DarkGray) },
                                     value = state.lat,
                                     modifier = Modifier.width(150.dp),
-                                    onValueChange = { authVM.onBusinessRegisterEvent(
-                                        BusinessRegisterEvent.LatChanged(it)
-                                    ) },
+                                    onValueChange = {
+                                        authVM.onBusinessRegisterEvent(
+                                            BusinessRegisterEvent.LatChanged(it)
+                                        )
+                                    },
                                     colors = TextFieldDefaults.textFieldColors(
                                         backgroundColor = Color.Transparent,
                                         focusedLabelColor = Color.Gray,
@@ -224,9 +229,11 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                                     label = { Text(text = "Longitude", color = Color.DarkGray) },
                                     value = state.lng,
                                     modifier = Modifier.width(150.dp),
-                                    onValueChange = { authVM.onBusinessRegisterEvent(
-                                        BusinessRegisterEvent.LngChanged(it)
-                                    )},
+                                    onValueChange = {
+                                        authVM.onBusinessRegisterEvent(
+                                            BusinessRegisterEvent.LngChanged(it)
+                                        )
+                                    },
                                     colors = TextFieldDefaults.textFieldColors(
                                         backgroundColor = Color.Transparent,
                                         focusedLabelColor = Color.Gray,

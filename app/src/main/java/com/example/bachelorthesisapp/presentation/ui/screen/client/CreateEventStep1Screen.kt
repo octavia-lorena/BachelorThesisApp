@@ -1,13 +1,11 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.client
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,16 +40,14 @@ import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.model.entities.EventType
 import com.example.bachelorthesisapp.data.model.events.CreateEventEvent
-import com.example.bachelorthesisapp.presentation.ui.components.BusinessSecondaryAppBar
-import com.example.bachelorthesisapp.presentation.ui.components.DropdownDateMenu
-import com.example.bachelorthesisapp.presentation.ui.components.ErrorText
-import com.example.bachelorthesisapp.presentation.ui.components.FormTextField
-import com.example.bachelorthesisapp.presentation.ui.components.LargeDropdownMenu
-import com.example.bachelorthesisapp.presentation.ui.components.SubmitButton
-import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
+import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
+import com.example.bachelorthesisapp.presentation.ui.components.common.DropdownDateMenu
+import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
+import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
+import com.example.bachelorthesisapp.presentation.ui.components.common.LargeDropdownMenu
+import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.WhiteTransparent
-import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 
 @Composable
@@ -124,7 +120,7 @@ fun CreateEventStep1ScreenContent(
                 is ClientViewModel.ValidationEvent.Success -> {
                     Toast.makeText(
                         context,
-                        "Offer posted successfully!",
+                        "Event created successfully!",
                         Toast.LENGTH_SHORT
                     )
                         .show()

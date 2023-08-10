@@ -3,6 +3,7 @@ package com.example.bachelorthesisapp.data.remote
 import android.net.Uri
 import androidx.core.net.toUri
 import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.model.entities.Rating
 
 data class OfferPostDto(
     val id: Int,
@@ -11,7 +12,7 @@ data class OfferPostDto(
     val description: String,
     val images: List<String>,
     val price: Int,
-    val rating: Double
+    val rating: Map<String, String>
 )
 
 fun OfferPostDto.toEntity(): OfferPost = OfferPost(
@@ -21,5 +22,8 @@ fun OfferPostDto.toEntity(): OfferPost = OfferPost(
     description = description,
     images = images.map { it.toUri() },
     price = price,
-    rating = rating
+    rating = Rating(
+        value = rating.values.toList()[0].toDouble(),
+        voterCount = rating.values.toList()[1].toInt()
+    )
 )

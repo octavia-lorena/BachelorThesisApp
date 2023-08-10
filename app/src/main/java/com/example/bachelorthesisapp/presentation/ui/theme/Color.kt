@@ -15,6 +15,7 @@ val DarkOlive = Color(0xFF41521F)
 
 val GrayBlue = Color(0XFF8AA399)
 val SkyGray = Color(0xFF8E98A7)
+val SkyGrayDark = Color(0xFF737A86)
 val SkyBlue = Color(0XFF8FA6CB)
 val IrisBlue = Color(0XFF7D84B2)
 val IrisBlueLight = Color(0xFFC6CAE2)
@@ -43,15 +44,40 @@ val CoralLight = Color(0xFFFFB5AC)
 val Purple200 = Color(0xFFBB86FC)
 val WhiteTransparent = Color(0xC6FFFFFF)
 val Green = Color(0xFF4BF054)
-val GreenLight = Color(0xFF86E98C)
+val GreenLight = Color(0xFF62C968)
 val GreenDark = Color(0xFF25C42E)
+val RedSoft = Color(0xFFFF5F5F)
+val DarkGray = Color(0xFF202020)
 
+val kalendarBackgroundColor = listOf(
+    IrisBlueDark,
+    IrisBlueDark,
+    IrisBlue,
+    IrisBlue,
+    IrisBlueLight,
+    IrisBlueLight,
+    IrisBlueDark,
+    IrisBlueDark,
+    IrisBlue,
+    IrisBlue,
+    IrisBlueLight,
+    IrisBlueLight,
+)
 
-
-val cardCollapsedBackgroundColor = Color(0xFFBDE7EC)
-val cardExpandedBackgroundColor = Color(0xFFD1A3FF)
-
-
+val dayBackgroundColor = listOf(
+    IrisBlueLight,
+    IrisBlueLight,
+    IrisBlueDark,
+    IrisBlueDark,
+    IrisBlue,
+    IrisBlue,
+    IrisBlueLight,
+    IrisBlueLight,
+    IrisBlueDark,
+    IrisBlueDark,
+    IrisBlue,
+    IrisBlue,
+)
 
 
 

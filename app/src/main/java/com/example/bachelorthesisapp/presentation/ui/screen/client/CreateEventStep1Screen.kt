@@ -38,7 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.EventType
+import com.example.bachelorthesisapp.domain.model.EventType
 import com.example.bachelorthesisapp.data.model.events.CreateEventEvent
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.common.DropdownDateMenu
@@ -59,6 +59,7 @@ fun CreateEventsStep1Screen(
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     LaunchedEffect(key1 = context) {
+        clientViewModel.clearCreateEventState()
         clientViewModel.validationCreateEventEvents.collect { event ->
             when (event) {
                 is ClientViewModel.ValidationEvent.Success -> {

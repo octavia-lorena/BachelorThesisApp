@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
-import com.example.bachelorthesisapp.data.model.entities.BusinessType
-import com.example.bachelorthesisapp.data.model.entities.ClientEntity
-import com.example.bachelorthesisapp.data.model.entities.UserEntity
-import com.example.bachelorthesisapp.data.model.entities.UserModel
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
+import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
+import com.example.bachelorthesisapp.domain.model.UserEntity
+import com.example.bachelorthesisapp.domain.model.UserModel
 import com.example.bachelorthesisapp.data.model.events.BusinessRegisterEvent
 import com.example.bachelorthesisapp.data.model.events.ClientRegisterEvent
 import com.example.bachelorthesisapp.data.model.events.LoginEvent
@@ -20,11 +20,11 @@ import com.example.bachelorthesisapp.data.model.states.LoginFormState
 import com.example.bachelorthesisapp.data.model.validators.BusinessRegisterFormValidator
 import com.example.bachelorthesisapp.data.model.validators.ClientRegisterFormValidator
 import com.example.bachelorthesisapp.data.model.validators.LoginFormValidator
-import com.example.bachelorthesisapp.data.remote.Resource
-import com.example.bachelorthesisapp.data.repo.auth.AuthRepository
-import com.example.bachelorthesisapp.data.repo.auth.await
-import com.example.bachelorthesisapp.data.repo.firebase.FirebaseMessageService
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.resources.Resource
+import com.example.bachelorthesisapp.data.authentication.AuthRepository
+import com.example.bachelorthesisapp.data.authentication.await
+import com.example.bachelorthesisapp.data.notifications.FirebaseMessageService
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -37,8 +37,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -48,6 +46,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
+
 
     companion object {
         const val CLIENTS_TABLE_NAME = "clients"
@@ -495,6 +494,61 @@ class AuthViewModel @Inject constructor(
                     msg = "Subscribe failed"
                 }
             }
+    }
+
+    fun clearLoginStateForm() {
+        viewModelScope.launch {
+            loginState = loginState.copy(
+                email = "",
+                emailError = null,
+                password = "",
+                passwordError = null
+            )
+        }
+    }
+
+    fun clearRegisterClientStateForm() {
+        viewModelScope.launch {
+            registerClientState = registerClientState.copy(
+                email = "",
+                emailError = null,
+                password = "",
+                passwordError = null,
+                confirmPassword = "",
+                confirmPasswordError = null,
+                firstName = "",
+                firstNameError = null,
+                lastName = "",
+                lastNameError = null,
+                phoneNumber = "",
+                phoneNumberError = null
+            )
+        }
+    }
+
+    fun clearRegisterBusinessStateForm() {
+        viewModelScope.launch {
+            registerBusinessState = registerBusinessState.copy(
+                name = "",
+                nameError = null,
+                type = "",
+                typeError = null,
+                phoneNumber = "",
+                phoneNumberError = null,
+                city = "",
+                cityError = null,
+                address = "",
+                addressError = null,
+                email = "",
+                emailError = null,
+                password = "",
+                passwordError = null,
+                confirmPassword = "",
+                confirmPasswordError = null,
+                lat = "",
+                lng = ""
+            )
+        }
     }
 
     sealed class ValidationEvent {

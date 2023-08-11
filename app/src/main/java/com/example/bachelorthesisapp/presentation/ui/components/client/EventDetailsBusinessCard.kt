@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 
 @Composable
 fun EventDetailsBusinessCard(

@@ -9,15 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
-import com.example.bachelorthesisapp.data.model.entities.ClientEntity
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.data.model.entities.RequestStatus
-import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
+import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.domain.model.RequestStatus
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -39,7 +38,8 @@ fun RequestsScreenBackdrop(
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
     contentClients: UiState<List<ClientEntity>> = UiState.Loading
 ) {
-    BackdropScaffold(modifier = Modifier,
+    BackdropScaffold(
+        modifier = Modifier,
         scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed),
         frontLayerShape = RoundedCornerShape(30.dp),
         frontLayerScrimColor = Color.Unspecified,
@@ -61,7 +61,7 @@ fun RequestsScreenBackdrop(
             )
         },
         appBar = {},
-        // Front layer contains the list of the business filtered by the business type selected in the back layer
+        // Front layer contains the list of the business filtered by the business type and city, selected in the back layer
         frontLayerContent = {
             RequestsFrontLayerContent(
                 businessId = businessId,

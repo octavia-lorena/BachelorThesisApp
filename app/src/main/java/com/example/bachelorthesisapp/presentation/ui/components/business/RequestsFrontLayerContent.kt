@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,18 +32,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
-import com.example.bachelorthesisapp.data.model.entities.ClientEntity
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueDark
+import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueLight
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.ui.theme.dayBackgroundColor
 import com.example.bachelorthesisapp.presentation.ui.theme.kalendarBackgroundColor
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.KalendarType
 import com.himanshoe.kalendar.color.KalendarColor
@@ -74,8 +72,11 @@ fun RequestsFrontLayerContent(
 
     when (contentRequests) {
         is UiState.Loading -> {
-            Column(verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 CircularProgressIndicator(
                     backgroundColor = IrisBlueLight,
                     color = IrisBlueLight,
@@ -100,7 +101,7 @@ fun RequestsFrontLayerContent(
                                 KalendarColor(
                                     backgroundColor = kalendarBackgroundColor[index],
                                     dayBackgroundColor = dayBackgroundColor[index],
-                                    headerTextColor = List(12){Color.White}[index]
+                                    headerTextColor = List(12) { Color.White }[index]
                                 )
                             }
                         ),

@@ -22,7 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.BusinessType
+import com.example.bachelorthesisapp.domain.model.BusinessType
 import com.example.bachelorthesisapp.data.model.events.BusinessRegisterEvent
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomClickableText
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
@@ -35,8 +35,13 @@ import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 
 @Composable
-fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostController) {
+fun BusinessRegisterStep1Screen(authViewModel: AuthViewModel, navController: NavHostController) {
 
+    LaunchedEffect(Unit) {
+        authViewModel.clearLoginStateForm()
+        authViewModel.clearRegisterBusinessStateForm()
+        authViewModel.clearRegisterClientStateForm()
+    }
 
     Box {
         Image(
@@ -59,10 +64,10 @@ fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostCon
                         bottom = innerPadding.calculateBottomPadding()
                     )
             ) {
-                val state = authVM.registerBusinessState
+                val state = authViewModel.registerBusinessState
                 val context = LocalContext.current
                 LaunchedEffect(key1 = context) {
-                    authVM.validationBusinessRegisterEvents.collect { event ->
+                    authViewModel.validationBusinessRegisterEvents.collect { event ->
                         when (event) {
                             is AuthViewModel.ValidationEvent.Success -> {
                                 Toast.makeText(
@@ -132,7 +137,7 @@ fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostCon
                                     labelText = "Business Name",
                                     value = state.name,
                                     onValueChange = {
-                                        authVM.onBusinessRegisterEvent(
+                                        authViewModel.onBusinessRegisterEvent(
                                             (
                                                     BusinessRegisterEvent.NameChanged(it)
                                                     )
@@ -166,7 +171,7 @@ fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostCon
                                 onItemSelected = { index, type ->
                                     run {
                                         selectedIndex = index
-                                        authVM.onBusinessRegisterEvent(
+                                        authViewModel.onBusinessRegisterEvent(
                                             BusinessRegisterEvent.TypeChanged(type)
                                         )
                                     }
@@ -182,7 +187,7 @@ fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostCon
                                     labelText = "Email",
                                     value = state.email,
                                     onValueChange = {
-                                        authVM.onBusinessRegisterEvent(
+                                        authViewModel.onBusinessRegisterEvent(
                                             BusinessRegisterEvent.EmailChanged(it)
                                         )
                                     },
@@ -212,7 +217,7 @@ fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostCon
                                     labelText = "Phone Number",
                                     value = state.phoneNumber,
                                     onValueChange = {
-                                        authVM.onBusinessRegisterEvent(
+                                        authViewModel.onBusinessRegisterEvent(
                                             BusinessRegisterEvent.PhoneNumberChanged(it)
                                         )
                                     },
@@ -241,7 +246,7 @@ fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostCon
                                     labelText = "Password",
                                     value = state.password,
                                     onValueChange = {
-                                        authVM.onBusinessRegisterEvent(
+                                        authViewModel.onBusinessRegisterEvent(
                                             BusinessRegisterEvent.PasswordChanged(it)
                                         )
                                     },
@@ -285,7 +290,7 @@ fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostCon
                                     labelText = "Confirm Password",
                                     value = state.confirmPassword,
                                     onValueChange = {
-                                        authVM.onBusinessRegisterEvent(
+                                        authViewModel.onBusinessRegisterEvent(
                                             BusinessRegisterEvent.ConfirmPasswordChanged(it)
                                         )
                                     },
@@ -322,7 +327,7 @@ fun BusinessRegisterStep1Screen(authVM: AuthViewModel, navController: NavHostCon
                         item {
                             SubmitButton(
                                 onClick = {
-                                    authVM.onBusinessRegisterEvent(BusinessRegisterEvent.PartialSubmit)
+                                    authViewModel.onBusinessRegisterEvent(BusinessRegisterEvent.PartialSubmit)
                                     navController.navigate(Routes.BusinessRegisterStep2Screen.route)
 
                                 },

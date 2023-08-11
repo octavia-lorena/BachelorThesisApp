@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostFloatingButton
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarBusiness
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessDrawerContent
@@ -30,7 +30,7 @@ import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 
 
 @Composable
@@ -88,9 +88,8 @@ fun BusinessPostsHomeScreen(
         ) {
             BusinessPostsHomeScreenContent(
                 contentPosts = postBusinessState.value,
-                onPostClick = onPostClick,
-                cardsViewModel = cardsViewModel,
                 businessViewModel = businessViewModel,
+                cardsViewModel = cardsViewModel,
                 navHostController = navHostController
             )
         }
@@ -100,12 +99,15 @@ fun BusinessPostsHomeScreen(
 @Composable
 fun BusinessPostsHomeScreenContent(
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
-    onPostClick: (Int) -> Unit,
     businessViewModel: BusinessViewModel,
     cardsViewModel: CardSwipeViewModel,
     navHostController: NavHostController
 ) {
     val revealedCardIds by cardsViewModel.revealedCardIdsList.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        businessViewModel.clearUpdatePostForm()
+    }
 
     Column(
         modifier = Modifier
@@ -148,4 +150,3 @@ fun BusinessPostsHomeScreenContent(
         }
     }
 }
-

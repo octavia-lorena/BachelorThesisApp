@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.BusinessType
+import com.example.bachelorthesisapp.domain.model.BusinessType
 import com.example.bachelorthesisapp.data.model.events.CreateEventEvent
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.common.DropdownWithCheckboxesMenu
@@ -47,7 +47,7 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextF
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import kotlinx.coroutines.delay
 
 @Composable

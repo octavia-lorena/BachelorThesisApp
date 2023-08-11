@@ -22,7 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.model.events.UpdatePostEvent
@@ -32,7 +31,6 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextF
 import com.example.bachelorthesisapp.presentation.ui.components.common.GalleryImagePicker
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
 
 @Composable
 fun UpdateOfferPostScreen(
@@ -50,11 +48,13 @@ fun UpdateOfferPostScreen(
             contentScale = ContentScale.FillBounds
         )
         Scaffold(
-            topBar = { BusinessSecondaryAppBar(title = "Edit Post Details", navController = navController) },
+            topBar = {
+                BusinessSecondaryAppBar(
+                    title = "Edit Post Details",
+                    navController = navController
+                )
+            },
             scaffoldState = scaffoldState,
-//        drawerContent = {
-//            BusinessDrawerContent(uid, authVM, navController)
-//        },
             drawerGesturesEnabled = true,
             backgroundColor = Color.Transparent
         ) { innerPadding ->
@@ -86,6 +86,7 @@ fun UpdateOfferPostScreenContent(
     state.id = postId
 
     LaunchedEffect(key1 = context) {
+        businessViewModel.clearUpdatePostForm()
         businessViewModel.validationUpdatePostEvents.collect { event ->
             when (event) {
                 is BusinessViewModel.ValidationEvent.Success -> {
@@ -118,7 +119,6 @@ fun UpdateOfferPostScreenContent(
                 bottom = 0.dp
             ),
         userScrollEnabled = true,
-        //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
         // TITLE ITEM

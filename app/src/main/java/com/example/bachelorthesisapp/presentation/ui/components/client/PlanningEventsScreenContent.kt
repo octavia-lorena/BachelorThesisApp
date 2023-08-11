@@ -12,10 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.data.model.entities.Event
+import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

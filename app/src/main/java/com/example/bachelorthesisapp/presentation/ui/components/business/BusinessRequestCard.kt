@@ -43,9 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.ClientEntity
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography

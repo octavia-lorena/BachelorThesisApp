@@ -6,28 +6,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
-import com.example.bachelorthesisapp.data.model.entities.BusinessType
-import com.example.bachelorthesisapp.data.model.entities.ClientEntity
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.EventStatus
-import com.example.bachelorthesisapp.data.model.entities.EventType
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.data.model.entities.RequestStatus
+import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
+import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.domain.model.EventStatus
+import com.example.bachelorthesisapp.domain.model.EventType
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.domain.model.RequestStatus
 import com.example.bachelorthesisapp.data.model.events.CreateEventEvent
 import com.example.bachelorthesisapp.data.model.events.UpdateEventEvent
 import com.example.bachelorthesisapp.data.model.states.CreateEventFormState
 import com.example.bachelorthesisapp.data.model.states.UpdateEventFormState
-import com.example.bachelorthesisapp.data.model.states.UpdatePostFormState
 import com.example.bachelorthesisapp.data.model.validators.CreateEventFormValidator
 import com.example.bachelorthesisapp.data.model.validators.UpdateEventFormValidator
-import com.example.bachelorthesisapp.data.remote.Resource
-import com.example.bachelorthesisapp.data.repo.ClientRepository
-import com.example.bachelorthesisapp.data.repo.auth.AuthRepository
-import com.example.bachelorthesisapp.data.repo.firebase.NotificationData
-import com.example.bachelorthesisapp.data.repo.firebase.PushNotification
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.resources.Resource
+import com.example.bachelorthesisapp.data.clients.ClientRepository
+import com.example.bachelorthesisapp.data.authentication.AuthRepository
+import com.example.bachelorthesisapp.data.notifications.NotificationData
+import com.example.bachelorthesisapp.data.notifications.PushNotification
+import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.data.appointment_requests.AppointmentRequestsRepository
+import com.example.bachelorthesisapp.data.businesses.BusinessRepository
+import com.example.bachelorthesisapp.data.events.EventsRepository
+import com.example.bachelorthesisapp.data.posts.OfferPostsRepository
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -47,6 +50,10 @@ import java.time.LocalDate
 @HiltViewModel
 class ClientViewModel @Inject constructor(
     private val clientRepository: ClientRepository,
+    private val postsRepository: OfferPostsRepository,
+    private val eventsRepository: EventsRepository,
+    private val requestsRepository: AppointmentRequestsRepository,
+    private val businessRepository: BusinessRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
@@ -87,7 +94,7 @@ class ClientViewModel @Inject constructor(
 
     // ALL EVENTS BY UID STATE
     val eventState: Flow<UiState<List<Event>>> =
-        clientRepository.eventListFlow.map { eventEntities ->
+        eventsRepository.eventListFlow.map { eventEntities ->
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -108,7 +115,7 @@ class ClientViewModel @Inject constructor(
 
     // UPCOMING EVENTS STATE
     val eventUpcomingState: Flow<UiState<List<Event>>> =
-        clientRepository.eventUpcomingFlow.map { eventEntities ->
+        eventsRepository.eventUpcomingFlow.map { eventEntities ->
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -129,7 +136,7 @@ class ClientViewModel @Inject constructor(
 
     // PLANNING EVENTS STATE
     val eventPlanningState: Flow<UiState<List<Event>>> =
-        clientRepository.eventPlanningFlow.map { eventEntities ->
+        eventsRepository.eventPlanningFlow.map { eventEntities ->
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -150,7 +157,7 @@ class ClientViewModel @Inject constructor(
 
     // TODAY EVENTS STATE
     val eventTodayState: Flow<UiState<List<Event>>> =
-        clientRepository.eventTodayFlow.map { eventEntities ->
+        eventsRepository.eventTodayFlow.map { eventEntities ->
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -171,7 +178,7 @@ class ClientViewModel @Inject constructor(
 
     // PAST EVENTS STATE
     val eventPastState: Flow<UiState<List<Event>>> =
-        clientRepository.eventPastFlow.map { eventEntities ->
+        eventsRepository.eventPastFlow.map { eventEntities ->
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -192,7 +199,7 @@ class ClientViewModel @Inject constructor(
 
     // PAST EVENTS STATE
     val eventPastBusinessState: Flow<UiState<List<Event>>> =
-        clientRepository.eventPastFlow.map { eventEntities ->
+        eventsRepository.eventPastFlow.map { eventEntities ->
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -220,12 +227,12 @@ class ClientViewModel @Inject constructor(
 //                is Resource.Success -> UiState.Success(eventResult.data!!)
 //            }
 //        }
-    val eventCurrentState = clientRepository.eventCurrentFlow
+    val eventCurrentState = eventsRepository.eventCurrentFlow
 
 
     // EVENT RESULT STATE
     val eventResultState: Flow<UiState<Event>> =
-        clientRepository.eventResultFlow.map { eventResult ->
+        eventsRepository.eventResultFlow.map { eventResult ->
             when (eventResult) {
                 is Resource.Error -> UiState.Error(eventResult.exception)
                 is Resource.Loading -> UiState.Loading
@@ -235,7 +242,7 @@ class ClientViewModel @Inject constructor(
 
     // BUSINESSES STATE
     val businessesState: Flow<UiState<List<BusinessEntity>>> =
-        clientRepository.businessFlow.map { businessEntities ->
+        businessRepository.businessFlow.map { businessEntities ->
             when (businessEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -256,7 +263,7 @@ class ClientViewModel @Inject constructor(
 
     // BUSINESSES BY TYPE STATE
     val businessesByTypeState: Flow<UiState<List<BusinessEntity>>> =
-        clientRepository.businessByTypeFlow.map { businessEntities ->
+        businessRepository.businessByTypeFlow.map { businessEntities ->
             when (businessEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -277,7 +284,7 @@ class ClientViewModel @Inject constructor(
 
     // BUSINESSES BY CITY STATE
     val businessesByCityState: Flow<UiState<List<BusinessEntity>>> =
-        clientRepository.businessByCityFlow.map { businessEntities ->
+        businessRepository.businessByCityFlow.map { businessEntities ->
             when (businessEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -298,7 +305,7 @@ class ClientViewModel @Inject constructor(
 
     // BUSINESS RESULT STATE
     val businessResultState: Flow<UiState<BusinessEntity>> =
-        clientRepository.businessResultFlow.map { eventResult ->
+        businessRepository.businessResultFlow.map { eventResult ->
             when (eventResult) {
                 is Resource.Error -> UiState.Error(eventResult.exception)
                 is Resource.Loading -> UiState.Loading
@@ -308,7 +315,7 @@ class ClientViewModel @Inject constructor(
 
     // POSTS BY BUSINESS ID STATE
     val postBusinessState: Flow<UiState<List<OfferPost>>> =
-        clientRepository.postBusinessFlow.map { postEntities ->
+        postsRepository.postBusinessFlow.map { postEntities ->
             when (postEntities) {
                 is Resource.Error -> UiState.Error(postEntities.exception)
                 is Resource.Loading -> UiState.Loading
@@ -317,7 +324,7 @@ class ClientViewModel @Inject constructor(
         }
 
     // POST BY ID STATE
-    val postState = clientRepository.postFlow
+    val postState = postsRepository.postFlow
 //        when (clientRepository.postFlow.value) {
 //        is Resource.Loading -> {
 //            UiState.Loading
@@ -335,7 +342,7 @@ class ClientViewModel @Inject constructor(
 
     // REQUESTS STATE (REQUEST STATUS = PENDING)
     val requestsState: Flow<UiState<List<AppointmentRequest>>> =
-        clientRepository.requestFlow.map { requestEntities ->
+        requestsRepository.requestFlow.map { requestEntities ->
             when (requestEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
@@ -356,17 +363,28 @@ class ClientViewModel @Inject constructor(
 
     // APPOINTMENTS STATE (REQUEST STATUS = ACCEPTED)
     val appointmentsState: Flow<UiState<List<AppointmentRequest>>> =
-        clientRepository.appointmentFlow.map { requestEntities ->
+        requestsRepository.appointmentFlow.map { requestEntities ->
             when (requestEntities) {
-                is Resource.Error -> UiState.Error(requestEntities.exception)
-                is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(requestEntities.data)
+                is Resource.Error -> {
+                    _isLoading.value = false
+                    UiState.Error(requestEntities.exception)
+                }
+
+                is Resource.Loading -> {
+                    _isLoading.value = true
+                    UiState.Loading
+                }
+
+                is Resource.Success -> {
+                    _isLoading.value = false
+                    UiState.Success(requestEntities.data)
+                }
             }
         }
 
     // REQUEST RESULT STATE
     val requestResultState: Flow<UiState<AppointmentRequest>> =
-        clientRepository.requestResultFlow.map { requestResult ->
+        requestsRepository.requestResultFlow.map { requestResult ->
             when (requestResult) {
                 is Resource.Error -> UiState.Error(requestResult.exception)
                 is Resource.Loading -> UiState.Loading
@@ -385,7 +403,7 @@ class ClientViewModel @Inject constructor(
         }
 
     val deletedEventState: Flow<UiState<Event>> =
-        clientRepository.deletedEventFlow.map { result ->
+        eventsRepository.deletedEventFlow.map { result ->
             when (result) {
                 is Resource.Error -> UiState.Error(result.exception)
                 is Resource.Loading -> UiState.Loading
@@ -403,13 +421,24 @@ class ClientViewModel @Inject constructor(
             }
         }
 
-    // ALL CLIENTS STATE
+    // ALL POSTS STATE
     val postsState: Flow<UiState<List<OfferPost>>> =
-        clientRepository.postsFlow.map { result ->
+        postsRepository.postsFlow.map { result ->
             when (result) {
-                is Resource.Error -> UiState.Error(result.exception)
-                is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(result.data)
+                is Resource.Error -> {
+                    _isLoading.value = false
+                    UiState.Error(result.exception)
+                }
+
+                is Resource.Loading -> {
+                    _isLoading.value = true
+                    UiState.Loading
+                }
+
+                is Resource.Success -> {
+                    _isLoading.value = false
+                    UiState.Success(result.data)
+                }
             }
         }
 
@@ -419,14 +448,14 @@ class ClientViewModel @Inject constructor(
             val clientId = authRepository.currentUser?.uid
             delay(2000L)
             if (clientId != null) {
-                clientRepository.fetchEventsByOrganizerId(clientId)
+                eventsRepository.fetchEventsByOrganizerId(clientId)
             }
         }
     }
 
     suspend fun loadAllEvents() {
         viewModelScope.launch {
-            clientRepository.fetchAllEvents()
+            eventsRepository.fetchAllEvents()
             delay(2000L)
         }
     }
@@ -440,7 +469,7 @@ class ClientViewModel @Inject constructor(
 
     suspend fun loadAllPosts() {
         viewModelScope.launch {
-            clientRepository.fetchAllPosts()
+            postsRepository.fetchAllPosts()
             delay(2000L)
         }
     }
@@ -450,7 +479,7 @@ class ClientViewModel @Inject constructor(
             val clientId = authRepository.currentUser?.uid
             delay(2000L)
             if (clientId != null) {
-                clientRepository.fetchPostsByBusinessId(clientId)
+                postsRepository.fetchPostsByBusinessId(clientId)
             }
         }
     }
@@ -460,7 +489,7 @@ class ClientViewModel @Inject constructor(
             val clientId = authRepository.currentUser?.uid
             delay(2000L)
             if (clientId != null) {
-                clientRepository.fetchRequestsByBusinessId(clientId)
+                requestsRepository.fetchRequestsByBusinessId(clientId)
             }
         }
     }
@@ -468,28 +497,28 @@ class ClientViewModel @Inject constructor(
 
     fun findEventById(id: Int) {
         viewModelScope.launch {
-            clientRepository.fetchEventById(id)
+            eventsRepository.fetchEventById(id)
             delay(2000L)
         }
     }
 
     suspend fun findPostsByBusinessId(businessId: String) {
         viewModelScope.launch {
-            clientRepository.fetchPostsByBusinessId(businessId)
+            postsRepository.fetchPostsByBusinessId(businessId)
             delay(2000L)
         }
     }
 
     fun findPostById(id: Int) {
         viewModelScope.launch {
-            clientRepository.fetchPostById(id)
+            postsRepository.fetchPostById(id)
             delay(2000L)
         }
     }
 
     suspend fun findBusinessById(id: String) {
         viewModelScope.launch {
-            clientRepository.fetchBusinessById(id)
+            businessRepository.fetchBusinessById(id)
             delay(2000L)
         }
     }
@@ -503,28 +532,28 @@ class ClientViewModel @Inject constructor(
 
     fun findBusinessesByType(businessType: String) {
         viewModelScope.launch {
-            clientRepository.fetchBusinessesByType(businessType)
+            businessRepository.fetchBusinessesByType(businessType)
             delay(2000L)
         }
     }
 
     fun findBusinessesByCity(city: String) {
         viewModelScope.launch {
-            clientRepository.fetchBusinessesByCity(city)
+            businessRepository.fetchBusinessesByCity(city)
             delay(2000L)
         }
     }
 
     suspend fun loadBusinesses() {
         viewModelScope.launch {
-            clientRepository.fetchBusinesses()
+            businessRepository.fetchBusinesses()
             delay(2000L)
         }
     }
 
     suspend fun loadRequests(businessId: String) {
         viewModelScope.launch {
-            clientRepository.fetchRequestsByBusinessId(businessId)
+            requestsRepository.fetchRequestsByBusinessId(businessId)
             delay(2000L)
         }
     }
@@ -824,19 +853,19 @@ class ClientViewModel @Inject constructor(
 
     private fun createEvent(event: Event) {
         viewModelScope.launch {
-            clientRepository.createEvent(event)
+            eventsRepository.createEvent(event)
         }
     }
 
     private fun deleteAllEvents() {
         viewModelScope.launch {
-            clientRepository.deleteAllEvents()
+            eventsRepository.deleteAllEvents()
         }
     }
 
     private fun deleteAllPosts() {
         viewModelScope.launch {
-            clientRepository.deleteAllPosts()
+            postsRepository.deleteAllPosts()
         }
     }
 
@@ -850,7 +879,7 @@ class ClientViewModel @Inject constructor(
         budget: String
     ) {
         viewModelScope.launch {
-            clientRepository.updateEvent(
+            eventsRepository.updateEvent(
                 id = id,
                 name = name,
                 description = description,
@@ -867,7 +896,7 @@ class ClientViewModel @Inject constructor(
     fun createRequest(eventId: Int, postId: Int, pushNotification: PushNotification) {
         viewModelScope.launch {
             val request = AppointmentRequest(0, eventId, postId, RequestStatus.Pending)
-            clientRepository.createRequest(request)
+            requestsRepository.createRequest(request)
         }
         sendNotification(pushNotification)
         Log.d("BUSINESS_TOKEN", pushNotification.to)
@@ -876,7 +905,7 @@ class ClientViewModel @Inject constructor(
     private fun sendNotification(pushNotification: PushNotification) {
         viewModelScope.launch {
             try {
-                val response = clientRepository.sendNotification(pushNotification)
+                val response = businessRepository.sendNotification(pushNotification)
                 Log.d("TAG", "SUCCESS ${response.raw().body.toString()}")
             } catch (e: Exception) {
                 Log.e("TAG", "Error: ${e.stackTraceToString()}")
@@ -893,9 +922,9 @@ class ClientViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             //val username = database.child(AuthRepository.CLIENTS_TABLE_NAME).child(clientId).child("username").get().await().value
-            clientRepository.acceptRequest(requestId = requestId)
-            clientRepository.setVendorValue(event.id, business.businessType.name, post.id)
-            clientRepository.setEventCost(eventId = event.id, price = post.price)
+            requestsRepository.acceptRequest(requestId = requestId)
+            eventsRepository.setVendorValue(event.id, business.businessType.name, post.id)
+            eventsRepository.setEventCost(eventId = event.id, price = post.price)
 
         }
         sendNotification(
@@ -916,7 +945,7 @@ class ClientViewModel @Inject constructor(
         clientDeviceId: String
     ) {
         viewModelScope.launch {
-            clientRepository.deleteRequest(requestId)
+            requestsRepository.deleteRequest(requestId)
         }
         sendNotification(
             PushNotification(
@@ -931,20 +960,62 @@ class ClientViewModel @Inject constructor(
 
     fun deleteEvent(eventId: Int) {
         viewModelScope.launch {
-            clientRepository.deleteEvent(eventId = eventId)
-            clientRepository.deleteRequestByEventId(eventId = eventId)
+            eventsRepository.deleteEvent(eventId = eventId)
+            requestsRepository.deleteRequestByEventId(eventId = eventId)
         }
     }
 
     fun ratePost(postId: Int, ratingValue: Int) {
         viewModelScope.launch {
-            clientRepository.ratePost(postId, ratingValue)
+            postsRepository.ratePost(postId, ratingValue)
         }
     }
 
-    fun publishEvent(eventId: Int){
+    fun publishEvent(eventId: Int) {
         viewModelScope.launch {
-            clientRepository.publishEvent(eventId)
+            eventsRepository.publishEvent(eventId)
+        }
+    }
+
+    fun clearUpdateEventState() {
+        viewModelScope.launch {
+            updateEventState = updateEventState.copy(
+                name = "",
+                nameError = null,
+                description = "",
+                descriptionError = null,
+                date = "",
+                dateError = null,
+                time = "",
+                timeError = null,
+                guestNumber = "",
+                guestNumberError = null,
+                budget = "",
+                budgetError = null,
+            )
+        }
+    }
+
+    fun clearCreateEventState() {
+        viewModelScope.launch {
+            createEventState = createEventState.copy(
+                title = "",
+                titleError = null,
+                description = "",
+                descriptionError = null,
+                date = "",
+                dateError = null,
+                time = "",
+                timeError = null,
+                guestNumber = "",
+                guestNumberError = null,
+                budget = "",
+                budgetError = null,
+                type = "",
+                typeError = null,
+                vendors = "",
+                vendorsError = null
+            )
         }
     }
 

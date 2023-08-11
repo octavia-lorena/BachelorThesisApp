@@ -1,11 +1,11 @@
 package com.example.bachelorthesisapp.di
 
-import com.example.bachelorthesisapp.data.remote.BusinessApi
-import com.example.bachelorthesisapp.data.remote.ClientApi
-import com.example.bachelorthesisapp.data.remote.EventApi
-import com.example.bachelorthesisapp.data.remote.NotificationApi
-import com.example.bachelorthesisapp.data.remote.PostApi
-import com.example.bachelorthesisapp.data.remote.RequestApi
+import com.example.bachelorthesisapp.data.businesses.remote.api.BusinessApi
+import com.example.bachelorthesisapp.data.clients.remote.api.ClientApi
+import com.example.bachelorthesisapp.data.events.remote.api.EventApi
+import com.example.bachelorthesisapp.data.notifications.NotificationApi
+import com.example.bachelorthesisapp.data.posts.remote.api.PostApi
+import com.example.bachelorthesisapp.data.appointment_requests.remote.api.RequestApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module

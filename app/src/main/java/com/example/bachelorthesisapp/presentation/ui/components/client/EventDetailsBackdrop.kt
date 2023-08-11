@@ -1,6 +1,5 @@
 package com.example.bachelorthesisapp.presentation.ui.components.client
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BackdropScaffold
 import androidx.compose.material.BackdropValue
@@ -10,15 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlue
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueDark
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueLight
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
-import com.example.bachelorthesisapp.presentation.ui.theme.YogurtWhite
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

@@ -7,22 +7,25 @@ import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.data.model.entities.Rating
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.domain.model.Rating
 import com.example.bachelorthesisapp.data.model.events.CreatePostEvent
 import com.example.bachelorthesisapp.data.model.events.UpdatePostEvent
 import com.example.bachelorthesisapp.data.model.states.CreatePostFormState
 import com.example.bachelorthesisapp.data.model.states.UpdatePostFormState
 import com.example.bachelorthesisapp.data.model.validators.CreatePostFormValidator
 import com.example.bachelorthesisapp.data.model.validators.UpdatePostFormValidator
-import com.example.bachelorthesisapp.data.remote.Resource
-import com.example.bachelorthesisapp.data.repo.BusinessRepository
-import com.example.bachelorthesisapp.data.repo.auth.AuthRepository
-import com.example.bachelorthesisapp.data.repo.firebase.NotificationData
-import com.example.bachelorthesisapp.data.repo.firebase.PushNotification
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.resources.Resource
+import com.example.bachelorthesisapp.data.businesses.BusinessRepository
+import com.example.bachelorthesisapp.data.authentication.AuthRepository
+import com.example.bachelorthesisapp.data.notifications.NotificationData
+import com.example.bachelorthesisapp.data.notifications.PushNotification
+import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.data.appointment_requests.AppointmentRequestsRepository
+import com.example.bachelorthesisapp.data.events.EventsRepository
+import com.example.bachelorthesisapp.data.posts.OfferPostsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -35,6 +38,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class BusinessViewModel @Inject constructor(
     private val businessRepository: BusinessRepository,
+    private val postsRepository: OfferPostsRepository,
+    private val eventsRepository: EventsRepository,
+    private val requestsRepository: AppointmentRequestsRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -52,7 +58,7 @@ class BusinessViewModel @Inject constructor(
 
 
     val postState: Flow<UiState<List<OfferPost>>> =
-        businessRepository.postFlow.map { postEntities ->
+        postsRepository.postsFlow.map { postEntities ->
             when (postEntities) {
                 is Resource.Error -> UiState.Error(postEntities.exception)
                 is Resource.Loading -> UiState.Loading
@@ -60,8 +66,11 @@ class BusinessViewModel @Inject constructor(
             }
         }
 
+    val postState1 = postsRepository.postFlow
+
+
     val postBusinessState: Flow<UiState<List<OfferPost>>> =
-        businessRepository.postBusinessFlow.map { postEntities ->
+        postsRepository.postBusinessFlow.map { postEntities ->
             when (postEntities) {
                 is Resource.Error -> UiState.Error(postEntities.exception)
                 is Resource.Loading -> UiState.Loading
@@ -70,7 +79,7 @@ class BusinessViewModel @Inject constructor(
         }
 
     val postResultState: Flow<UiState<OfferPost>> =
-        businessRepository.postResultFlow.map { postResult ->
+        postsRepository.postResultFlow.map { postResult ->
             when (postResult) {
                 is Resource.Error -> UiState.Error(postResult.exception)
                 is Resource.Loading -> UiState.Loading
@@ -79,7 +88,7 @@ class BusinessViewModel @Inject constructor(
         }
 
     val postCurrentState: Flow<UiState<OfferPost>> =
-        businessRepository.postCurrentFlow.map { postResult ->
+        postsRepository.postCurrentFlow.map { postResult ->
             when (postResult) {
                 is Resource.Error -> UiState.Error(postResult.exception)
                 is Resource.Loading -> UiState.Loading
@@ -150,7 +159,7 @@ class BusinessViewModel @Inject constructor(
     fun loadPostData() {
         viewModelScope.launch {
             val businessId = authRepository.currentUser?.uid!!
-            businessRepository.fetchPostsByBusinessId(businessId)
+            postsRepository.fetchPostsByBusinessId(businessId)
         }
     }
 
@@ -425,7 +434,7 @@ class BusinessViewModel @Inject constructor(
                 price.toInt(),
                 Rating(0.0, 0)
             )
-            businessRepository.addPost(post)
+            postsRepository.addPost(post)
         }
     }
 
@@ -438,20 +447,20 @@ class BusinessViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val imagesList = images.split(";")
-            businessRepository.updatePost(id, title, description, imagesList, price.toInt())
+            postsRepository.updatePost(id, title, description, imagesList, price.toInt())
         }
     }
 
     fun deletePost(post: OfferPost) {
         viewModelScope.launch {
-            businessRepository.deletePost(post)
+            postsRepository.deletePost(post)
             delay(2000L)
         }
     }
 
     fun findPostById(id: Int) {
         viewModelScope.launch {
-            businessRepository.fetchPostById(id)
+            postsRepository.fetchPostById(id)
             delay(2000L)
         }
     }
@@ -489,10 +498,10 @@ class BusinessViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             // delete request
-            businessRepository.deleteAppointment(requestId)
+            requestsRepository.deleteAppointment(requestId)
             // update event - set vendor value for the category to -1, reset the event cost <- cost - post.price
-            businessRepository.setVendorValue(event.id, business.businessType.name, -1)
-            businessRepository.setEventCost(event.id, -post.price)
+            eventsRepository.setVendorValue(event.id, business.businessType.name, -1)
+            eventsRepository.setEventCost(event.id, -post.price)
 
         }
         sendNotification(
@@ -503,6 +512,40 @@ class BusinessViewModel @Inject constructor(
                 ), to = clientDeviceId
             )
         )
+    }
+
+    fun clearCreatePostForm() {
+        viewModelScope.launch {
+            createPostState = createPostState.copy(
+                title = "",
+                titleError = null,
+                description = "",
+                descriptionError = null,
+                images = "",
+                imagesError = null,
+                price = "",
+                priceError = null,
+                rating = "",
+                ratingError = null
+            )
+        }
+    }
+
+    fun clearUpdatePostForm() {
+        viewModelScope.launch {
+            updatePostState = updatePostState.copy(
+                title = "",
+                titleError = null,
+                description = "",
+                descriptionError = null,
+                images = "",
+                imagesError = null,
+                price = "",
+                priceError = null,
+                rating = "",
+                ratingError = null
+            )
+        }
     }
 
     sealed class ValidationEvent {

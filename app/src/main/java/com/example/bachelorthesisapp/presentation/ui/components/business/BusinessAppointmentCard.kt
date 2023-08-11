@@ -27,8 +27,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.LabelImportant
-import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PlainTooltipBox
@@ -50,9 +48,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.ClientEntity
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.RedSoft

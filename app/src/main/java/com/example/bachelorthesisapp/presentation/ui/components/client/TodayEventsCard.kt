@@ -38,13 +38,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.Event
+import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.Green
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalTime

@@ -40,7 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.model.events.LoginEvent
-import com.example.bachelorthesisapp.data.remote.Resource
+import com.example.bachelorthesisapp.core.resources.Resource
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomClickableText
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
@@ -48,12 +48,17 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitBut
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(authViewModel: AuthViewModel, navHostController: NavHostController) {
+    LaunchedEffect(Unit) {
+        authViewModel.clearLoginStateForm()
+        authViewModel.clearRegisterBusinessStateForm()
+        authViewModel.clearRegisterClientStateForm()
+    }
     LoginScreenContent(authViewModel, navHostController)
 }
 
@@ -66,6 +71,7 @@ fun LoginScreenContent(
     val scope = rememberCoroutineScope()
     val loginState = authViewModel.loginState1.collectAsStateWithLifecycle(UiState.Loading)
     val loginFlow = authViewModel.loginFlow.collectAsState()
+
 
     Box(
         modifier = Modifier
@@ -84,7 +90,7 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        top = 145.dp,
+                        top = 155.dp,
                         start = 25.dp,
                         end = 25.dp,
                         bottom = innerPadding.calculateBottomPadding()
@@ -277,37 +283,37 @@ fun LoginScreenContent(
                         },
                         text = "Sign In"
                     )
-                    Spacer(modifier = Modifier.height(19.dp))
-                    Text(
-                        text = "Or Sign-In with",
-                        style = Typography.subtitle2.copy(color = Color.DarkGray)
-                    )
-                    Spacer(modifier = Modifier.height(19.dp))
-                    // Google, Facebook sign in buttons
-                    Row() {
-                        IconButton(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.size(37.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.google_icon),
-                                contentDescription = "Google icon",
-                                tint = Color.Unspecified
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(30.dp))
-                        IconButton(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.size(37.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.facebook_logo),
-                                contentDescription = "Facebook icon",
-                                tint = Color.Unspecified
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(120.dp))
+                    Spacer(modifier = Modifier.height(200.dp))
+//                    Text(
+//                        text = "Or Sign-In with",
+//                        style = Typography.subtitle2.copy(color = Color.DarkGray)
+//                    )
+//                    Spacer(modifier = Modifier.height(19.dp))
+//                    // Google, Facebook sign in buttons
+//                    Row() {
+//                        IconButton(
+//                            onClick = { /*TODO*/ },
+//                            modifier = Modifier.size(37.dp)
+//                        ) {
+//                            Icon(
+//                                painter = painterResource(id = R.drawable.google_icon),
+//                                contentDescription = "Google icon",
+//                                tint = Color.Unspecified
+//                            )
+//                        }
+//                        Spacer(modifier = Modifier.width(30.dp))
+//                        IconButton(
+//                            onClick = { /*TODO*/ },
+//                            modifier = Modifier.size(37.dp)
+//                        ) {
+//                            Icon(
+//                                painter = painterResource(id = R.drawable.facebook_logo),
+//                                contentDescription = "Facebook icon",
+//                                tint = Color.Unspecified
+//                            )
+//                        }
+//                    }
+//                    Spacer(modifier = Modifier.height(120.dp))
                     BottomClickableText(
                         text = "New to Event Space? Create an account here.",
                         onClick = { navController.navigate(Routes.MainRegisterScreen.route) },

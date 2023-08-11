@@ -2,14 +2,14 @@ package com.example.bachelorthesisapp.presentation.ui.components.client
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
-import com.example.bachelorthesisapp.data.model.entities.BusinessType
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.EventStatus
-import com.example.bachelorthesisapp.data.model.entities.EventType
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.data.model.entities.Rating
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
+import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.domain.model.EventStatus
+import com.example.bachelorthesisapp.domain.model.EventType
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.domain.model.Rating
+import com.example.bachelorthesisapp.core.presentation.UiState
 import java.time.LocalDate
 
 @Preview(showSystemUi = true)

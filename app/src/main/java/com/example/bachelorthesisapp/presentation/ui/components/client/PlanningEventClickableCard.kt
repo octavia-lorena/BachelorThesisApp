@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.Event
+import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import java.time.LocalDate
 import java.time.Period

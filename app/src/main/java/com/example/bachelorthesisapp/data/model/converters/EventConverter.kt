@@ -2,9 +2,9 @@ package com.example.bachelorthesisapp.data.model.converters
 
 import android.util.Log
 import androidx.room.TypeConverter
-import com.example.bachelorthesisapp.data.model.entities.BusinessType
-import com.example.bachelorthesisapp.data.model.entities.EventStatus
-import com.example.bachelorthesisapp.data.model.entities.EventType
+import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.domain.model.EventStatus
+import com.example.bachelorthesisapp.domain.model.EventType
 import java.time.LocalDate
 import java.util.TreeMap
 

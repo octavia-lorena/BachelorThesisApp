@@ -1,12 +1,8 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.business
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -20,23 +16,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
-import com.example.bachelorthesisapp.data.model.entities.ClientEntity
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.data.model.entities.RequestStatus
-import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostFloatingButton
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarBusiness
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessDrawerContent
-import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessRequestCard
 import com.example.bachelorthesisapp.presentation.ui.components.business.RequestsScreenContent
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch

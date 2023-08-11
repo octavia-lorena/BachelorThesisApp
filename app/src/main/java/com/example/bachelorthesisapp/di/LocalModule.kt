@@ -2,13 +2,13 @@ package com.example.bachelorthesisapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.bachelorthesisapp.data.dao.ActivitiesDao
-import com.example.bachelorthesisapp.data.dao.AppointmentRequestDao
-import com.example.bachelorthesisapp.data.dao.BusinessesDao
-import com.example.bachelorthesisapp.data.dao.ClientsDao
-import com.example.bachelorthesisapp.data.dao.EventsDao
-import com.example.bachelorthesisapp.data.dao.OfferPostsDao
-import com.example.bachelorthesisapp.data.database.EventSpaceDatabase
+import com.example.bachelorthesisapp.data.ActivitiesDao
+import com.example.bachelorthesisapp.data.appointment_requests.local.dao.AppointmentRequestDao
+import com.example.bachelorthesisapp.data.businesses.local.dao.BusinessesDao
+import com.example.bachelorthesisapp.data.clients.local.dao.ClientsDao
+import com.example.bachelorthesisapp.data.events.local.dao.EventsDao
+import com.example.bachelorthesisapp.data.posts.local.dao.OfferPostsDao
+import com.example.bachelorthesisapp.database.EventSpaceDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,7 +1,6 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.client
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -28,9 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.EventStatus
-import com.example.bachelorthesisapp.data.model.entities.EventType
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.domain.model.EventStatus
+import com.example.bachelorthesisapp.domain.model.EventType
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarClient
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.business.ClientDrawerContent
@@ -41,11 +40,9 @@ import com.example.bachelorthesisapp.presentation.ui.components.client.TodayEven
 import com.example.bachelorthesisapp.presentation.ui.components.client.UpcomingEventsCard
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.google.android.material.search.SearchView.Behavior
-import com.google.android.material.search.SearchView.GONE
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -76,6 +73,8 @@ fun ClientHomeScreen(
 
     LaunchedEffect(key1 = context) {
         clientViewModel.loadAllEventsByOrganizerId()
+        clientViewModel.clearUpdateEventState()
+        clientViewModel.clearCreateEventState()
     }
 
     val loadingState by clientViewModel.isLoading.collectAsState()

@@ -55,7 +55,7 @@ import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
@@ -91,6 +91,10 @@ fun EventsScreen(
     val loadingState by clientViewModel.isLoading.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState)
 
+    LaunchedEffect(Unit){
+        clientViewModel.clearCreateEventState()
+        clientViewModel.clearUpdateEventState()
+    }
 
     LaunchedEffect(key1 = deletedEventState.value) {
         when (val deletedEvent = deletedEventState.value) {

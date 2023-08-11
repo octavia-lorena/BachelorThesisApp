@@ -31,9 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessDrawerContent
 import com.example.bachelorthesisapp.presentation.ui.components.business.CompletedAppointmentsCard
 import com.example.bachelorthesisapp.presentation.ui.components.business.RequestsCard
@@ -44,7 +44,8 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNav
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 
 @Composable
 fun BusinessHomeScreen(
@@ -52,7 +53,8 @@ fun BusinessHomeScreen(
     authViewModel: AuthViewModel,
     navHostController: NavHostController,
     askNotificationPermissionCall: () -> Unit,
-    clientViewModel: ClientViewModel
+    clientViewModel: ClientViewModel,
+    businessViewModel: BusinessViewModel
 ) {
     askNotificationPermissionCall()
     authViewModel.subscribeToTopic(uid)
@@ -72,6 +74,8 @@ fun BusinessHomeScreen(
         clientViewModel.loadRequests(uid)
         clientViewModel.loadAllPosts()
         clientViewModel.loadAllEvents()
+        businessViewModel.clearUpdatePostForm()
+        businessViewModel.clearCreatePostForm()
     }
 
     Scaffold(
@@ -110,12 +114,6 @@ fun BusinessHomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = innerPadding.calculateBottomPadding(), top = 10.dp)
-//                .animateContentSize(
-//                    animationSpec = tween(
-//                        durationMillis = 300,
-//                        easing = LinearOutSlowInEasing
-//                    )
-//                ),
         ) {
             BusinessHomeScreenContent(
                 businessId = uid,

@@ -1,8 +1,5 @@
 package com.example.bachelorthesisapp.presentation.ui.components.business
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +21,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -32,24 +28,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.EventStatus
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.data.model.entities.RequestStatus
+import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.domain.model.EventStatus
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Green
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
-import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
-import com.example.bachelorthesisapp.presentation.ui.theme.OchreDark
-import com.example.bachelorthesisapp.presentation.ui.theme.OchreLight
-import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
-import com.example.bachelorthesisapp.presentation.ui.theme.RoseDark
-import com.example.bachelorthesisapp.presentation.ui.theme.RoseLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
-import java.time.LocalDate
+import com.example.bachelorthesisapp.core.presentation.UiState
 
 @Composable
 fun CompletedAppointmentsCard(

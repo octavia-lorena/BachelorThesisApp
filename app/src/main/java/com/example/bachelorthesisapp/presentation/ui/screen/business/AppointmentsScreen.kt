@@ -23,14 +23,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
-import com.example.bachelorthesisapp.data.model.entities.BusinessEntity
-import com.example.bachelorthesisapp.data.model.entities.ClientEntity
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.data.model.entities.RequestStatus
+import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.domain.model.RequestStatus
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessAppointmentCard
-import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostFloatingButton
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarBusiness
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessDrawerContent
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
@@ -39,7 +38,7 @@ import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
@@ -151,13 +150,16 @@ fun AppointmentsScreenContent(
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
     contentClients: UiState<List<ClientEntity>> = UiState.Loading,
 
-) {
+    ) {
     val context = LocalContext.current
 
     when (contentAppointments) {
         is UiState.Loading -> {
-            Column(verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 CircularProgressIndicator(
                     backgroundColor = Rose,
                     color = CoralLight,
@@ -188,7 +190,7 @@ fun AppointmentsScreenContent(
                                 post = post,
                                 event = event,
                                 client = client,
-                            ){
+                            ) {
                                 businessViewModel.cancelAppointment(
                                     appointment.id,
                                     business,

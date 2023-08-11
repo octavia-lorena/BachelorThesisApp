@@ -32,7 +32,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <service
-            android:name=".data.repo.firebase.FirebaseMessageService"
+            android:name=".data.notifications.FirebaseMessageService"
             android:exported="false"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>

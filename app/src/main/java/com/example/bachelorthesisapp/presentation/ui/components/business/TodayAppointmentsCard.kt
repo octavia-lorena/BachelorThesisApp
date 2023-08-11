@@ -1,8 +1,5 @@
 package com.example.bachelorthesisapp.presentation.ui.components.business
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -40,18 +37,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.AppointmentRequest
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
-import com.example.bachelorthesisapp.data.model.entities.RequestStatus
+import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.Green
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalDate

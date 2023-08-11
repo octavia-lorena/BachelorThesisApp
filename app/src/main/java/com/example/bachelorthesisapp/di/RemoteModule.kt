@@ -1,15 +1,15 @@
 package com.example.bachelorthesisapp.di
 
-import com.example.bachelorthesisapp.data.datasource.BusinessRemoteDataSourceImpl
-import com.example.bachelorthesisapp.data.datasource.ClientRemoteDataSourceImpl
-import com.example.bachelorthesisapp.data.datasource.EventRemoteDataSourceImpl
-import com.example.bachelorthesisapp.data.datasource.PostRemoteDataSourceImpl
-import com.example.bachelorthesisapp.data.datasource.RequestRemoteDataSourceImpl
-import com.example.bachelorthesisapp.datasource.BusinessRemoteDataSource
-import com.example.bachelorthesisapp.datasource.ClientRemoteDataSource
-import com.example.bachelorthesisapp.datasource.EventRemoteDataSource
-import com.example.bachelorthesisapp.datasource.PostRemoteDataSource
-import com.example.bachelorthesisapp.datasource.RequestRemoteDataSource
+import com.example.bachelorthesisapp.data.businesses.remote.BusinessRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.clients.remote.ClientRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.events.remote.EventRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.posts.remote.PostRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.appointment_requests.remote.RequestRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.businesses.remote.BusinessRemoteDataSource
+import com.example.bachelorthesisapp.data.clients.remote.ClientRemoteDataSource
+import com.example.bachelorthesisapp.data.events.remote.EventRemoteDataSource
+import com.example.bachelorthesisapp.data.posts.remote.PostRemoteDataSource
+import com.example.bachelorthesisapp.data.appointment_requests.remote.RequestRemoteDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

@@ -1,8 +1,5 @@
 package com.example.bachelorthesisapp.presentation.ui.components.client
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -22,11 +19,9 @@ import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -35,14 +30,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
+import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
 import com.example.bachelorthesisapp.presentation.ui.theme.OchreDark
 import com.example.bachelorthesisapp.presentation.ui.theme.OchreLight
-import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Preview

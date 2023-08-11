@@ -30,8 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.data.model.entities.Event
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.DarkGray
 import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlue
 import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueDark

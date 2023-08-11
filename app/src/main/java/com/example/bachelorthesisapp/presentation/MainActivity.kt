@@ -19,7 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.bachelorthesisapp.data.repo.firebase.FirebaseMessageService
+import com.example.bachelorthesisapp.data.notifications.FirebaseMessageService
 import com.example.bachelorthesisapp.presentation.ui.components.common.TransparentStatusBarHandler
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.screen.authentication.BusinessRegisterStep1Screen
@@ -117,12 +117,12 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
         composable(
             route = Routes.ClientRegisterScreen.route
         ) {
-            ClientRegisterScreen(authVM = authViewModel, navController = navController)
+            ClientRegisterScreen(authViewModel = authViewModel, navController = navController)
         }
         composable(
             route = Routes.BusinessRegisterStep1Screen.route
         ) {
-            BusinessRegisterStep1Screen(authVM = authViewModel, navController = navController)
+            BusinessRegisterStep1Screen(authViewModel = authViewModel, navController = navController)
         }
         composable(
             route = Routes.BusinessRegisterStep2Screen.route
@@ -150,7 +150,8 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
                 authViewModel = authViewModel,
                 navHostController = navController,
                 askNotificationPermissionCall = askNotificationPermissionCall,
-                clientViewModel = clientViewModel
+                clientViewModel = clientViewModel,
+                businessViewModel = businessViewModel
             )
         }
         composable(

@@ -32,24 +32,24 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.bachelorthesisapp.data.model.entities.OfferPost
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
-import com.example.bachelorthesisapp.presentation.viewmodel.state.UiState
+import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.core.resources.Resource
 
 @Composable
 fun PostItem(
     post: OfferPost,
-    onPostClick: (postId: Int) -> Unit = {},
     businessViewModel: BusinessViewModel,
     cardsViewModel: CardSwipeViewModel,
     revealedCards: List<Int>,
     navHostController: NavHostController
 ) {
-    val postState = businessViewModel.postCurrentState.collectAsStateWithLifecycle(UiState.Loading)
+    val postState = businessViewModel.postState1
 
 
     var isDialogOpen by remember {
@@ -141,9 +141,9 @@ fun PostItem(
             onEdit = {
                 Log.d("EDIT", "requested by ${post.id}")
                 when (postState.value) {
-                    is UiState.Loading -> {}
-                    is UiState.Error -> {}
-                    is UiState.Success -> {
+                    is Resource.Loading -> {}
+                    is Resource.Error -> {}
+                    is Resource.Success -> {
                         cardsViewModel.reset()
                         navHostController.navigate("update_post/${post.id}")
                     }

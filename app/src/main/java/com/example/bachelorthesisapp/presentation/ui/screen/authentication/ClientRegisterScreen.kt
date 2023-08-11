@@ -44,14 +44,17 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextF
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
-import com.example.bachelorthesisapp.presentation.ui.theme.NavyBlue
-import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController) {
+fun ClientRegisterScreen(authViewModel: AuthViewModel, navController: NavHostController) {
 
+    LaunchedEffect(Unit) {
+        authViewModel.clearLoginStateForm()
+        authViewModel.clearRegisterBusinessStateForm()
+        authViewModel.clearRegisterClientStateForm()
+    }
 
     Box {
         Image(
@@ -75,10 +78,10 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                         bottom = innerPadding.calculateBottomPadding()
                     )
             ) {
-                val state = authVM.registerClientState
+                val state = authViewModel.registerClientState
                 val context = LocalContext.current
                 LaunchedEffect(key1 = context) {
-                    authVM.validationClientRegisterEvents.collect { event ->
+                    authViewModel.validationClientRegisterEvents.collect { event ->
                         when (event) {
                             is AuthViewModel.ValidationEvent.Success -> {
                                 Toast.makeText(
@@ -133,7 +136,7 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                                     labelText = "First Name",
                                     value = state.firstName,
                                     onValueChange = {
-                                        authVM.onClientRegisterEvent(
+                                        authViewModel.onClientRegisterEvent(
                                             (
                                                     ClientRegisterEvent.FirstNameChanged(it)
                                                     )
@@ -164,7 +167,7 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                                     labelText = "Last Name",
                                     value = state.lastName,
                                     onValueChange = {
-                                        authVM.onClientRegisterEvent(
+                                        authViewModel.onClientRegisterEvent(
                                             ClientRegisterEvent.LastNameChanged(
                                                 it
                                             )
@@ -193,7 +196,7 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                                     labelText = "Email",
                                     value = state.email,
                                     onValueChange = {
-                                        authVM.onClientRegisterEvent(
+                                        authViewModel.onClientRegisterEvent(
                                             ClientRegisterEvent.EmailChanged(it)
                                         )
                                     },
@@ -223,7 +226,7 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                                     labelText = "Phone Number",
                                     value = state.phoneNumber,
                                     onValueChange = {
-                                        authVM.onClientRegisterEvent(
+                                        authViewModel.onClientRegisterEvent(
                                             ClientRegisterEvent.PhoneNumberChanged(it)
                                         )
                                     },
@@ -252,7 +255,7 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                                     labelText = "Password",
                                     value = state.password,
                                     onValueChange = {
-                                        authVM.onClientRegisterEvent(
+                                        authViewModel.onClientRegisterEvent(
                                             ClientRegisterEvent.PasswordChanged(it)
                                         )
                                     },
@@ -296,7 +299,7 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                                     labelText = "Confirm Password",
                                     value = state.confirmPassword,
                                     onValueChange = {
-                                        authVM.onClientRegisterEvent(
+                                        authViewModel.onClientRegisterEvent(
                                             ClientRegisterEvent.ConfirmPasswordChanged(
                                                 it
                                             )
@@ -335,7 +338,7 @@ fun ClientRegisterScreen(authVM: AuthViewModel, navController: NavHostController
                         item {
                             SubmitButton(
                                 onClick = {
-                                    authVM.onClientRegisterEvent(ClientRegisterEvent.Submit)
+                                    authViewModel.onClientRegisterEvent(ClientRegisterEvent.Submit)
                                 },
                                 text = "Sign Up"
                             )

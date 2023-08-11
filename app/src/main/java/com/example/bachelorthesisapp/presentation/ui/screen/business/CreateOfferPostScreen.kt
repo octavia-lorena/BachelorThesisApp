@@ -39,6 +39,10 @@ fun CreateOfferPostScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
 
+    LaunchedEffect(Unit){
+        businessViewModel.clearCreatePostForm()
+    }
+
     Box {
         Image(
             painter = painterResource(id = R.drawable.create_post_background),

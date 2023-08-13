@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import kotlinx.coroutines.launch
@@ -42,7 +43,7 @@ fun FormTextField(
             backgroundColor = Color.Transparent,
             focusedLabelColor = Color.Gray,
             unfocusedLabelColor = Color.Transparent,
-            focusedIndicatorColor = Coral,
+            focusedIndicatorColor = CoralAccent,
             unfocusedIndicatorColor = Color.Gray,
             cursorColor = Color.Gray,
             textColor = Color.Black

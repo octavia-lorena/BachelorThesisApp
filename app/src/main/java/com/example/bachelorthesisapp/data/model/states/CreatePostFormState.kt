@@ -1,6 +1,7 @@
 package com.example.bachelorthesisapp.data.model.states
 
 data class CreatePostFormState(
+    val id: Int = -1,
     val title: String = "",
     val titleError: String? = null,
     val description: String = "",

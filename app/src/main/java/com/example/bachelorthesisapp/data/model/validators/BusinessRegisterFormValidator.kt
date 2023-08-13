@@ -42,6 +42,12 @@ class BusinessRegisterFormValidator {
         return ValidationResult(success = true)
     }
 
+    fun validateCity(city: String): ValidationResult {
+        if (city.isEmpty())
+            return ValidationResult(false, "This field cannot be blank.")
+        return ValidationResult(success = true)
+    }
+
     fun validateAddress(address: String): ValidationResult{
         if (address.isEmpty())
             return ValidationResult(false, "This field cannot be blank.")

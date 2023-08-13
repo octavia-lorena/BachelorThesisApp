@@ -25,6 +25,7 @@ import com.example.bachelorthesisapp.data.authentication.AuthRepository
 import com.example.bachelorthesisapp.data.authentication.await
 import com.example.bachelorthesisapp.data.notifications.FirebaseMessageService
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.data.model.validators.ValidationResult
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -106,8 +107,7 @@ class AuthViewModel @Inject constructor(
     val currentUser: FirebaseUser?
         get() = authRepository.currentUser
 
-    val userTypeState: Flow<String> =
-        authRepository.userType
+    val userTypeState: Flow<String> = authRepository.userType
     private var _userFlow = MutableStateFlow<UserModel?>(null)
     val userFlow: StateFlow<UserModel?> = _userFlow
 
@@ -117,10 +117,12 @@ class AuthViewModel @Inject constructor(
         when (event) {
             is LoginEvent.EmailChanged -> {
                 loginState = loginState.copy(email = event.email)
+                validateEmailLoginEventForm()
             }
 
             is LoginEvent.PasswordChanged -> {
                 loginState = loginState.copy(password = event.password)
+                validatePasswordLoginEventForm()
             }
 
             is LoginEvent.Submit -> {
@@ -134,27 +136,33 @@ class AuthViewModel @Inject constructor(
         when (event) {
             is ClientRegisterEvent.FirstNameChanged -> {
                 registerClientState = registerClientState.copy(firstName = event.firstName)
+                validateFirstNameClientRegisterEventForm()
             }
 
             is ClientRegisterEvent.LastNameChanged -> {
                 registerClientState = registerClientState.copy(lastName = event.lastName)
+                validateLastNameClientRegisterEventForm()
             }
 
             is ClientRegisterEvent.EmailChanged -> {
                 registerClientState = registerClientState.copy(email = event.email)
+                validateEmailClientRegisterEventForm()
             }
 
             is ClientRegisterEvent.PasswordChanged -> {
                 registerClientState = registerClientState.copy(password = event.password)
+                validatePasswordClientRegisterEventForm()
             }
 
             is ClientRegisterEvent.PhoneNumberChanged -> {
                 registerClientState = registerClientState.copy(phoneNumber = event.phoneNumber)
+                validatePhoneNumberClientRegisterEventForm()
             }
 
             is ClientRegisterEvent.ConfirmPasswordChanged -> {
                 registerClientState =
                     registerClientState.copy(confirmPassword = event.confirmPassword)
+                validateConfirmPasswordClientRegisterEventForm()
             }
 
             is ClientRegisterEvent.Submit -> {
@@ -163,50 +171,167 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private fun validateConfirmPasswordClientRegisterEventForm() {
+        val result = clientRegisterValidator.validateConfirmPassword(
+            registerClientState.password, registerClientState.confirmPassword
+        )
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerClientState = result.errorMessage?.let {
+                registerClientState.copy(
+                    confirmPasswordError = it,
+                )
+            }!!
+            return
+        } else {
+            registerClientState = registerClientState.copy(
+                confirmPasswordError = null,
+            )
+            return
+        }
+    }
+
+    private fun validatePhoneNumberClientRegisterEventForm() {
+        val result = clientRegisterValidator.validatePhoneNumber(registerClientState.phoneNumber)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerClientState = registerClientState.copy(
+                phoneNumberError = result.errorMessage,
+            )
+            return
+        } else {
+            registerClientState = registerClientState.copy(
+                phoneNumberError = null,
+            )
+            return
+        }
+    }
+
+    private fun validatePasswordClientRegisterEventForm() {
+        val result = clientRegisterValidator.validatePassword(registerClientState.password)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerClientState = registerClientState.copy(
+                passwordError = result.errorMessage,
+            )
+            return
+        } else {
+            registerClientState = registerClientState.copy(
+                passwordError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateEmailClientRegisterEventForm() {
+        val result = clientRegisterValidator.validateEmail(registerClientState.email)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerClientState = registerClientState.copy(
+                emailError = result.errorMessage,
+            )
+            return
+        } else {
+            registerClientState = registerClientState.copy(
+                emailError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateLastNameClientRegisterEventForm() {
+        val result = clientRegisterValidator.validateLastName(registerClientState.lastName)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerClientState = registerClientState.copy(
+                lastNameError = result.errorMessage,
+            )
+            return
+        } else {
+            registerClientState = registerClientState.copy(
+                lastNameError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateFirstNameClientRegisterEventForm() {
+        val result = clientRegisterValidator.validateFirstName(registerClientState.firstName)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerClientState = registerClientState.copy(
+                firstNameError = result.errorMessage,
+            )
+            return
+        } else {
+            registerClientState = registerClientState.copy(
+                firstNameError = null,
+            )
+            return
+        }
+    }
+
     fun onBusinessRegisterEvent(event: BusinessRegisterEvent) {
         when (event) {
             is BusinessRegisterEvent.NameChanged -> {
                 registerBusinessState = registerBusinessState.copy(name = event.name)
+                validateNameBusinessRegisterEventForm()
             }
 
             is BusinessRegisterEvent.TypeChanged -> {
                 registerBusinessState = registerBusinessState.copy(type = event.type)
+                validateTypeBusinessRegisterEventForm()
             }
 
             is BusinessRegisterEvent.PhoneNumberChanged -> {
                 registerBusinessState = registerBusinessState.copy(phoneNumber = event.phoneNumber)
+                validatePhoneNumberBusinessRegisterEventForm()
             }
 
             is BusinessRegisterEvent.AddressChanged -> {
                 registerBusinessState = registerBusinessState.copy(address = event.address)
+                validateAddressBusinessRegisterEventForm()
             }
 
             is BusinessRegisterEvent.EmailChanged -> {
                 registerBusinessState = registerBusinessState.copy(email = event.email)
+                validateEmailBusinessRegisterEventForm()
             }
 
             is BusinessRegisterEvent.PasswordChanged -> {
                 registerBusinessState = registerBusinessState.copy(password = event.password)
+                validatePasswordBusinessRegisterEventForm()
             }
 
             is BusinessRegisterEvent.ConfirmPasswordChanged -> {
                 registerBusinessState =
                     registerBusinessState.copy(confirmPassword = event.confirmPassword)
+                validateConfirmPasswordBusinessRegisterEventForm()
             }
 
             is BusinessRegisterEvent.CityChanged -> {
-                registerBusinessState =
-                    registerBusinessState.copy(city = event.city)
+                registerBusinessState = registerBusinessState.copy(city = event.city)
+                validateCityBusinessRegisterEventForm()
             }
 
             is BusinessRegisterEvent.LatChanged -> {
-                registerBusinessState =
-                    registerBusinessState.copy(lat = event.lat)
+                registerBusinessState = registerBusinessState.copy(lat = event.lat)
             }
 
             is BusinessRegisterEvent.LngChanged -> {
-                registerBusinessState =
-                    registerBusinessState.copy(lng = event.lng)
+                registerBusinessState = registerBusinessState.copy(lng = event.lng)
             }
 
 
@@ -219,6 +344,154 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
+    private fun validateNameBusinessRegisterEventForm() {
+        val result = businessRegisterValidator.validateName(registerBusinessState.name)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerBusinessState = registerBusinessState.copy(
+                nameError = result.errorMessage,
+            )
+            return
+        } else {
+            registerBusinessState = registerBusinessState.copy(
+                nameError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateTypeBusinessRegisterEventForm() {
+        val result = businessRegisterValidator.validateType(registerBusinessState.type)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerBusinessState = registerBusinessState.copy(
+                typeError = result.errorMessage,
+            )
+            return
+        } else {
+            registerBusinessState = registerBusinessState.copy(
+                typeError = null,
+            )
+            return
+        }
+    }
+
+    private fun validatePhoneNumberBusinessRegisterEventForm() {
+        val result =
+            businessRegisterValidator.validatePhoneNumber(registerBusinessState.phoneNumber)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerBusinessState = registerBusinessState.copy(
+                phoneNumberError = result.errorMessage,
+            )
+            return
+        } else {
+            registerBusinessState = registerBusinessState.copy(
+                phoneNumberError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateAddressBusinessRegisterEventForm() {
+        val result = businessRegisterValidator.validateAddress(registerBusinessState.address)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerBusinessState = registerBusinessState.copy(
+                addressError = result.errorMessage,
+            )
+            return
+        } else {
+            registerBusinessState = registerBusinessState.copy(
+                addressError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateEmailBusinessRegisterEventForm() {
+        val result = businessRegisterValidator.validateEmail(registerBusinessState.email)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerBusinessState = registerBusinessState.copy(
+                emailError = result.errorMessage,
+            )
+            return
+        } else {
+            registerBusinessState = registerBusinessState.copy(
+                emailError = null,
+            )
+            return
+        }
+    }
+
+    private fun validatePasswordBusinessRegisterEventForm() {
+        val result = businessRegisterValidator.validatePassword(registerBusinessState.password)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerBusinessState = registerBusinessState.copy(
+                passwordError = result.errorMessage,
+            )
+            return
+        } else {
+            registerBusinessState = registerBusinessState.copy(
+                passwordError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateConfirmPasswordBusinessRegisterEventForm() {
+        val result = businessRegisterValidator.validateConfirmPassword(
+            registerBusinessState.password, registerBusinessState.confirmPassword
+        )
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerBusinessState = registerBusinessState.copy(
+                confirmPasswordError = result.errorMessage,
+            )
+            return
+        } else {
+            registerBusinessState = registerBusinessState.copy(
+                confirmPasswordError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateCityBusinessRegisterEventForm() {
+        val result = businessRegisterValidator.validateCity(registerBusinessState.city)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            registerBusinessState = registerBusinessState.copy(
+                cityError = result.errorMessage,
+            )
+            return
+        } else {
+            registerBusinessState = registerBusinessState.copy(
+                cityError = null,
+            )
+            return
+        }
+    }
+
 
     private suspend fun submitLoginForm() {
         val emailResult = loginValidator.validateEmail(loginState.email)
@@ -255,13 +528,46 @@ class AuthViewModel @Inject constructor(
 //                }
 //            }
             loginState = loginState.copy(
-                email = "",
-                emailError = null,
-                password = "",
-                passwordError = null
+                email = "", emailError = null, password = "", passwordError = null
             )
             validationLoginEventChannel.send(ValidationEvent.Success)
 
+        }
+    }
+
+    private fun validateEmailLoginEventForm() {
+        val result = loginValidator.validateEmail(loginState.email)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            loginState = loginState.copy(
+                emailError = result.errorMessage,
+            )
+            return
+        } else {
+            loginState = loginState.copy(
+                emailError = null,
+            )
+            return
+        }
+    }
+
+    private fun validatePasswordLoginEventForm() {
+        val result = loginValidator.validatePassword(loginState.password)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            loginState = loginState.copy(
+                passwordError = result.errorMessage,
+            )
+            return
+        } else {
+            loginState = loginState.copy(
+                passwordError = null,
+            )
+            return
         }
     }
 
@@ -272,8 +578,7 @@ class AuthViewModel @Inject constructor(
         val emailResult = clientRegisterValidator.validateEmail(registerClientState.email)
         val passwordResult = clientRegisterValidator.validatePassword(registerClientState.password)
         val confirmPasswordResult = clientRegisterValidator.validateConfirmPassword(
-            registerClientState.password,
-            registerClientState.confirmPassword
+            registerClientState.password, registerClientState.confirmPassword
         )
         val phoneNumberResult =
             clientRegisterValidator.validatePhoneNumber(registerClientState.phoneNumber)
@@ -300,8 +605,8 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             val email = registerClientState.email
             val password = registerClientState.password
-            val username = registerClientState.firstName.lowercase() + "_" +
-                    registerClientState.lastName.lowercase()
+            val username =
+                registerClientState.firstName.lowercase() + "_" + registerClientState.lastName.lowercase()
             val firstName = registerClientState.firstName
             val lastName = registerClientState.lastName
             val phoneNumber = registerClientState.phoneNumber
@@ -341,13 +646,11 @@ class AuthViewModel @Inject constructor(
         val cityResult = businessRegisterValidator.validateAddress(registerBusinessState.city)
 
         val hasError = listOf(
-            addressResult,
-            cityResult
+            addressResult, cityResult
         ).any { !it.success }
         if (hasError) {
             registerBusinessState = registerBusinessState.copy(
-                addressError = addressResult.errorMessage,
-                cityError = cityResult.errorMessage
+                addressError = addressResult.errorMessage, cityError = cityResult.errorMessage
             )
             return
         }
@@ -373,22 +676,21 @@ class AuthViewModel @Inject constructor(
                 latitude = lat.toDouble()
                 longitude = lng.toDouble()
             }
-            val user =
-                BusinessEntity(
-                    id = "new",
-                    businessName = name,
-                    businessType = businessType,
-                    phoneNumber = phoneNumber,
-                    address = address,
-                    city = city,
-                    lat = latitude,
-                    lng = longitude,
-                    email = email,
-                    password = password,
-                    username = username,
-                    profilePicture = "",
-                    deviceToken = Firebase.messaging.token.await()
-                )
+            val user = BusinessEntity(
+                id = "new",
+                businessName = name,
+                businessType = businessType,
+                phoneNumber = phoneNumber,
+                address = address,
+                city = city,
+                lat = latitude,
+                lng = longitude,
+                email = email,
+                password = password,
+                username = username,
+                profilePicture = "",
+                deviceToken = Firebase.messaging.token.await()
+            )
             Log.d("REGISTER", user.toString())
             register(email, password, BUSINESS_TABLE_NAME, user)
             delay(4000L)
@@ -418,14 +720,12 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun partialSubmitBusinessRegisterForm() {
-        val nameResult =
-            businessRegisterValidator.validateName(registerBusinessState.name)
+        val nameResult = businessRegisterValidator.validateName(registerBusinessState.name)
         val emailResult = businessRegisterValidator.validateEmail(registerBusinessState.email)
         val passwordResult =
             businessRegisterValidator.validatePassword(registerBusinessState.password)
         val confirmPasswordResult = businessRegisterValidator.validateConfirmPassword(
-            registerBusinessState.password,
-            registerBusinessState.confirmPassword
+            registerBusinessState.password, registerBusinessState.confirmPassword
         )
         val phoneNumberResult =
             businessRegisterValidator.validatePhoneNumber(registerBusinessState.phoneNumber)
@@ -487,8 +787,7 @@ class AuthViewModel @Inject constructor(
 
     fun subscribeToTopic(uid: String) {
         Log.d("TOKEN", FirebaseMessageService.token!!)
-        Firebase.messaging.subscribeToTopic("/topics/$uid")
-            .addOnCompleteListener { task ->
+        Firebase.messaging.subscribeToTopic("/topics/$uid").addOnCompleteListener { task ->
                 var msg = "Subscribed"
                 if (!task.isSuccessful) {
                     msg = "Subscribe failed"
@@ -499,10 +798,7 @@ class AuthViewModel @Inject constructor(
     fun clearLoginStateForm() {
         viewModelScope.launch {
             loginState = loginState.copy(
-                email = "",
-                emailError = null,
-                password = "",
-                passwordError = null
+                email = "", emailError = null, password = "", passwordError = null
             )
         }
     }

@@ -28,14 +28,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import coil.compose.AsyncImage
+import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.domain.model.BusinessType
 import com.example.bachelorthesisapp.data.events.local.entity.Event
@@ -101,7 +106,7 @@ fun BusinessProfileScreenContent(
                                     modifier = Modifier
                                         .size(70.dp)
                                         .padding(top = 0.dp)
-                                        .background(Color.LightGray, shape = CircleShape)
+                                        .background(Color.Transparent, shape = CircleShape)
                                         .border(
                                             width = 1.dp,
                                             brush = Brush.horizontalGradient(
@@ -115,10 +120,12 @@ fun BusinessProfileScreenContent(
                                         ),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    // TODO get the profile pic of the business
-                                    Image(
-                                        painter = BitmapPainter(ImageBitmap(20, 20)),
-                                        contentDescription = ""
+                                    AsyncImage(
+                                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                        model = business.profilePicture,
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        placeholder = painterResource(id = R.drawable.profile_picture_placeholder)
                                     )
                                 }
                                 Spacer(modifier = Modifier.width(50.dp))
@@ -130,16 +137,7 @@ fun BusinessProfileScreenContent(
                                     Text(text = "Posts")
                                 }
                                 Spacer(modifier = Modifier.width(30.dp))
-//                                if (pastEventsState is UiState.Success) {
-//                                    val pasteEvents = pastEventsState.value
-//                                    Column(
-//                                        verticalArrangement = Arrangement.Center,
-//                                        horizontalAlignment = Alignment.CenterHorizontally
-//                                    ) {
-//                                        Text(text = "${pasteEvents.size}")
-//                                        Text(text = "Events")
-//                                    }
-//                                }
+
                                 if (business.lat != null && business.lng != null) {
                                     Spacer(
                                         modifier = Modifier

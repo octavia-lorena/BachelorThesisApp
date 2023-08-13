@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +34,9 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
 import com.example.bachelorthesisapp.presentation.ui.components.common.GalleryImagePicker
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
+import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 
 @Composable
@@ -39,25 +46,29 @@ fun CreateOfferPostScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         businessViewModel.clearCreatePostForm()
     }
 
     Box {
-        Image(
-            painter = painterResource(id = R.drawable.create_post_background),
-            contentDescription = "background",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
-        )
+//        Image(
+//            painter = painterResource(id = R.drawable.register_gradient_background),
+//            contentDescription = "background",
+//            modifier = Modifier.fillMaxSize(),
+//            contentScale = ContentScale.FillBounds
+//        )
         Scaffold(
-            topBar = { BusinessSecondaryAppBar(title = "New Post", navController = navController) },
+            topBar = {
+                BusinessSecondaryAppBar(
+                    title = "New Post",
+                    navController = navController,
+                    backgroundColor = Coral,
+                    elevation = 10.dp
+                )
+            },
             scaffoldState = scaffoldState,
-//        drawerContent = {
-//            BusinessDrawerContent(uid, authVM, navController)
-//        },
             drawerGesturesEnabled = true,
-            backgroundColor = Color.Transparent
+            backgroundColor = Color.White
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -116,7 +127,6 @@ fun CreateOfferPostScreenContent(
                 bottom = 0.dp
             ),
         userScrollEnabled = true,
-        //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
         // TITLE ITEM
@@ -210,10 +220,17 @@ fun CreateOfferPostScreenContent(
         }
         // SUBMIT BUTTON
         item {
-            SubmitButton(
+            Button(
                 onClick = { businessViewModel.onCreatePostEvent(CreatePostEvent.Submit) },
-                text = stringResource(R.string.Submit)
-            )
+                modifier = Modifier.wrapContentSize(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = CoralAccent)
+            ) {
+                Text(
+                    text = stringResource(R.string.Submit),
+                    style = Typography.caption,
+                    color = Color.White
+                )
+            }
         }
     }
 }

@@ -12,12 +12,12 @@ class PhotosConverter {
     }
 
     @TypeConverter
-    fun photosListToString(photosList: List<Uri>): String =
+    fun photosListToString(photosList: List<String>): String =
         photosList.joinToString(SEPARATOR)
 
     @TypeConverter
-    fun stringToPhotosList(string: String): List<Uri> =
-        string.split(SEPARATOR).map { it.toUri() }
+    fun stringToPhotosList(string: String): List<String> =
+        string.split(SEPARATOR)
 
     @TypeConverter
     fun uriToString(uri: Uri): String = uri.toString()

@@ -1,10 +1,10 @@
 package com.example.bachelorthesisapp.presentation.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
@@ -24,8 +24,10 @@ import com.example.bachelorthesisapp.data.notifications.NotificationData
 import com.example.bachelorthesisapp.data.notifications.PushNotification
 import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.appointment_requests.AppointmentRequestsRepository
+import com.example.bachelorthesisapp.data.authentication.await
 import com.example.bachelorthesisapp.data.events.EventsRepository
 import com.example.bachelorthesisapp.data.posts.OfferPostsRepository
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -43,6 +45,8 @@ class BusinessViewModel @Inject constructor(
     private val requestsRepository: AppointmentRequestsRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
+
+    val storageRef = FirebaseStorage.getInstance().getReference("images/posts/")
 
     // CREATE POST STATE
     var createPostState by mutableStateOf(CreatePostFormState())
@@ -78,7 +82,7 @@ class BusinessViewModel @Inject constructor(
             }
         }
 
-    val postResultState: Flow<UiState<OfferPost>> =
+    private val postResultState: Flow<UiState<OfferPost>> =
         postsRepository.postResultFlow.map { postResult ->
             when (postResult) {
                 is Resource.Error -> UiState.Error(postResult.exception)
@@ -423,14 +427,28 @@ class BusinessViewModel @Inject constructor(
         price: String
     ) {
         viewModelScope.launch {
-            val imagesList = images.split(";").map { it.toUri() }
             val businessId = authRepository.currentUser?.uid!!
+            val imagesList = images.split(";")
+            val pathList = mutableListOf<String>()
+            imagesList.forEach {
+                val randomNumber = System.currentTimeMillis()
+                val path = "$randomNumber.jpeg"
+               // pathList.add(path)
+                storageRef.child("$businessId/$path").putFile(Uri.parse(it)).addOnSuccessListener {
+                    task ->
+                    task.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
+                        url ->
+                        pathList.add(url.toString())
+                    }
+                }.await()
+                delay(2000L)
+            }
             val post = OfferPost(
                 0,
                 businessId,
                 title,
                 description,
-                imagesList,
+                pathList,
                 price.toInt(),
                 Rating(0.0, 0)
             )

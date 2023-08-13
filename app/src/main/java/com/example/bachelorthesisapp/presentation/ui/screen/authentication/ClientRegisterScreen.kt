@@ -44,6 +44,7 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextF
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
@@ -113,7 +114,7 @@ fun ClientRegisterScreen(authViewModel: AuthViewModel, navController: NavHostCon
                     BottomClickableText(
                         text = "Already have an account? Sign In here.",
                         onClick = { navController.navigate(Routes.LoginScreen.route) },
-                        color = Coral
+                        color = CoralAccent
                     )
                     LazyColumn(
                         modifier = Modifier

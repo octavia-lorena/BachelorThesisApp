@@ -23,6 +23,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,7 +48,11 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessH
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.launch
 
 @Composable
 fun BusinessHomeScreen(
@@ -69,6 +76,10 @@ fun BusinessHomeScreen(
         clientViewModel.eventState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val postsState =
         clientViewModel.postsState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+    val loadingState by clientViewModel.isLoading.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState)
+    val scope = rememberCoroutineScope()
+
 
     LaunchedEffect(key1 = context) {
         clientViewModel.loadRequests(uid)
@@ -110,22 +121,31 @@ fun BusinessHomeScreen(
         drawerGesturesEnabled = true,
         backgroundColor = Color.White
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding(), top = 10.dp)
-        ) {
-            BusinessHomeScreenContent(
-                businessId = uid,
-                postContent = postsState.value,
-                eventContent = eventsState.value,
-                appointmentsContent = appointmentsState.value,
-                requestsContent = requestsState.value,
-                onUpcomingCardClick = { navHostController.navigate("appointments/$uid") },
-                onRequestsCardClick = { navHostController.navigate("requests/$uid") },
-                onFeedCardClick = { navHostController.navigate("posts_business/$uid") }
-            )
+        SwipeRefresh(state = swipeRefreshState, onRefresh = {
+            scope.launch {
+                clientViewModel.loadRequests(uid)
+                clientViewModel.loadAllPosts()
+                clientViewModel.loadAllEvents()
+            }
+        }) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = innerPadding.calculateBottomPadding(), top = 10.dp)
+            ) {
+                BusinessHomeScreenContent(
+                    businessId = uid,
+                    postContent = postsState.value,
+                    eventContent = eventsState.value,
+                    appointmentsContent = appointmentsState.value,
+                    requestsContent = requestsState.value,
+                    onUpcomingCardClick = { navHostController.navigate("appointments/$uid") },
+                    onRequestsCardClick = { navHostController.navigate("requests/$uid") },
+                    onFeedCardClick = { navHostController.navigate("posts_business/$uid") }
+                )
+            }
         }
+
     }
 }
 
@@ -157,15 +177,15 @@ fun BusinessHomeScreenContent(
                 contentEvents = eventContent,
                 contentPosts = postContent
             )
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(20.dp))
         }
         item {
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(2),
                 modifier = Modifier
-                    .height(290.dp)
+                    .height(320.dp)
                     .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
+                    .padding(top = 10.dp, bottom = 5.dp),
                 verticalItemSpacing = 15.dp,
                 horizontalArrangement = Arrangement.spacedBy(15.dp)
             ) {
@@ -195,7 +215,6 @@ fun BusinessHomeScreenContent(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(20.dp))
         }
         item {
             Card(
@@ -212,7 +231,7 @@ fun BusinessHomeScreenContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "MY FEED")
+                    Text(text = "MY FEED", color = CoralAccent)
                 }
 
             }

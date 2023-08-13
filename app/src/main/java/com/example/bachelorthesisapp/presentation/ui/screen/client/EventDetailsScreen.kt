@@ -1,7 +1,9 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.client
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
@@ -14,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -76,7 +79,16 @@ fun EventDetailsScreen(
 
     when (currentEvent) {
         is Resource.Loading -> {
-            CircularProgressIndicator(backgroundColor = Rose, color = CoralLight)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(backgroundColor = Rose, color = CoralLight)
+
+            }
         }
 
         is Resource.Success -> {
@@ -89,7 +101,7 @@ fun EventDetailsScreen(
                     BusinessSecondaryAppBar(
                         title = event.name,
                         navController = navHostController,
-                        backgroundColor = IrisBlueDark,
+                        backgroundColor = CoralLight,
                         elevation = 0.dp
                     )
                 }, drawerGesturesEnabled = true, backgroundColor = Color.White
@@ -121,7 +133,16 @@ fun EventDetailsScreen(
                                 onCityClicked = { city -> clientViewModel.findBusinessesByCity(city) },
                                 postsList = (postsState as UiState.Success<List<OfferPost>>).value,
                                 onEditClick = { eventId -> navHostController.navigate("update_event/$eventId") },
-                                onPublishClick = { eventId -> clientViewModel.publishEvent(eventId) }
+                                onPublishClick = { eventId -> clientViewModel.publishEvent(eventId) },
+                                onCollaborationCanceledClicked = { eventId ->
+//                                    clientViewModel.cancelAppointment(
+//                                        requestId =,
+//                                        business =,
+//                                        event =,
+//                                        post =,
+//                                        clientDeviceId =
+//                                    )
+                                }
                             )
                         }
 

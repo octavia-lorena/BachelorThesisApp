@@ -108,7 +108,7 @@ fun RequestsFrontLayerContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(400.dp)
-                            .animateContentSize { initialValue, targetValue -> },
+                            .animateContentSize { _, _ -> },
                         onDayClick = { date, _ -> pickedDate = LocalDate.parse(date.toString()) }
                     )
                 }
@@ -128,7 +128,7 @@ fun RequestsFrontLayerContent(
                         Text(
                             "${appointments.size} appointments on this date",
                             style = Typography.body2,
-                            color = Color.White
+                            color = Color.Gray
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                     }

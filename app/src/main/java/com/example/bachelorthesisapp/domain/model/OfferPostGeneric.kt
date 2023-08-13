@@ -8,7 +8,7 @@ abstract class OfferPostGeneric(
     businessId: String,
     title: String,
     description: String,
-    images: List<Uri>,
+    images: List<String>,
     price: Int,
     rating: Rating,
 )

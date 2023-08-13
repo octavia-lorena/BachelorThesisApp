@@ -16,6 +16,7 @@ import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -43,7 +44,7 @@ fun RequestsScreenBackdrop(
         scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed),
         frontLayerShape = RoundedCornerShape(30.dp),
         frontLayerScrimColor = Color.Unspecified,
-        frontLayerBackgroundColor = Color.Gray,
+        frontLayerBackgroundColor = OffWhite,
         backLayerBackgroundColor = Color.White,
         peekHeight = 50.dp,
         stickyFrontLayer = false,

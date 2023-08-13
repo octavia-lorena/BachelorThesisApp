@@ -25,8 +25,8 @@ fun EventDetailsBackdrop(
     onCityClicked: (String) -> Unit = {},
     postsList: List<OfferPost>,
     onEditClick: (Int) -> Unit = {},
-    onPublishClick: (Int) -> Unit = {}
-
+    onPublishClick: (Int) -> Unit = {},
+    onCollaborationCanceledClicked: (Int) -> Unit = {}
 ) {
     BackdropScaffold(modifier = Modifier,
         scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed),
@@ -45,7 +45,8 @@ fun EventDetailsBackdrop(
                 onBusinessTypeFilterClick = onBusinessTypeFilterClick,
                 postsList = postsList,
                 onEditClick = onEditClick,
-                onPublishClick = onPublishClick
+                onPublishClick = onPublishClick,
+                onCollaborationCanceledClicked = onCollaborationCanceledClicked
             )
         },
         appBar = {},
@@ -53,6 +54,7 @@ fun EventDetailsBackdrop(
         frontLayerContent = {
             EventDetailsFrontLayerContent(
                 businessState = businessState,
+                postsList = postsList,
                 onBusinessClick = onBusinessClick,
                 onCityClicked = onCityClicked,
             )

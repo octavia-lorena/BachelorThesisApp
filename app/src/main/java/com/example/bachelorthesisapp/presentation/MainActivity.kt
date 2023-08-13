@@ -161,9 +161,8 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
             BusinessPostsHomeScreen(
                 uid = backStackEntry.arguments?.getString("uid")!!,
                 authViewModel = authViewModel,
-                navHostController = navController,
-                onPostClick = {},
                 businessViewModel = businessViewModel,
+                navHostController = navController,
                 cardsViewModel = cardsViewModel
             )
         }

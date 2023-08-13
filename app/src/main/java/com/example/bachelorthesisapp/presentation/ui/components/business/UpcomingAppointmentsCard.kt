@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +45,7 @@ import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import java.time.LocalDate
 import java.time.Period
 
@@ -62,12 +65,6 @@ fun UpcomingAppointmentsCard(
         modifier = Modifier
             .height(280.dp)
             .fillMaxWidth(),
-//            .animateContentSize(
-//                animationSpec = tween(
-//                    durationMillis = 300,
-//                    easing = LinearOutSlowInEasing
-//                )
-//            ),
         backgroundColor = Color.White,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp),
@@ -133,10 +130,9 @@ fun UpcomingAppointmentsCard(
                             appointmentsList = appointmentsList.take(3)
                         appointmentsList.forEachIndexed { index, appointment ->
                             val event = events.first { it.id == appointment.eventId }
-                            val post = posts.first { it.id == appointment.postId }
+                            posts.first { it.id == appointment.postId }
                             UpcomingAppointmentElement(
-                                appointment = appointment,
-                                event = event, post = post
+                                event = event
                             )
                             if (index < 2)
                                 Divider(
@@ -157,9 +153,7 @@ fun UpcomingAppointmentsCard(
 
 @Composable
 fun UpcomingAppointmentElement(
-    appointment: AppointmentRequest,
-    event: Event,
-    post: OfferPost
+    event: Event
 ) {
     Column(
         modifier = Modifier
@@ -178,7 +172,7 @@ fun UpcomingAppointmentElement(
                     .size(7.dp)
                     .aspectRatio(1f)
                     .padding(top = 0.dp)
-                    .background(Rose, shape = AbsoluteCutCornerShape(5.dp)),
+                    .background(CoralAccent, shape = AbsoluteCutCornerShape(5.dp)),
             )
             Spacer(modifier = Modifier.width(10.dp))
             Column(
@@ -196,67 +190,62 @@ fun UpcomingAppointmentElement(
             }
 
         }
-        Spacer(modifier = Modifier.height(1.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         Row(
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier.height(15.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Start
         ) {
-            Row(
-                modifier = Modifier.height(15.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
 
-                val timeToGo =
-                    Period.between(LocalDate.now(), event.date)
-                val yearsLeft = timeToGo.years
-                val monthsLeft = timeToGo.months
-                val daysLeft = timeToGo.days
+            val timeToGo =
+                Period.between(LocalDate.now(), event.date)
+            val yearsLeft = timeToGo.years
+            val monthsLeft = timeToGo.months
+            val daysLeft = timeToGo.days
 
-                var yearsText = ""
-                if (yearsLeft > 0)
-                    yearsText = "${yearsLeft}y, "
+            var yearsText = ""
+            if (yearsLeft > 0)
+                yearsText = "${yearsLeft}y, "
 
-                var monthsText = ""
-                if (monthsLeft > 0)
-                    monthsText = if (daysLeft > 0)
-                        "${monthsLeft}m, "
-                    else "${monthsLeft}m"
+            var monthsText = ""
+            if (monthsLeft > 0)
+                monthsText = if (daysLeft > 0)
+                    "${monthsLeft}m, "
+                else "${monthsLeft}m"
 
 
-                val daysText = "${daysLeft}d"
-                Spacer(modifier = Modifier.width(14.dp))
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_hourglass_top_24),
-                    contentDescription = "",
-                    tint = Color.Gray
-                )
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(
-                    text = "$yearsText$monthsText$daysText left",
-                    style = Typography.caption,
-                    color = Color.Gray
-                )
-            }
-            Spacer(modifier = Modifier.height(3.dp))
-            Row(
-                modifier = Modifier.height(15.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_calendar_today_24),
-                    contentDescription = "",
-                    tint = Color.Gray
-                )
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(
-                    text = "${event.date}",
-                    style = Typography.caption,
-                    color = Color.Gray
-                )
-            }
+            val daysText = "${daysLeft}d"
+            Spacer(modifier = Modifier.width(14.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_hourglass_top_24),
+                contentDescription = "",
+                tint = Color.Gray
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "$yearsText$monthsText$daysText left",
+                style = Typography.caption,
+                color = Color.Gray
+            )
+        }
+        Spacer(modifier = Modifier.height(3.dp))
+        Row(
+            modifier = Modifier.height(15.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Spacer(modifier = Modifier.width(14.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_calendar_today_24),
+                contentDescription = "",
+                tint = Color.Gray
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "${event.date}",
+                style = Typography.caption,
+                color = Color.Gray
+            )
         }
     }
 

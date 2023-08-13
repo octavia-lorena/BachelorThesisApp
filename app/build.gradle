@@ -67,6 +67,8 @@ dependencies {
     // Dagger - Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     implementation 'com.google.firebase:firebase-database:20.2.2'
+    implementation 'com.google.firebase:firebase-storage:20.1.0'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     // Retrofit - Moshi
@@ -123,6 +125,8 @@ dependencies {
 
     // Coil
     implementation "io.coil-kt:coil-compose:2.1.0"
+    implementation 'com.github.rosariopfernandes:firecoil:0.2.0'
+
 
     // Accompanist - swipe refresh screen
     implementation "com.google.accompanist:accompanist-swiperefresh:0.27.0"

@@ -36,6 +36,8 @@ import com.example.bachelorthesisapp.presentation.ui.theme.RoseDark
 import com.example.bachelorthesisapp.presentation.ui.theme.RoseLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 
 @Composable
 fun RequestsCard(
@@ -49,12 +51,6 @@ fun RequestsCard(
             .height(130.dp)
             .fillMaxWidth()
             .clickable { onCardClick() },
-//            .animateContentSize(
-//                animationSpec = tween(
-//                    durationMillis = 300,
-//                    easing = LinearOutSlowInEasing
-//                )
-//            ),
         backgroundColor = Color.White,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp)
@@ -86,7 +82,7 @@ fun RequestsCard(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_notifications_none_24),
                     contentDescription = "",
-                    tint = Rose,
+                    tint = CoralAccent,
                     modifier = Modifier.padding(10.dp)
                 )
             }
@@ -108,14 +104,14 @@ fun RequestsCard(
                         .size(35.dp)
                         .aspectRatio(2f)
                         .padding(top = 0.dp)
-                        .background(Rose, shape = CircleShape)
+                        .background(Coral, shape = CircleShape)
                         .border(
                             width = 1.dp,
                             brush = Brush.horizontalGradient(
                                 colors = listOf(
-                                    RoseDark,
-                                    RoseLight,
-                                    RoseDark
+                                    CoralAccent,
+                                    Coral,
+                                    CoralAccent
                                 )
                             ),
                             shape = RoundedCornerShape(50.dp)

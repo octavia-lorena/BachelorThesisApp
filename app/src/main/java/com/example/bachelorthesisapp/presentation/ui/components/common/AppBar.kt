@@ -1,7 +1,9 @@
 package com.example.bachelorthesisapp.presentation.ui.components.common
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,13 +24,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.presentation.ui.navigation.NavigationItemBusiness
 import com.example.bachelorthesisapp.presentation.ui.navigation.NavigationItemClient
-import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import kotlinx.coroutines.launch
@@ -95,11 +98,11 @@ fun BusinessHomeAppBar(
 fun BusinessSecondaryAppBar(
     title: String,
     navController: NavHostController,
-    backgroundColor: Color = Coral,
+    backgroundColor: Color = CoralAccent,
     elevation: Dp = 15.dp
 ) {
     TopAppBar(
-        modifier = Modifier.height(120.dp),
+        modifier = Modifier.height(100.dp),
         backgroundColor = backgroundColor,
         elevation = elevation
     ) {
@@ -204,18 +207,27 @@ fun BottomNavigationBarBusiness(
     )
 
     BottomNavigation(
-        modifier = modifier.height(70.dp),
-        backgroundColor = Coral
+        modifier = modifier.height(60.dp).fillMaxSize(),
+        backgroundColor = Color.White,
+        elevation = 0.dp
     ) {
         items.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route
             BottomNavigationItem(
-                icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
-                selectedContentColor = CoralLight,
-                unselectedContentColor = Color.White,
+                icon = {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(painterResource(id = item.icon), contentDescription = item.title)
+                        Text(text = item.title, fontSize = 12.sp, style = Typography.caption)
+                    }
+                },
+                selectedContentColor = CoralAccent,
+                unselectedContentColor = Color.Gray,
                 alwaysShowLabel = false,
                 selected = selected,
-                onClick = { onItemClick(item) }
+                onClick = { onItemClick(item) },
             )
         }
 
@@ -236,7 +248,7 @@ fun BottomNavigationBarClient(
 
     BottomNavigation(
         modifier = modifier.height(70.dp),
-        backgroundColor = Coral
+        backgroundColor = CoralAccent
     ) {
         items.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route

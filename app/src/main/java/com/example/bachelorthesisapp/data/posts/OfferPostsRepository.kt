@@ -151,7 +151,7 @@ class OfferPostsRepository @Inject constructor(
 
     suspend fun addPost(post: OfferPost) {
         try {
-            _postResultFlow.emit(Resource.Loading())
+            //_postResultFlow.emit(Resource.Loading())
             val result = postRemoteDataSource.addPost(post)
             _postResultFlow.emit(Resource.Success(result.toEntity()))
         } catch (e: Exception) {

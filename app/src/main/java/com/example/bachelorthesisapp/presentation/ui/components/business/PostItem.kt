@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
@@ -38,7 +37,6 @@ import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
-import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.core.resources.Resource
 
 @Composable
@@ -50,6 +48,7 @@ fun PostItem(
     navHostController: NavHostController
 ) {
     val postState = businessViewModel.postState1
+    val storageRef = businessViewModel.storageRef
 
 
     var isDialogOpen by remember {
@@ -59,7 +58,7 @@ fun PostItem(
     if (isDialogOpen) {
         Dialog(
             onDismissRequest = { isDialogOpen = false },
-            properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false)
+            properties = DialogProperties(dismissOnClickOutside = true, dismissOnBackPress = true)
         ) {
             Card(
                 modifier = Modifier
@@ -77,7 +76,7 @@ fun PostItem(
                     Text(
                         modifier = Modifier.padding(7.dp),
                         text = "Are you sure you want to delete this post?",
-                        color = Color.Gray
+                        style = Typography.caption
                     )
                     Row(
                         modifier = Modifier
@@ -129,12 +128,11 @@ fun PostItem(
     Box(
         Modifier
             .fillMaxWidth()
-            .height(280.dp),
+            .height(300.dp),
     ) {
         ActionsRow(
             actionIconSize = 56.dp,
             onDelete = {
-                //businessViewModel.deletePost(post)
                 isDialogOpen = true
                 cardsViewModel.reset()
             },
@@ -153,14 +151,13 @@ fun PostItem(
         )
         PostDraggableCard(
             post = post,
-            cardHeight = 260.dp,
             isRevealed = revealedCards.contains(post.id),
             cardOffset = -300f,
             onExpand = {
                 cardsViewModel.onItemExpanded(post.id)
                 businessViewModel.findPostById(post.id)
                 businessViewModel.setUpdatePostState(post)
-            },
-            onCollapse = { cardsViewModel.onItemCollapsed(post.id) })
+            }
+        ) { cardsViewModel.onItemCollapsed(post.id) }
     }
 }

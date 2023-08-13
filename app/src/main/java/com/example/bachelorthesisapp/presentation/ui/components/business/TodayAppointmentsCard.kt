@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,15 +38,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bachelorthesisapp.R
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Green
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
-import com.example.bachelorthesisapp.core.presentation.UiState
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalDate
@@ -65,13 +65,7 @@ fun TodayAppointmentsCard(
         modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(top = 2.dp),
-//            .animateContentSize(
-//                animationSpec = tween(
-//                    durationMillis = 300,
-//                    easing = LinearOutSlowInEasing
-//                )
- //           ),
+            .padding(top = 10.dp),
         backgroundColor = Color.White,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp)
@@ -118,7 +112,7 @@ fun TodayAppointmentsCard(
                             ) {
                                 Text(
                                     modifier = Modifier.padding(1.dp),
-                                    text = "${contentAppointmentsToday.value.size}",
+                                    text = "${appointments.size}",
                                     color = Color.White,
                                     textAlign = TextAlign.Center,
                                     fontSize = 15.sp
@@ -132,7 +126,6 @@ fun TodayAppointmentsCard(
                                 .firstOrNull { it.date == LocalDate.now() }
                             if (event != null)
                                 TodayAppointmentElement(
-                                    post = post,
                                     event = event
                                 )
 
@@ -148,8 +141,7 @@ fun TodayAppointmentsCard(
 
 @Composable
 fun TodayAppointmentElement(
-    event: Event,
-    post: OfferPost
+    event: Event
 ) {
     Row(
         modifier = Modifier
@@ -168,7 +160,7 @@ fun TodayAppointmentElement(
                     .size(10.dp)
                     .aspectRatio(1f)
                     .padding(top = 0.dp)
-                    .background(Coral, shape = AbsoluteCutCornerShape(5.dp)),
+                    .background(CoralAccent, shape = AbsoluteCutCornerShape(5.dp)),
             )
             Spacer(modifier = Modifier.width(10.dp))
             Column(

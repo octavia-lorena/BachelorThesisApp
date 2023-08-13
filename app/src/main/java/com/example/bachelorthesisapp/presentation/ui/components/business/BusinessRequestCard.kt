@@ -47,6 +47,7 @@ import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import kotlinx.coroutines.launch
@@ -98,7 +99,7 @@ fun BusinessRequestCard(
                     Text(
                         modifier = Modifier.padding(7.dp),
                         text = "Are you sure you want to accept this request?",
-                        color = Color.Gray
+                        style = Typography.caption
                     )
                     Row(
                         modifier = Modifier
@@ -140,7 +141,7 @@ fun BusinessRequestCard(
                                 .height(50.dp)
                                 .width(100.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Coral)
+                            colors = ButtonDefaults.buttonColors(backgroundColor = CoralLight)
                         ) {
                             Text(
                                 text = "Accept",
@@ -178,7 +179,7 @@ fun BusinessRequestCard(
                     Text(
                         modifier = Modifier.padding(7.dp),
                         text = "Are you sure you want to decline this request?",
-                        color = Color.Gray
+                        style = Typography.caption
                     )
                     Row(
                         modifier = Modifier

@@ -45,6 +45,7 @@ fun EventDetailsScreenContent(
     onCityClicked: (String) -> Unit = {},
     onEditClick: (Int) -> Unit = {},
     onPublishClick: (Int) -> Unit = {},
+    onCollaborationCanceledClicked: (Int) -> Unit = {},
     postsList: List<OfferPost> = listOf(
         OfferPost(1, "", "Cake", "", emptyList(), 200, Rating(4.4, 1)),
         OfferPost(2, "", "Decor", "", emptyList(), 200, Rating(4.4, 1)),
@@ -55,10 +56,11 @@ fun EventDetailsScreenContent(
         event = event,
         onBusinessTypeFilterClick = onBusinessTypeFilterClick,
         businessState = businessState,
+        postsList = postsList,
         onBusinessClick = onBusinessClick,
         onCityClicked = onCityClicked,
-        postsList = postsList,
         onEditClick = onEditClick,
-        onPublishClick = onPublishClick
+        onPublishClick = onPublishClick,
+        onCollaborationCanceledClicked = onCollaborationCanceledClicked
     )
 }

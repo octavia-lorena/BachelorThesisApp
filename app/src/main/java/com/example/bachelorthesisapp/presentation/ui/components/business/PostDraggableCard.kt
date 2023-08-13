@@ -1,14 +1,19 @@
 package com.example.bachelorthesisapp.presentation.ui.components.business
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,28 +24,37 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.presentation.ui.theme.NavyBlue
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
+import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.ui.theme.WhiteTransparent
 import kotlin.math.roundToInt
@@ -48,11 +62,11 @@ import kotlin.math.roundToInt
 const val ANIMATION_DURATION = 500
 const val MIN_DRAG_AMOUNT = 6
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 fun PostDraggableCard(
     post: OfferPost,
-    cardHeight: Dp,
     isRevealed: Boolean,
     cardOffset: Float,
     onExpand: () -> Unit,
@@ -68,7 +82,7 @@ fun PostDraggableCard(
         label = "cardBgColorTransition",
         transitionSpec = { tween(durationMillis = ANIMATION_DURATION) },
         targetValueByState = {
-            if (isRevealed) WhiteTransparent else Color.White
+            if (isRevealed) CoralLight else OffWhite
         }
     )
     val offsetTransition by transition.animateFloat(
@@ -80,14 +94,14 @@ fun PostDraggableCard(
     val cardElevation by transition.animateDp(
         label = "cardElevation",
         transitionSpec = { tween(durationMillis = ANIMATION_DURATION) },
-        targetValueByState = { if (isRevealed) 40.dp else 2.dp }
+        targetValueByState = { if (isRevealed) 10.dp else 2.dp }
     )
+
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 5.dp, vertical = 10.dp)
-            .height(cardHeight)
+            .fillMaxSize()
+            .padding(horizontal = 2.dp, vertical = 2.dp)
             .offset { IntOffset(offsetTransition.roundToInt(), 0) }
             .pointerInput(Unit) {
                 detectHorizontalDragGestures { _, dragAmount ->
@@ -97,77 +111,110 @@ fun PostDraggableCard(
                     }
                 }
             },
-        backgroundColor = cardBgColor,
-        shape = remember {
-            RoundedCornerShape(0.dp)
-        },
-        elevation = cardElevation,
+        colors = CardDefaults.cardColors(containerColor = cardBgColor),
+        shape = RectangleShape,
+        elevation = CardDefaults.elevatedCardElevation(cardElevation),
         content = {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .wrapContentHeight()
                     .padding(15.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top
             ) {
-
-                Text(
-                    text = post.title,
-                    color = NavyBlue
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = post.description,
-                    color = NavyBlue
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(130.dp)
-                ) {
-                    val imagesList = post.images
-                    items(imagesList.size) { imageIndex ->
-                        val imgUri = imagesList[imageIndex]
-                        Card(
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(start = 6.dp, end = 6.dp),
-                            backgroundColor = Rose
-                        ) {
-//                            Text(text = it.toString())
-//                            AsyncImage(
-//                                model = it,
-//                                contentDescription = null,
-//                                modifier = Modifier.fillMaxSize(),
-//                                contentScale = ContentScale.Crop
-//                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(7.dp))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            text = post.rating.value.toString(),
-                            style = Typography.subtitle1,
-                            color = Color.DarkGray
+                            modifier = Modifier.weight(6f),
+                            text = post.title,
+                            style = Typography.h6,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.width(2.dp))
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_star_24),
-                            contentDescription = null,
-                            tint = Color.Black
+                        Spacer(modifier = Modifier.width(15.dp))
+
+                    }
+                    // Photo carrousel
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+
+                    ) {
+                        items(post.images.size) { index ->
+                            AsyncImage(
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .padding(end = 3.dp),
+                                model = post.images[index],
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                placeholder = painterResource(id = R.drawable.baseline_image_24)
+                            )
+                        }
+
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier.padding(start = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_star_24),
+                                contentDescription = null,
+                                tint = Color.DarkGray
+                            )
+                            Text(
+                                text = "${post.rating.value}",
+                                color = Color.DarkGray,
+                                style = Typography.caption
+                            )
+
+                        }
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start,
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_attach_money_24),
+                                contentDescription = null,
+                                tint = Color.DarkGray
+                            )
+                            Text(
+                                text = "${post.price}",
+                                color = Color.DarkGray,
+                                style = Typography.caption
+                            )
+
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = post.description, style = Typography.caption,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
                         )
                     }
-
-                    Spacer(modifier = Modifier.width(180.dp))
 
                 }
             }
@@ -211,3 +258,4 @@ fun ActionsRow(
         )
     }
 }
+

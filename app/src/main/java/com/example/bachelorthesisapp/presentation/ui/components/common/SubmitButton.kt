@@ -14,12 +14,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.bachelorthesisapp.data.model.events.ClientRegisterEvent
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 
 @Composable
-fun SubmitButton(onClick: () -> Unit, text: String, backgroundColor: Color = Coral, enabled: Boolean = true) = Button(
+fun SubmitButton(
+    onClick: () -> Unit,
+    text: String,
+    backgroundColor: Color = CoralAccent,
+    enabled: Boolean = true,
+) = Button(
     modifier = Modifier
         .height(50.dp)
         .width(150.dp),
@@ -31,20 +37,29 @@ fun SubmitButton(onClick: () -> Unit, text: String, backgroundColor: Color = Cor
 ) {
     Text(
         text = text,
-        style = Typography.subtitle1,
+        style = Typography.button,
         color = Color.White
     )
 }
 
 @Composable
-fun SmallSubmitButton(onClick: () -> Unit, text: String) = Button(
+fun SmallSubmitButton(
+    onClick: () -> Unit,
+    text: String,
+    backgroundColor: Color = Color.Gray,
+    textColor: Color = Color.White
+) = Button(
     modifier = Modifier
         .wrapContentHeight()
         .wrapContentWidth(),
     onClick = onClick,
-    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray),
+    colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor),
     elevation = ButtonDefaults.elevation(defaultElevation = 5.dp),
     shape = RoundedCornerShape(10.dp)
 ) {
-    Text(text = text)
+    Text(
+        text = text,
+        color = textColor,
+        style = Typography.caption
+    )
 }

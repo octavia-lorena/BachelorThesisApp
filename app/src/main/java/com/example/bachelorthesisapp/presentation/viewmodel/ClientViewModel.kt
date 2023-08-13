@@ -234,9 +234,20 @@ class ClientViewModel @Inject constructor(
     val eventResultState: Flow<UiState<Event>> =
         eventsRepository.eventResultFlow.map { eventResult ->
             when (eventResult) {
-                is Resource.Error -> UiState.Error(eventResult.exception)
-                is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(eventResult.data)
+                is Resource.Error -> {
+                    _isLoading.value = false
+                    UiState.Error(eventResult.exception)
+                }
+
+                is Resource.Loading -> {
+                    _isLoading.value = true
+                    UiState.Loading
+                }
+
+                is Resource.Success -> {
+                    _isLoading.value = false
+                    UiState.Success(eventResult.data)
+                }
             }
         }
 
@@ -317,9 +328,20 @@ class ClientViewModel @Inject constructor(
     val postBusinessState: Flow<UiState<List<OfferPost>>> =
         postsRepository.postBusinessFlow.map { postEntities ->
             when (postEntities) {
-                is Resource.Error -> UiState.Error(postEntities.exception)
-                is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(postEntities.data)
+                is Resource.Error -> {
+                    _isLoading.value = false
+                    UiState.Error(postEntities.exception)
+                }
+
+                is Resource.Loading -> {
+                    _isLoading.value = true
+                    UiState.Loading
+                }
+
+                is Resource.Success -> {
+                    _isLoading.value = false
+                    UiState.Success(postEntities.data)
+                }
             }
         }
 
@@ -562,34 +584,42 @@ class ClientViewModel @Inject constructor(
         when (event) {
             is CreateEventEvent.TitleChanged -> {
                 createEventState = createEventState.copy(title = event.title)
+                validateTitleCreateEventForm()
             }
 
             is CreateEventEvent.DescriptionChanged -> {
                 createEventState = createEventState.copy(description = event.description)
+                validateDescriptionCreateEventForm()
             }
 
             is CreateEventEvent.DateChanged -> {
                 createEventState = createEventState.copy(date = event.date)
+                validateDateCreateEventForm()
             }
 
             is CreateEventEvent.TimeChanged -> {
                 createEventState = createEventState.copy(time = event.time)
+                validateTimeCreateEventForm()
             }
 
             is CreateEventEvent.TypeChanged -> {
                 createEventState = createEventState.copy(type = event.type)
+                validateTypeCreateEventForm()
             }
 
             is CreateEventEvent.BudgetChanged -> {
                 createEventState = createEventState.copy(budget = event.budget)
+                validateBudgetCreateEventForm()
             }
 
             is CreateEventEvent.GuestNumberChanged -> {
                 createEventState = createEventState.copy(guestNumber = event.guestNumber)
+                validateGuestNumberCreateEventForm()
             }
 
             is CreateEventEvent.VendorsChanged -> {
                 createEventState = createEventState.copy(vendors = event.vendors)
+                validateVendorsCreateEventForm()
             }
 
             is CreateEventEvent.PartialSubmit -> {
@@ -603,30 +633,288 @@ class ClientViewModel @Inject constructor(
         }
     }
 
+    private fun validateVendorsCreateEventForm() {
+        val result = createEventValidator.validateVendors(createEventState.vendors)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            createEventState = createEventState.copy(
+                vendorsError = result.errorMessage,
+            )
+            return
+        } else {
+            createEventState = createEventState.copy(
+                vendorsError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateBudgetCreateEventForm() {
+        val result = createEventValidator.validateBudget(createEventState.budget)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            createEventState = createEventState.copy(
+                budgetError = result.errorMessage,
+            )
+            return
+        } else {
+            createEventState = createEventState.copy(
+                budgetError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateBudgetUpdateEventForm() {
+        val result = updateEventValidator.validateBudget(updateEventState.budget)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            updateEventState = updateEventState.copy(
+                budgetError = result.errorMessage,
+            )
+            return
+        } else {
+            updateEventState = updateEventState.copy(
+                budgetError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateGuestNumberCreateEventForm() {
+        val result = createEventValidator.validateGuestNumber(createEventState.guestNumber)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            createEventState = createEventState.copy(
+                guestNumberError = result.errorMessage,
+            )
+            return
+        } else {
+            createEventState = createEventState.copy(
+                guestNumberError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateGuestNumberUpdateEventForm() {
+        val result = updateEventValidator.validateGuestNumber(updateEventState.guestNumber)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            updateEventState = updateEventState.copy(
+                guestNumberError = result.errorMessage,
+            )
+            return
+        } else {
+            updateEventState = updateEventState.copy(
+                guestNumberError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateTypeCreateEventForm() {
+        val result = createEventValidator.validateType(createEventState.type)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            createEventState = createEventState.copy(
+                typeError = result.errorMessage,
+            )
+            return
+        } else {
+            createEventState = createEventState.copy(
+                typeError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateTimeCreateEventForm() {
+        val result = createEventValidator.validateTime(createEventState.time)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            createEventState = createEventState.copy(
+                timeError = result.errorMessage,
+            )
+            return
+        } else {
+            createEventState = createEventState.copy(
+                timeError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateTimeUpdateEventForm() {
+        val result = updateEventValidator.validateTime(updateEventState.time)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            updateEventState = updateEventState.copy(
+                timeError = result.errorMessage,
+            )
+            return
+        } else {
+            updateEventState = updateEventState.copy(
+                timeError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateDateCreateEventForm() {
+        val result = createEventValidator.validateDate(createEventState.date)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            createEventState = createEventState.copy(
+                dateError = result.errorMessage,
+            )
+            return
+        } else {
+            createEventState = createEventState.copy(
+                dateError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateDateUpdateEventForm() {
+        val result = updateEventValidator.validateDate(updateEventState.date)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            updateEventState = updateEventState.copy(
+                dateError = result.errorMessage,
+            )
+            return
+        } else {
+            updateEventState = updateEventState.copy(
+                dateError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateDescriptionCreateEventForm() {
+        val result = createEventValidator.validateDescription(createEventState.description)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            createEventState = createEventState.copy(
+                descriptionError = result.errorMessage,
+            )
+            return
+        } else {
+            createEventState = createEventState.copy(
+                descriptionError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateDescriptionUpdateEventForm() {
+        val result = updateEventValidator.validateDescription(updateEventState.description)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            updateEventState = updateEventState.copy(
+                descriptionError = result.errorMessage,
+            )
+            return
+        } else {
+            updateEventState = updateEventState.copy(
+                descriptionError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateTitleCreateEventForm() {
+        val result = createEventValidator.validateTitle(createEventState.title)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            createEventState = createEventState.copy(
+                titleError = result.errorMessage,
+            )
+            return
+        } else {
+            createEventState = createEventState.copy(
+                titleError = null,
+            )
+            return
+        }
+    }
+
+    private fun validateTitleUpdateEventForm() {
+        val result = updateEventValidator.validateTitle(updateEventState.name)
+        val hasError = listOf(
+            result,
+        ).any { !it.success }
+        if (hasError) {
+            updateEventState = updateEventState.copy(
+                nameError = result.errorMessage,
+            )
+            return
+        } else {
+            updateEventState = updateEventState.copy(
+                nameError = null,
+            )
+            return
+        }
+    }
+
     fun onUpdateEventEvent(event: UpdateEventEvent) {
         when (event) {
             is UpdateEventEvent.NameChanged -> {
                 updateEventState = updateEventState.copy(name = event.name)
+                validateTitleUpdateEventForm()
             }
 
             is UpdateEventEvent.DescriptionChanged -> {
                 updateEventState = updateEventState.copy(description = event.description)
+                validateDescriptionUpdateEventForm()
             }
 
             is UpdateEventEvent.DateChanged -> {
                 updateEventState = updateEventState.copy(date = event.date)
+                validateDateUpdateEventForm()
             }
 
             is UpdateEventEvent.TimeChanged -> {
                 updateEventState = updateEventState.copy(time = event.time)
+                validateTimeUpdateEventForm()
             }
 
             is UpdateEventEvent.BudgetChanged -> {
                 updateEventState = updateEventState.copy(budget = event.budget)
+                validateBudgetUpdateEventForm()
             }
 
             is UpdateEventEvent.GuestNumberChanged -> {
                 updateEventState = updateEventState.copy(guestNumber = event.guestNumber)
+                validateGuestNumberUpdateEventForm()
             }
 
             is UpdateEventEvent.Submit -> {
@@ -975,6 +1263,31 @@ class ClientViewModel @Inject constructor(
         viewModelScope.launch {
             eventsRepository.publishEvent(eventId)
         }
+    }
+
+    fun cancelAppointment(
+        requestId: Int,
+        business: BusinessEntity,
+        event: Event,
+        post: OfferPost,
+        clientDeviceId: String
+    ) {
+        viewModelScope.launch {
+            // delete request
+            requestsRepository.deleteAppointment(requestId)
+            // update event - set vendor value for the category to -1, reset the event cost <- cost - post.price
+            eventsRepository.setVendorValue(event.id, business.businessType.name, -1)
+            eventsRepository.setEventCost(event.id, -post.price)
+
+        }
+        sendNotification(
+            PushNotification(
+                data = NotificationData(
+                    "Canceled appointment",
+                    "${business.businessName}, ${business.businessType} canceled the appointment for ${event.name}, with ${post.title}"
+                ), to = clientDeviceId
+            )
+        )
     }
 
     fun clearUpdateEventState() {

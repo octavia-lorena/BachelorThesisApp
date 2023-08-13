@@ -6,13 +6,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostFloatingButton
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarBusiness
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessDrawerContent
 import com.example.bachelorthesisapp.presentation.ui.components.business.PostItem
@@ -31,6 +34,7 @@ import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostExpandableFloatingButton
 
 
 @Composable
@@ -39,12 +43,17 @@ fun BusinessPostsHomeScreen(
     authViewModel: AuthViewModel,
     businessViewModel: BusinessViewModel,
     navHostController: NavHostController,
-    onPostClick: (Int) -> Unit,
     cardsViewModel: CardSwipeViewModel
 ) {
     val postBusinessState =
         businessViewModel.postBusinessState.collectAsStateWithLifecycle(UiState.Loading)
     val scaffoldState = rememberScaffoldState()
+    val listState = rememberLazyListState()
+    val expandedFab by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex == 0
+        }
+    }
 
     LaunchedEffect(key1 = true) {
         businessViewModel.loadPostData()
@@ -68,7 +77,10 @@ fun BusinessPostsHomeScreen(
                 })
         },
         floatingActionButton = {
-            AddPostFloatingButton(navHostController = navHostController)
+            AddPostExpandableFloatingButton(
+                navHostController = navHostController,
+                expanded = expandedFab
+            )
         },
         scaffoldState = scaffoldState,
         drawerContent = {
@@ -84,13 +96,14 @@ fun BusinessPostsHomeScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding() + 50.dp, top = 10.dp)
+                .padding(bottom = innerPadding.calculateBottomPadding() + 10.dp, top = 0.dp)
         ) {
             BusinessPostsHomeScreenContent(
                 contentPosts = postBusinessState.value,
                 businessViewModel = businessViewModel,
                 cardsViewModel = cardsViewModel,
-                navHostController = navHostController
+                navHostController = navHostController,
+                listState = listState
             )
         }
     }
@@ -101,7 +114,8 @@ fun BusinessPostsHomeScreenContent(
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
     businessViewModel: BusinessViewModel,
     cardsViewModel: CardSwipeViewModel,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    listState: LazyListState,
 ) {
     val revealedCardIds by cardsViewModel.revealedCardIdsList.collectAsStateWithLifecycle()
 
@@ -112,7 +126,7 @@ fun BusinessPostsHomeScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 10.dp)
+            .padding(top = 5.dp)
     ) {
         when (contentPosts) {
             is UiState.Loading -> {
@@ -127,6 +141,7 @@ fun BusinessPostsHomeScreenContent(
                 val postsList = contentPosts.value
                 Log.d("POSTS", postsList.toString())
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .padding(5.dp)
                         .fillMaxSize(),

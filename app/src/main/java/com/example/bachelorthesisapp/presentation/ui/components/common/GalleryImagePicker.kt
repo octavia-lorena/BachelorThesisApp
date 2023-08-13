@@ -1,13 +1,17 @@
 package com.example.bachelorthesisapp.presentation.ui.components.common
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.util.Base64
 import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
@@ -34,16 +39,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bachelorthesisapp.R
+import com.example.bachelorthesisapp.data.authentication.await
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
+import com.google.android.gms.tasks.Task
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
+import java.io.ByteArrayOutputStream
 
 @Preview(showSystemUi = true, showBackground = true)
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun GalleryImagePicker(onValueChanged: (String) -> Unit = {}) {
+fun GalleryImagePicker(
+    postId: Int = 0,
+    postName: String = "",
+    onValueChanged: (String) -> Unit = {}
+) {
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
-    val imagesList by remember {
+    val urisList by remember {
         mutableStateOf<MutableList<Uri?>>(
             mutableListOf(
             )
@@ -57,19 +71,25 @@ fun GalleryImagePicker(onValueChanged: (String) -> Unit = {}) {
     ) { uri: Uri? ->
         imageUri = uri
         Log.d("URI", "$uri")
-        if (imageUri !in imagesList) {
-            imagesList.add(imageUri)
-            val imagesString = imagesList.joinToString(";") { it.toString() }
-            onValueChanged(imagesString)
+        if (imageUri !in urisList) {
+            imageUri?.let { imgUri ->
+                urisList.add(imgUri)
+                val imagesString = urisList.joinToString(";") { it.toString() }
+                onValueChanged(imagesString)
+            }
         }
     }
 
     Column(
         horizontalAlignment = Alignment.Start, modifier = Modifier
             .fillMaxWidth()
-            .height(500.dp)
+            .wrapContentHeight()
     ) {
-        Row(modifier = Modifier.padding(start = 10.dp)) {
+        Row(
+            modifier = Modifier.padding(start = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
             Text(
                 modifier = Modifier,
                 text = stringResource(R.string.Images),
@@ -88,22 +108,24 @@ fun GalleryImagePicker(onValueChanged: (String) -> Unit = {}) {
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp).padding(3.dp),
+                .wrapContentHeight()
+                .padding(3.dp),
             state = rememberLazyListState(initialFirstVisibleItemIndex = 0)
         ) {
-            Log.d("IMAGES", imagesList.toString())
-            items(imagesList.size) { imageIndex ->
-                val imgUri = imagesList[imageIndex]
+            Log.d("IMAGES", urisList.toString())
+            items(urisList.size) { imageIndex ->
+                val imgUri = urisList[imageIndex]
                 imgUri?.let {
                     val source = ImageDecoder
                         .createSource(context.contentResolver, it)
                     bitmap.value = ImageDecoder.decodeBitmap(source)
-
                     bitmap.value?.let { btm ->
                         Image(
                             bitmap = btm.asImageBitmap(),
                             contentDescription = null,
-                            modifier = Modifier.size(200.dp).padding(5.dp),
+                            modifier = Modifier
+                                .size(200.dp)
+                                .padding(5.dp),
                             contentScale = ContentScale.Crop
                         )
                     }

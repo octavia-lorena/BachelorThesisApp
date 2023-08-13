@@ -1,24 +1,27 @@
 package com.example.bachelorthesisapp.domain.model
 
 import android.net.Uri
-import androidx.room.Entity
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 
-@Entity(tableName = "posts_venue")
-class OfferPostVenue(
+data class OfferPostModel(
     val id: Int,
     val businessId: String,
     val title: String,
     val description: String,
     val images: List<String>,
     val price: Int,
-    val rating: Rating,
-    var maxCapacity: Int
-) : OfferPostGeneric(
+    val rating: Map<String, String>,
+)
+
+fun OfferPost.toModel() = OfferPostModel(
     id = id,
     businessId = businessId,
     title = title,
     description = description,
     images = images,
     price = price,
-    rating = rating
+    rating = mapOf(
+        Pair("value", rating.value.toString()),
+        Pair("voterCount", rating.voterCount.toString())
+    )
 )

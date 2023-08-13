@@ -7,6 +7,7 @@ import com.example.bachelorthesisapp.core.remote.NetworkCallException
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.data.posts.remote.api.PostApi
 import com.example.bachelorthesisapp.data.posts.remote.dto.OfferPostDto
+import com.example.bachelorthesisapp.domain.model.toModel
 import javax.inject.Inject
 import retrofit2.Response
 
@@ -37,7 +38,7 @@ class PostRemoteDataSourceImpl @Inject constructor(
     override suspend fun getPostByBusinessId(businessId: String): List<OfferPostDto> =
         api.getPostsByBusinessId(businessId)
 
-    override suspend fun addPost(post: OfferPost): OfferPostDto = api.addPost(post)
+    override suspend fun addPost(post: OfferPost): OfferPostDto = api.addPost(post.toModel())
     override suspend fun deletePost(id: Int): OfferPostDto = api.deletePost(id)
     override suspend fun updatePost(
         id: Int,

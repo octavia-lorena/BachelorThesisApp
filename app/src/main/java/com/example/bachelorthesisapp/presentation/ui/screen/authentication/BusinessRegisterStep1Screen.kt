@@ -31,6 +31,7 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.LargeDrop
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 
@@ -97,7 +98,7 @@ fun BusinessRegisterStep1Screen(authViewModel: AuthViewModel, navController: Nav
                     BottomClickableText(
                         text = "Already have an account? Sign In here.",
                         onClick = { navController.navigate(Routes.LoginScreen.route) },
-                        color = Coral
+                        color = CoralAccent
                     )
                     Spacer(modifier = Modifier.height(37.dp))
                     Box(modifier = Modifier.wrapContentSize()) {

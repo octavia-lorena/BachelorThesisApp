@@ -1,17 +1,17 @@
 package com.example.bachelorthesisapp.presentation.ui.components.common
 
-import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
-import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
-import okhttp3.Route
 
 @Composable
 fun AddPostFloatingButton(navHostController: NavHostController) {
@@ -28,7 +28,29 @@ fun AddPostFloatingButton(navHostController: NavHostController) {
                 tint = Color.White
             )
         },
-        backgroundColor = Rose
+        containerColor = Rose,
+        shape = RoundedCornerShape(50.dp)
+    )
+}
+
+@Composable
+fun AddPostExpandableFloatingButton(navHostController: NavHostController, expanded: Boolean) {
+    ExtendedFloatingActionButton(
+        text = { Text(text = "NEW POST", color = Color.White) },
+        onClick = {
+            // Navigate to Create Post Screen
+            navHostController.navigate(Routes.CreateOfferPostScreen.route)
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "",
+                tint = Color.White
+            )
+        },
+        containerColor = Rose,
+        expanded = expanded,
+        shape = RoundedCornerShape(50.dp)
     )
 }
 
@@ -47,6 +69,6 @@ fun CreateEventFloatingButton(navHostController: NavHostController, uid: String)
                 tint = Color.White
             )
         },
-        backgroundColor = Rose
+        containerColor = Rose
     )
 }

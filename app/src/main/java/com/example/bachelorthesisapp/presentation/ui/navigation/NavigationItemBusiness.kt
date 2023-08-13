@@ -14,7 +14,7 @@ sealed class NavigationItemBusiness(var route: String, var icon: Int, var title:
         NavigationItemBusiness(
             route = "posts_business/{uid}",
             icon = R.drawable.baseline_person_24,
-            title = "Feed"
+            title = "Posts"
         )
 
     object Appointments :

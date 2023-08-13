@@ -32,12 +32,14 @@ import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGrayDark
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun EventDetailsFrontLayerContent(
     businessState: UiState<List<BusinessEntity>> = UiState.Loading,
+    postsList: List<OfferPost> = listOf(),
     onBusinessClick: (String) -> Unit = {},
     onCityClicked: (String) -> Unit = {},
 ) {
@@ -98,7 +100,13 @@ fun EventDetailsFrontLayerContent(
                     businessList = businessList.filter { it.city == selectedCity }
                 items(businessList.size) { index ->
                     val business = businessList[index]
-                    EventDetailsBusinessCard(business = business, onBusinessClick = onBusinessClick)
+                    EventDetailsBusinessCard(
+                        business = business,
+                        postsList = postsList.filter { it.businessId == business.id },
+                        onBusinessClick = onBusinessClick
+                    )
+
+
                 }
             }
 

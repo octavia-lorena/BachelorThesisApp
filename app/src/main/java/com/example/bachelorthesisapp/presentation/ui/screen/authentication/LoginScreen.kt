@@ -78,7 +78,7 @@ fun LoginScreenContent(
             .fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.register_gradient_background),
+            painter = painterResource(id = R.drawable.login_logo),
             contentDescription = "background",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
@@ -90,7 +90,7 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        top = 155.dp,
+                        top = 195.dp,
                         start = 25.dp,
                         end = 25.dp,
                         bottom = innerPadding.calculateBottomPadding()
@@ -127,12 +127,6 @@ fun LoginScreenContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     //verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "EVENT SPACE",
-                        style = Typography.h1,
-                        color = Color.White
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "Welcome back!",
                         style = Typography.body2,
@@ -284,40 +278,10 @@ fun LoginScreenContent(
                         text = "Sign In"
                     )
                     Spacer(modifier = Modifier.height(200.dp))
-//                    Text(
-//                        text = "Or Sign-In with",
-//                        style = Typography.subtitle2.copy(color = Color.DarkGray)
-//                    )
-//                    Spacer(modifier = Modifier.height(19.dp))
-//                    // Google, Facebook sign in buttons
-//                    Row() {
-//                        IconButton(
-//                            onClick = { /*TODO*/ },
-//                            modifier = Modifier.size(37.dp)
-//                        ) {
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.google_icon),
-//                                contentDescription = "Google icon",
-//                                tint = Color.Unspecified
-//                            )
-//                        }
-//                        Spacer(modifier = Modifier.width(30.dp))
-//                        IconButton(
-//                            onClick = { /*TODO*/ },
-//                            modifier = Modifier.size(37.dp)
-//                        ) {
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.facebook_logo),
-//                                contentDescription = "Facebook icon",
-//                                tint = Color.Unspecified
-//                            )
-//                        }
-//                    }
-//                    Spacer(modifier = Modifier.height(120.dp))
                     BottomClickableText(
                         text = "New to Event Space? Create an account here.",
                         onClick = { navController.navigate(Routes.MainRegisterScreen.route) },
-                        color = Color.Black
+                        color = Color.Black,
                     )
                 }
             }

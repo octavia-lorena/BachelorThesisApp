@@ -14,6 +14,7 @@ import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -32,12 +33,12 @@ fun EventDetailsBackdrop(
         scaffoldState = rememberBackdropScaffoldState(BackdropValue.Revealed),
         frontLayerShape = RoundedCornerShape(30.dp),
         frontLayerScrimColor = Color.Unspecified,
-        frontLayerBackgroundColor = SkyGray,
+        frontLayerBackgroundColor = OffWhite,
         backLayerBackgroundColor = Color.White,
         peekHeight = 60.dp,
         stickyFrontLayer = false,
         frontLayerElevation = 20.dp,
-        headerHeight = 200.dp,
+        headerHeight = 150.dp,
         // Back layer displays the event details info and the business type selection mechanism
         backLayerContent = {
             EventDetailsBackLayerContent(

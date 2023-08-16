@@ -14,6 +14,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
@@ -28,8 +29,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
+import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerColors
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
@@ -57,11 +60,11 @@ fun DropdownDateMenu(
 
     Box(modifier = modifier.height(IntrinsicSize.Min)) {
         TextField(
-            label = { Text(label) },
-            //value = state.type,
+            label = { Text(text = label, style = Typography.caption) },
             value = dateValue,
             enabled = enabled,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_calendar_today_24),
@@ -75,10 +78,20 @@ fun DropdownDateMenu(
                 dateValue = it
                 Log.d("TYPE_SELECTED", it)
             },
-            readOnly = true
+            readOnly = true,
+            textStyle = Typography.h6,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.Transparent,
+                focusedLabelColor = Color.Gray,
+                unfocusedLabelColor = Color.Transparent,
+                focusedIndicatorColor = CoralAccent,
+                unfocusedIndicatorColor = Color.Gray,
+                cursorColor = Color.Gray,
+                textColor = Color.Black
+            ),
         )
 
-        // Transparent clickable surface on top of OutlinedTextField
+        // Transparent clickable surface on top of TextField
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -120,7 +133,7 @@ fun DropdownDateMenu(
                         headerBackgroundColor = Rose,
                         headerTextColor = Color.White,
                         calendarHeaderTextColor = Rose,
-                        dateActiveBackgroundColor = CoralLight
+                        dateActiveBackgroundColor = CoralAccent
                     )
                 ) {
                     pickedDate = it

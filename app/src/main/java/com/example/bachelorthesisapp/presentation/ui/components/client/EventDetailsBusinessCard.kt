@@ -1,6 +1,5 @@
 package com.example.bachelorthesisapp.presentation.ui.components.client
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,22 +31,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
+import com.example.bachelorthesisapp.domain.model.BusinessType
 
 @Composable
+@Preview
 fun EventDetailsBusinessCard(
-    business: BusinessEntity,
+    business: BusinessEntity = BusinessEntity(
+        "",
+        "Name",
+        "username",
+        "email",
+        "pss",
+        "https://firebasestorage.googleapis.com/v0/b/eventspace-24f7d.appspot.com/o/images%2Fposts%2FSrjjuuIevANOmCBvDPQhFe5MnJo2%2F1691838598076.jpeg?alt=media&token=c1da6e38-35df-4a96-8162-c986ded88224",
+        BusinessType.PhotoVideo,
+        "Cluj",
+        "",
+        null,
+        null,
+        "",
+        ""
+    ),
     postsList: List<OfferPost> = listOf(),
     onBusinessClick: (String) -> Unit = {}
 ) {
@@ -55,13 +67,14 @@ fun EventDetailsBusinessCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .padding(top = 5.dp)
+            .padding(5.dp)
             .clickable {
                 // Navigate to business profile
                 onBusinessClick(business.id)
             },
         shape = RoundedCornerShape(3.dp),
-        colors = CardDefaults.cardColors(containerColor = OffWhite)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.elevatedCardElevation(7.dp)
     ) {
         Row(
             modifier = Modifier.padding(10.dp),
@@ -112,9 +125,9 @@ fun EventDetailsBusinessCard(
                 Text(text = business.city)
                 Text(text = "${postsList.size} posts")
             }
-            Spacer(modifier = Modifier.width(50.dp))
+            Spacer(modifier = Modifier.width(170.dp))
             IconButton(
-                modifier = Modifier.weight(1f),
+             //   modifier = Modifier.weight(1f),
                 onClick = {
                     // Navigate to business profile
                     onBusinessClick(business.id)

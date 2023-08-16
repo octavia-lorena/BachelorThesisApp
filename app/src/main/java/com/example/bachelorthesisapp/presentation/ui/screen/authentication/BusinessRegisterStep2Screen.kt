@@ -1,10 +1,18 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.authentication
 
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -15,19 +23,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.material.Text
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import coil.compose.AsyncImage
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.model.events.BusinessRegisterEvent
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
+import com.example.bachelorthesisapp.presentation.ui.components.common.SmallSubmitButton
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
@@ -36,7 +50,6 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostController) {
-
 
     Box {
         Image(
@@ -90,7 +103,7 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                 ) {
                     Text(
                         text = "Let us know more about your business",
-                        style = Typography.h3.copy(color = Coral)
+                        style = Typography.h3.copy(color = CoralAccent)
                     )
                     Spacer(modifier = Modifier.height(50.dp))
                     Box(modifier = Modifier.wrapContentSize()) {
@@ -208,7 +221,7 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                                         backgroundColor = Color.Transparent,
                                         focusedLabelColor = Color.Gray,
                                         unfocusedLabelColor = Color.Transparent,
-                                        focusedIndicatorColor = Ochre,
+                                        focusedIndicatorColor = CoralAccent,
                                         unfocusedIndicatorColor = Color.Gray,
                                         cursorColor = Color.Gray
                                     ),
@@ -238,7 +251,7 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                                         backgroundColor = Color.Transparent,
                                         focusedLabelColor = Color.Gray,
                                         unfocusedLabelColor = Color.Transparent,
-                                        focusedIndicatorColor = Ochre,
+                                        focusedIndicatorColor = CoralAccent,
                                         unfocusedIndicatorColor = Color.Gray,
                                         cursorColor = Color.Gray
                                     ),
@@ -256,6 +269,73 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                                 )
                             }
 
+                            Spacer(modifier = Modifier.height(20.dp))
+
+                        }
+                        item {
+                            Text(
+                                text = "Optionally, upload a profile picture.",
+                                style = Typography.subtitle1,
+                                color = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+                        item {
+                            var imageUrl by remember {
+                                mutableStateOf("")
+                            }
+                            val launcher = rememberLauncherForActivityResult(
+                                contract = ActivityResultContracts.GetContent()
+                            ) { uri: Uri? ->
+                                imageUrl = uri.toString()
+                            }
+                            LaunchedEffect(key1 = imageUrl) {
+                                authVM.onBusinessRegisterEvent(
+                                    BusinessRegisterEvent.ProfilePictureChanged(imageUrl)
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(90.dp)
+                                        .padding(top = 0.dp)
+                                        .background(Color.LightGray, shape = CircleShape)
+                                        .border(
+                                            width = 1.dp,
+                                            brush = Brush.horizontalGradient(
+                                                colors = listOf(
+                                                    Color.DarkGray,
+                                                    Color.Gray,
+                                                    Color.White
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(50.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape),
+                                        model = if (imageUrl != "") imageUrl else null,
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        placeholder = painterResource(id = R.drawable.profile_picture_placeholder)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(20.dp))
+                                SmallSubmitButton(
+                                    onClick = {
+                                        launcher.launch("image/*")
+                                    },
+                                    text = stringResource(id = R.string.Upload),
+                                    backgroundColor = Color.LightGray
+                                )
+                            }
                             Spacer(modifier = Modifier.height(120.dp))
 
                         }

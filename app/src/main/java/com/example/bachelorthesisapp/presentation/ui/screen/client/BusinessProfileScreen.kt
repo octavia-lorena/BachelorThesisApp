@@ -24,6 +24,9 @@ import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.components.common.LoadingScreen
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
@@ -54,35 +57,7 @@ fun BusinessProfileScreen(
 
     when (businessState) {
         is UiState.Loading -> {
-            Scaffold(
-                topBar = {
-                    BusinessProfileAppBar(
-                        title = "",
-                        navController = navHostController
-                    )
-                }, drawerGesturesEnabled = true, backgroundColor = Color.White
-            ) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = innerPadding.calculateBottomPadding(), top = 10.dp)
-                    ) {
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 65.dp)
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                backgroundColor = Rose,
-                                color = CoralLight
-                            )
-                        }
-                    }
-
-            }
-
+            LoadingScreen(navHostController = navHostController)
         }
 
         is UiState.Success -> {

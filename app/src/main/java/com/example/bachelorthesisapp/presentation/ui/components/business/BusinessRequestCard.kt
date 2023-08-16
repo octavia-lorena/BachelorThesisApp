@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,7 +49,10 @@ import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
+import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
+import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import kotlinx.coroutines.launch
@@ -79,8 +84,8 @@ fun BusinessRequestCard(
         Dialog(
             onDismissRequest = { isAcceptDialogOpen = false },
             properties = DialogProperties(
-                dismissOnClickOutside = false,
-                dismissOnBackPress = false
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true
             )
         ) {
             Card(
@@ -109,16 +114,21 @@ fun BusinessRequestCard(
                     ) {
                         Button(
                             onClick = { isAcceptDialogOpen = false },
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = SkyGray)
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Gray,
+                                        Color.LightGray,
+                                        Color.Gray
+                                    )
+                                )
+                            )
                         ) {
                             Text(
                                 text = "Cancel",
-                                color = Color.White,
-                                style = Typography.button
+                                style = Typography.button,
+                                color = Color.DarkGray
                             )
                         }
                         Spacer(modifier = Modifier.padding(15.dp))
@@ -127,25 +137,23 @@ fun BusinessRequestCard(
                                 isAcceptDialogOpen = false
                                 scope.launch {
                                     onAcceptRequest()
-//                                    clientViewModel.acceptRequest(
-//                                        requestId = request.id,
-//                                        business = business,
-//                                        event = event,
-//                                        clientDeviceId = client.deviceToken!!,
-//                                        postId = post.id
-//                                    )
-
                                 }
                             },
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = CoralLight)
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        GreenDark,
+                                        GreenLight,
+                                        GreenDark
+                                    )
+                                )
+                            )
                         ) {
                             Text(
                                 text = "Accept",
-                                style = Typography.button
+                                style = Typography.button,
+                                color = Color.DarkGray
                             )
                         }
                     }
@@ -159,8 +167,8 @@ fun BusinessRequestCard(
         Dialog(
             onDismissRequest = { isDeclineDialogOpen = false },
             properties = DialogProperties(
-                dismissOnClickOutside = false,
-                dismissOnBackPress = false
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true
             )
         ) {
             Card(
@@ -188,17 +196,24 @@ fun BusinessRequestCard(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(
-                            onClick = { isDeclineDialogOpen = false },
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = SkyGray)
+                            onClick = {
+                                isDeclineDialogOpen = false
+                            },
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Gray,
+                                        Color.LightGray,
+                                        Color.Gray
+                                    )
+                                )
+                            )
                         ) {
                             Text(
                                 text = "Cancel",
-                                color = Color.White,
-                                style = Typography.button
+                                style = Typography.button,
+                                color = Color.DarkGray
                             )
                         }
                         Spacer(modifier = Modifier.padding(15.dp))
@@ -207,24 +222,23 @@ fun BusinessRequestCard(
                                 isDeclineDialogOpen = false
                                 scope.launch {
                                     onDeclineRequest()
-//                                    clientViewModel.declineRequest(
-//                                        requestId = request.id,
-//                                        businessName = business.businessName,
-//                                        eventName = event.name,
-//                                        clientDeviceId = client.deviceToken!!
-//                                    )
-
                                 }
                             },
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Coral)
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        CoralAccent,
+                                        Coral,
+                                        CoralAccent
+                                    )
+                                )
+                            )
                         ) {
                             Text(
                                 text = "Decline",
-                                style = Typography.button
+                                style = Typography.button,
+                                color = Color.DarkGray
                             )
                         }
                     }
@@ -242,7 +256,7 @@ fun BusinessRequestCard(
                     easing = LinearOutSlowInEasing
                 )
             )
-            .padding(bottom = 5.dp),
+            .padding(bottom = 10.dp),
         shape = RoundedCornerShape(5.dp),
         onClick = {
             expandedState = !expandedState
@@ -253,7 +267,7 @@ fun BusinessRequestCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(5.dp),
+                .padding(10.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
@@ -270,7 +284,9 @@ fun BusinessRequestCard(
                     text = event.name,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    modifier = Modifier.weight(5f)
+                    modifier = Modifier.weight(5f),
+                    style = Typography.body2,
+                    color = Color.DarkGray
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 IconButton(
@@ -283,10 +299,12 @@ fun BusinessRequestCard(
                     }) {
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Drop-Down Arrow"
+                        contentDescription = "Drop-Down Arrow",
+                        tint = Color.DarkGray
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(3.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -307,6 +325,7 @@ fun BusinessRequestCard(
                 )
 
             }
+            Spacer(modifier = Modifier.height(3.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -320,6 +339,8 @@ fun BusinessRequestCard(
                 )
 
             }
+            Spacer(modifier = Modifier.height(5.dp))
+            // BUTTONS ROW
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
@@ -327,26 +348,45 @@ fun BusinessRequestCard(
                 Spacer(modifier = Modifier.width(80.dp))
                 Button(
                     onClick = { isAcceptDialogOpen = true },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Coral)
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    border = BorderStroke(
+                        width = 1.dp, brush = Brush.horizontalGradient(
+                            listOf(
+                                GreenDark,
+                                GreenLight,
+                                GreenDark
+                            )
+                        )
+                    )
                 ) {
                     Text(
                         text = "Accept",
                         style = Typography.button,
-                        color = Color.White
+                        color = Color.DarkGray
                     )
                 }
-                Spacer(modifier = Modifier.width(15.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = { isDeclineDialogOpen = true },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    border = BorderStroke(
+                        width = 1.dp, brush = Brush.horizontalGradient(
+                            listOf(
+                                CoralAccent,
+                                Coral,
+                                CoralAccent
+                            )
+                        )
+                    )
                 ) {
                     Text(
                         text = "Decline",
                         style = Typography.button,
-                        color = Color.White
+                        color = Color.DarkGray
                     )
                 }
             }
+            // EXPANDED CONTENT
             AnimatedVisibility(expandedState) {
                 Column(
                     modifier = Modifier.padding(top = 10.dp),
@@ -361,7 +401,7 @@ fun BusinessRequestCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_calendar_today_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -373,7 +413,7 @@ fun BusinessRequestCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_access_time_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -383,12 +423,6 @@ fun BusinessRequestCard(
                         )
                     }
                     Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        text = "Contact the organizer",
-                        style = Typography.caption,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(3.dp))
                     Row(
                         modifier = Modifier.height(20.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -397,7 +431,7 @@ fun BusinessRequestCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_alternate_email_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -409,7 +443,7 @@ fun BusinessRequestCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_phone_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(

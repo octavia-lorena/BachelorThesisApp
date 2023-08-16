@@ -72,6 +72,49 @@ fun LoginScreenContent(
     val loginState = authViewModel.loginState1.collectAsStateWithLifecycle(UiState.Loading)
     val loginFlow = authViewModel.loginFlow.collectAsState()
 
+    val context = LocalContext.current
+    LaunchedEffect(key1 = loginState) {
+        authViewModel.validationLoginEvents.collect { event ->
+            when (event) {
+                is AuthViewModel.ValidationEvent.Success -> {
+                    Toast.makeText(
+                        context,
+                        "We are logging you in.",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+
+                    val loginContent = loginState.value
+                    if (loginContent is UiState.Success) {
+                        if (loginContent.value.type == "clients") {
+                            navController.navigate(
+                                "home_client/${loginContent.value.id}"
+                            )
+                        } else if (loginContent.value.type == "businesses") {
+                            navController.navigate(
+                                "home_business/${loginContent.value.id}"
+                            )
+                        }
+                    }
+                    else{
+                        Toast.makeText(
+                            context,
+                            "Error/Loading.",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+
+                is AuthViewModel.ValidationEvent.Failure -> Toast.makeText(
+                    context,
+                    "Error logging in.",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -90,63 +133,32 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        top = 195.dp,
+                        top = 210.dp,
                         start = 25.dp,
                         end = 25.dp,
                         bottom = innerPadding.calculateBottomPadding()
                     )
             ) {
                 val loginFormState = authViewModel.loginState
-                val context = LocalContext.current
-                LaunchedEffect(key1 = context) {
-                    authViewModel.validationLoginEvents.collect { event ->
-                        when (event) {
-                            is AuthViewModel.ValidationEvent.Success -> {
-                                Toast.makeText(
-                                    context,
-                                    "We are logging you in.",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
-
-                            is AuthViewModel.ValidationEvent.Failure -> Toast.makeText(
-                                context,
-                                "Error logging in.",
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                        }
-                    }
-                }
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Alignment.Center),
-                    //verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    //verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = "Welcome back!",
                         style = Typography.body2,
                         color = Color.White
                     )
-                    Spacer(modifier = Modifier.height(35.dp))
+                    Spacer(modifier = Modifier.height(60.dp))
                     Column(
                         modifier = Modifier
                             .align(Alignment.Start)
                             .wrapContentWidth()
-                            .height(230.dp)
+                            .height(170.dp)
                             .padding(bottom = 5.dp)
                     ) {
-                        Text(
-                            text = "Login",
-                            color = Color.White,
-                            style = Typography.h2
-
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
                         // EMAIL FIELD
                         FormTextField(
                             labelText = "Email",
@@ -190,7 +202,6 @@ fun LoginScreenContent(
                                         )
                                     )
                                 }
-
                             },
                             error = loginFormState.passwordError,
                             leadingIcon = {
@@ -222,62 +233,16 @@ fun LoginScreenContent(
                             ErrorText(text = loginFormState.passwordError.toString())
                         }
                     }
-                    Spacer(modifier = Modifier.height(0.dp))
                     SubmitButton(
                         onClick = {
                             scope.launch {
                                 authViewModel.onLoginEvent(LoginEvent.Submit)
-                                delay(7000L)
-//                                when (val loginContent = loginState.value) {
-                                loginFlow.value.let {
-                                    when (it) {
-                                        is Resource.Loading -> {
-                                            Log.d("LOGIN", "LOADING")
-                                            Toast.makeText(
-                                                context,
-                                                "Loadingg...",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-
-                                        is Resource.Success -> {
-                                            Log.d("LOGIN", "SUCCESS")
-
-                                            Toast.makeText(
-                                                context,
-                                                "Success...",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                            delay(2000L)
-                                            if (it.data.type == "clients") {
-                                                navController.navigate(
-                                                    "home_client/${it.data.id}"
-                                                )
-                                            } else if (it.data.type == "businesses") {
-                                                navController.navigate(
-                                                    "home_business/${it.data.id}"
-                                                )
-                                            }
-                                        }
-
-                                        is Resource.Error -> {
-                                            Log.d("LOGIN", "ERROR")
-
-                                            Toast.makeText(
-                                                context,
-                                                "Error",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-
-                                        else -> {}
-                                    }
-                                }
+                                delay(3000L)
                             }
                         },
                         text = "Sign In"
                     )
-                    Spacer(modifier = Modifier.height(200.dp))
+                    Spacer(modifier = Modifier.height(220.dp))
                     BottomClickableText(
                         text = "New to Event Space? Create an account here.",
                         onClick = { navController.navigate(Routes.MainRegisterScreen.route) },

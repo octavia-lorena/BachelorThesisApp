@@ -14,7 +14,7 @@ sealed class NavigationItemClient(var route: String, var icon: Int, var title: S
         NavigationItemClient(
             route = "events/{uid}",
             icon = R.drawable.baseline_feed_24,
-            title = "Feed"
+            title = "Events"
         )
 
 }

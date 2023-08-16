@@ -11,6 +11,7 @@ sealed class BusinessRegisterEvent {
     data class CityChanged(val city: String): BusinessRegisterEvent()
     data class LatChanged(val lat: String): BusinessRegisterEvent()
     data class LngChanged(val lng: String): BusinessRegisterEvent()
+    data class ProfilePictureChanged(val profilePicture: String): BusinessRegisterEvent()
     object Submit: BusinessRegisterEvent()
     object PartialSubmit: BusinessRegisterEvent()
 

@@ -1,6 +1,7 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.client
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,9 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
-import androidx.compose.material3.Icon as Icon3
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,17 +41,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.domain.model.EventType
 import com.example.bachelorthesisapp.data.model.events.CreateEventEvent
+import com.example.bachelorthesisapp.domain.model.EventType
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.common.DropdownDateMenu
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
 import com.example.bachelorthesisapp.presentation.ui.components.common.LargeDropdownMenu
-import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
+import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.ui.theme.WhiteTransparent
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
+import androidx.compose.material3.Icon as Icon3
 
 @Composable
 fun CreateEventsStep1Screen(
@@ -59,7 +65,6 @@ fun CreateEventsStep1Screen(
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     LaunchedEffect(key1 = context) {
-        clientViewModel.clearCreateEventState()
         clientViewModel.validationCreateEventEvents.collect { event ->
             when (event) {
                 is ClientViewModel.ValidationEvent.Success -> {
@@ -72,36 +77,31 @@ fun CreateEventsStep1Screen(
         }
     }
 
-    Box {
-//        Image(
-//            painter = painterResource(id = R.drawable.create_post_background),
-//            contentDescription = "background",
-//            modifier = Modifier.fillMaxSize(),
-//            contentScale = ContentScale.FillBounds
-//        )
-        Scaffold(
-            topBar = {
-                BusinessSecondaryAppBar(
-                    title = "New Event",
-                    navController = navHostController
+    Scaffold(
+        topBar = {
+            BusinessSecondaryAppBar(
+                title = "New Event",
+                navController = navHostController,
+                onNavBackClick = {
+                    clientViewModel.clearCreateEventState()
+                }
+            )
+        },
+        scaffoldState = scaffoldState,
+        drawerGesturesEnabled = true,
+        backgroundColor = Color.White
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    bottom = innerPadding.calculateBottomPadding(),
+                    top = 10.dp,
+                    start = 20.dp,
+                    end = 20.dp
                 )
-            },
-            scaffoldState = scaffoldState,
-            drawerGesturesEnabled = true,
-            backgroundColor = Color.White
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        bottom = innerPadding.calculateBottomPadding(),
-                        top = 10.dp,
-                        start = 20.dp,
-                        end = 20.dp
-                    )
-            ) {
-                CreateEventStep1ScreenContent(clientViewModel, navHostController)
-            }
+        ) {
+            CreateEventStep1ScreenContent(clientViewModel, navHostController)
         }
     }
 }
@@ -139,7 +139,10 @@ fun CreateEventStep1ScreenContent(
             }
         }
     }
-    Box(modifier = Modifier.wrapContentSize()) {
+    Column(
+        modifier = Modifier.wrapContentSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Row {
             Divider(
                 modifier = Modifier
@@ -154,168 +157,200 @@ fun CreateEventStep1ScreenContent(
                     .height(5.dp)
             )
         }
-    }
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 20.dp,
-                bottom = 0.dp
-            ),
-        userScrollEnabled = true,
-        //verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start
-    ) {
-        // TITLE ITEM
-        item {
-            Column(horizontalAlignment = Alignment.Start) {
-                Spacer(modifier = Modifier.height(2.dp))
-                FormTextField(
-                    labelText = stringResource(R.string.Title),
-                    value = state.title,
-                    onValueChange = {
-                        clientViewModel.onCreateEventEvent(
-                            CreateEventEvent.TitleChanged(
-                                it
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = 20.dp,
+                    bottom = 0.dp
+                ),
+            userScrollEnabled = true,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // TITLE ITEM
+            item {
+                Column(horizontalAlignment = Alignment.Start) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    FormTextField(
+                        labelText = stringResource(R.string.Title),
+                        value = state.title,
+                        onValueChange = {
+                            clientViewModel.onCreateEventEvent(
+                                CreateEventEvent.TitleChanged(
+                                    it
+                                )
                             )
-                        )
-                    },
-                    error = state.titleError,
-                    leadingIcon = null,
-                    trailingIcon = {
-                        PlainTooltipBox(
-                            tooltip = { Text("Make sure it starts with a capital letter") },
-                            containerColor = WhiteTransparent
-                        ) {
-                            Icon3(
-                                imageVector = Icons.Filled.QuestionMark,
-                                contentDescription = "Present now",
-                                modifier = Modifier
-                                    .tooltipAnchor()
-                                    .size(15.dp)
+                        },
+                        error = state.titleError,
+                        leadingIcon = null,
+                        trailingIcon = {
+                            PlainTooltipBox(
+                                tooltip = {
+                                    Text(
+                                        "Make sure it starts with a capital letter",
+                                        style = Typography.caption
+                                    )
+                                },
+                                containerColor = WhiteTransparent
+                            ) {
+                                Icon3(
+                                    imageVector = Icons.Filled.QuestionMark,
+                                    contentDescription = "Present now",
+                                    modifier = Modifier
+                                        .tooltipAnchor()
+                                        .size(15.dp)
+                                )
+                            }
+                        },
+                        keyboardType = KeyboardType.Text
+                    )
+                    if (state.titleError != null) {
+                        ErrorText(text = state.titleError.toString())
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
+            // DESCRIPTION ITEM
+            item {
+                Column(horizontalAlignment = Alignment.Start) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    FormTextField(
+                        labelText = stringResource(R.string.Description),
+                        value = state.description,
+                        onValueChange = {
+                            clientViewModel.onCreateEventEvent(
+                                CreateEventEvent.DescriptionChanged(
+                                    it
+                                )
+                            )
+                        },
+                        error = state.descriptionError,
+                        leadingIcon = null,
+                        trailingIcon = null,
+                        keyboardType = KeyboardType.Text
+                    )
+                    if (state.descriptionError != null) {
+                        ErrorText(text = state.descriptionError.toString())
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
+            // EVENT TYPE FIELD
+            item {
+                var selectedIndex by remember { mutableStateOf(-1) }
+                val options = enumValues<EventType>()
+                LargeDropdownMenu(
+                    label = "Event Type",
+                    items = options.map { it.name },
+                    selectedIndex = selectedIndex,
+                    onItemSelected = { index, type ->
+                        run {
+                            selectedIndex = index
+                            clientViewModel.onCreateEventEvent(
+                                CreateEventEvent.TypeChanged(type)
                             )
                         }
                     },
-                    keyboardType = KeyboardType.Text
+                    painterResource = R.drawable.baseline_category_24,
+                    initialValue = state.type
                 )
-                if (state.titleError != null) {
-                    ErrorText(text = state.titleError.toString())
+                if (state.typeError != null) {
+                    ErrorText(text = state.typeError.toString())
                 }
                 Spacer(modifier = Modifier.height(10.dp))
             }
-        }
-        // DESCRIPTION ITEM
-        item {
-            Column(horizontalAlignment = Alignment.Start) {
-                Spacer(modifier = Modifier.height(2.dp))
-                FormTextField(
-                    labelText = stringResource(R.string.Description),
-                    value = state.description,
-                    onValueChange = {
-                        clientViewModel.onCreateEventEvent(
-                            CreateEventEvent.DescriptionChanged(
-                                it
-                            )
-                        )
-                    },
-                    error = state.descriptionError,
-                    leadingIcon = null,
-                    trailingIcon = null,
-                    keyboardType = KeyboardType.Text
-                )
-                if (state.descriptionError != null) {
-                    ErrorText(text = state.descriptionError.toString())
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-            }
-        }
-        // EVENT TYPE FIELD
-        item {
-            var selectedIndex by remember { mutableStateOf(-1) }
-            val options = enumValues<EventType>()
-            LargeDropdownMenu(
-                label = "Event Type",
-                items = options.map { it.name },
-                selectedIndex = selectedIndex,
-                onItemSelected = { index, type ->
-                    run {
-                        selectedIndex = index
-                        clientViewModel.onCreateEventEvent(
-                            CreateEventEvent.TypeChanged(type)
-                        )
-                    }
-                },
-                painterResource = R.drawable.baseline_category_24
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-        // DATE FIELD - date picker
-        item {
-            DropdownDateMenu(
-                label = "Event Date",
-                onItemSelected = { date ->
-                    run {
-                        clientViewModel.onCreateEventEvent(
-                            CreateEventEvent.DateChanged(date)
-                        )
-                    }
-                }
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-        // TIME FIELD
-        item {
-            Column(horizontalAlignment = Alignment.Start) {
-                Spacer(modifier = Modifier.height(2.dp))
-                FormTextField(
-                    labelText = stringResource(R.string.Time),
-                    value = state.time,
-                    onValueChange = {
-                        clientViewModel.onCreateEventEvent(
-                            CreateEventEvent.TimeChanged(
-                                it
-                            )
-                        )
-                    },
-                    error = state.timeError,
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_access_time_24),
-                            contentDescription = "time icon"
-                        )
-                    },
-                    trailingIcon = {
-                        PlainTooltipBox(
-                            tooltip = { Text("Format must be 24h hh:mm") },
-                            containerColor = WhiteTransparent
-                        ) {
-                            Icon3(
-                                imageVector = Icons.Filled.QuestionMark,
-                                contentDescription = "Present now",
-                                modifier = Modifier
-                                    .tooltipAnchor()
-                                    .size(15.dp)
+            // DATE FIELD - date picker
+            item {
+                DropdownDateMenu(
+                    label = "Event Date",
+                    onItemSelected = { date ->
+                        run {
+                            clientViewModel.onCreateEventEvent(
+                                CreateEventEvent.DateChanged(date)
                             )
                         }
                     },
-                    keyboardType = KeyboardType.Text
+                    initialDate = state.date
                 )
-                if (state.timeError != null) {
-                    ErrorText(text = state.timeError.toString())
+                if (state.dateError != null) {
+                    ErrorText(text = state.dateError.toString())
                 }
                 Spacer(modifier = Modifier.height(10.dp))
             }
-        }
-
-
-        // SUBMIT BUTTON
-        item {
-            SubmitButton(
-                onClick = {
-                    clientViewModel.onCreateEventEvent(CreateEventEvent.PartialSubmit)
-                },
-                text = stringResource(R.string.Next)
-            )
+            // TIME FIELD
+            item {
+                Column(horizontalAlignment = Alignment.Start) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    FormTextField(
+                        labelText = stringResource(R.string.Time),
+                        value = state.time,
+                        onValueChange = {
+                            clientViewModel.onCreateEventEvent(
+                                CreateEventEvent.TimeChanged(
+                                    it
+                                )
+                            )
+                        },
+                        error = state.timeError,
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_access_time_24),
+                                contentDescription = "time icon"
+                            )
+                        },
+                        trailingIcon = {
+                            PlainTooltipBox(
+                                tooltip = {
+                                    Text(
+                                        "Format must be 24h hh:mm",
+                                        style = Typography.caption
+                                    )
+                                },
+                                containerColor = WhiteTransparent
+                            ) {
+                                Icon3(
+                                    imageVector = Icons.Filled.QuestionMark,
+                                    contentDescription = "Present now",
+                                    modifier = Modifier
+                                        .tooltipAnchor()
+                                        .size(15.dp)
+                                )
+                            }
+                        },
+                        keyboardType = KeyboardType.Text
+                    )
+                    if (state.timeError != null) {
+                        ErrorText(text = state.timeError.toString())
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+            // NEXT BUTTON
+            item {
+                Button(
+                    onClick = {
+                        clientViewModel.onCreateEventEvent(CreateEventEvent.PartialSubmit)
+                    },
+                    modifier = Modifier.wrapContentSize(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    border = BorderStroke(
+                        width = 1.dp, brush = Brush.horizontalGradient(
+                            listOf(
+                                CoralAccent,
+                                Coral,
+                                CoralAccent
+                            )
+                        )
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.Next),
+                        style = Typography.caption,
+                        color = Color.DarkGray
+                    )
+                }
+            }
         }
     }
 }

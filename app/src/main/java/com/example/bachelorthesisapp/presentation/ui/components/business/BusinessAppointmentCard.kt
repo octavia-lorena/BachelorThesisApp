@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,8 +53,13 @@ import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.presentation.ui.components.common.SmallSubmitButton
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
+import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
+import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
+import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.ui.theme.RedSoft
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
@@ -82,8 +89,8 @@ fun BusinessAppointmentCard(
         mutableStateOf(true)
     }
 
-    LaunchedEffect(Unit){
-        if (event.date.minusDays(30) <= LocalDate.now()){
+    LaunchedEffect(Unit) {
+        if (event.date.minusDays(30) <= LocalDate.now()) {
             cancelButtonEnabled = false
         }
     }
@@ -121,17 +128,24 @@ fun BusinessAppointmentCard(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(
-                            onClick = { isCancelDialogOpen = false },
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = SkyGray)
+                            onClick = {
+                                isCancelDialogOpen = false
+                            },
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Gray,
+                                        Color.LightGray,
+                                        Color.Gray
+                                    )
+                                )
+                            )
                         ) {
                             Text(
                                 text = "Cancel",
-                                color = Color.White,
-                                style = Typography.button
+                                style = Typography.button,
+                                color = Color.DarkGray
                             )
                         }
                         Spacer(modifier = Modifier.padding(15.dp))
@@ -142,15 +156,21 @@ fun BusinessAppointmentCard(
                                     onCancelAppointment()
                                 }
                             },
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Coral)
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        GreenDark,
+                                        GreenLight,
+                                        GreenDark
+                                    )
+                                )
+                            )
                         ) {
                             Text(
-                                text = "Accept",
-                                style = Typography.button
+                                text = "Continue",
+                                style = Typography.button,
+                                color = Color.DarkGray
                             )
                         }
                     }
@@ -168,7 +188,7 @@ fun BusinessAppointmentCard(
                     easing = LinearOutSlowInEasing
                 )
             )
-            .padding(bottom = 5.dp),
+            .padding(bottom = 10.dp),
         shape = RoundedCornerShape(5.dp),
         onClick = {
             expandedState = !expandedState
@@ -179,7 +199,7 @@ fun BusinessAppointmentCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(5.dp),
+                .padding(10.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
@@ -196,7 +216,9 @@ fun BusinessAppointmentCard(
                     text = event.name,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    modifier = Modifier.weight(5f)
+                    modifier = Modifier.weight(5f),
+                    style = Typography.body2,
+                    color = Color.DarkGray
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 IconButton(
@@ -209,10 +231,12 @@ fun BusinessAppointmentCard(
                     }) {
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Drop-Down Arrow"
+                        contentDescription = "Drop-Down Arrow",
+                        tint = Color.DarkGray
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(3.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -233,6 +257,7 @@ fun BusinessAppointmentCard(
                 )
 
             }
+            Spacer(modifier = Modifier.height(3.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -260,7 +285,7 @@ fun BusinessAppointmentCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_calendar_today_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -272,7 +297,7 @@ fun BusinessAppointmentCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_access_time_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -281,13 +306,7 @@ fun BusinessAppointmentCard(
                             color = Color.Black
                         )
                     }
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        text = "Contact the organizer",
-                        style = Typography.caption,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(3.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     Row(
                         modifier = Modifier.height(20.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -296,7 +315,7 @@ fun BusinessAppointmentCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_alternate_email_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -308,7 +327,7 @@ fun BusinessAppointmentCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_phone_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -322,11 +341,26 @@ fun BusinessAppointmentCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        SubmitButton(
-                            onClick = { isCancelDialogOpen = true }, text = "Cancel Appointment",
-                            backgroundColor = Color.DarkGray,
+                        Button(
+                            onClick = { isCancelDialogOpen = true },
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        CoralAccent,
+                                        Coral,
+                                        CoralAccent
+                                    )
+                                )
+                            ),
                             enabled = cancelButtonEnabled
-                        )
+                        ) {
+                            Text(
+                                text = "Cancel Appointment",
+                                style = Typography.button,
+                                color = Color.DarkGray
+                            )
+                        }
                         Spacer(modifier = Modifier.width(15.dp))
                         PlainTooltipBox(
                             tooltip = {
@@ -337,7 +371,7 @@ fun BusinessAppointmentCard(
                                     color = Color.DarkGray
                                 )
                             },
-                            containerColor = WhiteTransparent
+                            containerColor = OffWhite
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Warning,

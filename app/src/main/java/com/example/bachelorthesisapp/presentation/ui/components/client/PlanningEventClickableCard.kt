@@ -20,6 +20,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowCircleRight
+import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,9 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.events.local.entity.Event
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import java.time.LocalDate
 import java.time.Period
@@ -39,8 +40,7 @@ import java.time.Period
 @Composable
 fun PlanningEventsClickableCard(
     event: Event,
-    onEventClick: (Int) -> Unit,
-    navHostController: NavHostController
+    onEventClick: (Int) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -51,7 +51,7 @@ fun PlanningEventsClickableCard(
                     easing = LinearOutSlowInEasing
                 )
             )
-            .padding(bottom = 10.dp),
+            .padding(10.dp),
         shape = RoundedCornerShape(5.dp),
         onClick = {
             // Navigate to the Event Details Screen
@@ -63,7 +63,7 @@ fun PlanningEventsClickableCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(15.dp),
+                .padding(10.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
@@ -80,14 +80,18 @@ fun PlanningEventsClickableCard(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
-                    Text(text = event.name, overflow = TextOverflow.Ellipsis, maxLines = 1)
+                    Text(text = event.name, overflow = TextOverflow.Ellipsis, maxLines = 1,
+                        style = Typography.h6,
+                        color = Color.DarkGray)
                     Spacer(modifier = Modifier.height(2.dp))
-                    Text(text = event.type.name)
+                    Text(text = event.type.name,
+                        style = Typography.caption,
+                    )
                 }
                 // DATE + TIME ELEMENTS COLUMN
                 Column(
                     modifier = Modifier
-                        .weight(3f),
+                        .weight(2f),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -120,13 +124,13 @@ fun PlanningEventsClickableCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_hourglass_top_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = "$yearsText$monthsText$daysText left",
                             style = Typography.caption,
-                            color = Color.Gray
+                            color = Color.Black
                         )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -139,7 +143,7 @@ fun PlanningEventsClickableCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_pending_actions_24),
                             contentDescription = "",
-                            tint = Color.Gray
+                            tint = CoralAccent
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         val totalVendors = event.vendors.size
@@ -147,9 +151,8 @@ fun PlanningEventsClickableCard(
                         Text(
                             text = "$resolved/$totalVendors vendors",
                             style = Typography.caption,
-                            color = Color.Gray
+                            color = Color.Black
                         )
-
                     }
                 }
                 IconButton(
@@ -160,7 +163,7 @@ fun PlanningEventsClickableCard(
                         onEventClick(event.id)
                     }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowCircleRight,
+                        imageVector = Icons.Default.ArrowRight,
                         contentDescription = ""
                     )
                 }
@@ -168,25 +171,3 @@ fun PlanningEventsClickableCard(
         }
     }
 }
-
-//@ExperimentalMaterialApi
-//@Composable
-//@Preview
-//fun PlanningExpandableCardPreview() {
-//    PlanningEventsClickableCard(
-//        event = Event(
-//            1,
-//            "",
-//            "A+B's wedding",
-//            "Wedd",
-//            EventType.Wedding,
-//            LocalDate.parse("2023-07-22"),
-//            "15:30",
-//            200,
-//            1000,
-//            2000,
-//            mapOf(),
-//            EventStatus.Upcoming
-//        )
-//    )
-//}

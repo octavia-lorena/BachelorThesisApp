@@ -1,7 +1,6 @@
 package com.example.bachelorthesisapp.presentation.ui.components.common
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +31,6 @@ import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.presentation.ui.navigation.NavigationItemBusiness
 import com.example.bachelorthesisapp.presentation.ui.navigation.NavigationItemClient
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import kotlinx.coroutines.launch
 
@@ -43,14 +41,11 @@ fun AppBar(title: String) {
 
 @Composable
 fun BusinessHomeAppBar(
-    title: String,
-    scaffoldState: ScaffoldState
+    title: String, scaffoldState: ScaffoldState
 ) {
     val scope = rememberCoroutineScope()
     TopAppBar(
-        modifier = Modifier.height(120.dp),
-        backgroundColor = Color.White,
-        elevation = 15.dp
+        modifier = Modifier.height(120.dp), backgroundColor = Color.White, elevation = 15.dp
     ) {
         Row(
             modifier = Modifier
@@ -59,28 +54,22 @@ fun BusinessHomeAppBar(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Start
         ) {
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        scaffoldState.drawerState.apply {
-                            if (isClosed) open() else close()
-                        }
+            IconButton(onClick = {
+                scope.launch {
+                    scaffoldState.drawerState.apply {
+                        if (isClosed) open() else close()
                     }
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    // .padding(start = 7.dp, top = 7.dp)
-                    .width(50.dp)
-                    .height(50.dp),
-                content =
-                {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_menu_24),
-                        contentDescription = "Menu icon",
-                        tint = Color.DarkGray
-                    )
                 }
-            )
+            }, modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .width(50.dp)
+                .height(50.dp), content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_menu_24),
+                    contentDescription = "Menu icon",
+                    tint = Color.DarkGray
+                )
+            })
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -99,12 +88,11 @@ fun BusinessSecondaryAppBar(
     title: String,
     navController: NavHostController,
     backgroundColor: Color = CoralAccent,
-    elevation: Dp = 15.dp
+    elevation: Dp = 15.dp,
+    onNavBackClick: () -> Unit = {}
 ) {
     TopAppBar(
-        modifier = Modifier.height(100.dp),
-        backgroundColor = backgroundColor,
-        elevation = elevation
+        modifier = Modifier.height(100.dp), backgroundColor = backgroundColor, elevation = elevation
     ) {
         Row(
             modifier = Modifier
@@ -113,24 +101,22 @@ fun BusinessSecondaryAppBar(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.Bottom
         ) {
-            IconButton(
-                onClick = {
-                    navController.popBackStack()
-                },
+            IconButton(onClick = {
+                onNavBackClick()
+                navController.popBackStack()
+            },
                 modifier = Modifier
                     .align(Alignment.Top)
                     .padding(start = 7.dp, top = 7.dp)
                     .width(40.dp)
                     .height(40.dp),
-                content =
-                {
+                content = {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24),
                         contentDescription = "Back icon",
                         tint = Color.White
                     )
-                }
-            )
+                })
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -149,9 +135,7 @@ fun BusinessSecondaryAppBar(
 fun BusinessProfileAppBar(title: String, navController: NavHostController) {
     val scope = rememberCoroutineScope()
     TopAppBar(
-        modifier = Modifier.height(70.dp),
-        backgroundColor = Color.White,
-        elevation = 15.dp
+        modifier = Modifier.height(70.dp), backgroundColor = Color.White, elevation = 15.dp
     ) {
         Row(
             modifier = Modifier
@@ -160,24 +144,21 @@ fun BusinessProfileAppBar(title: String, navController: NavHostController) {
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.Bottom
         ) {
-            IconButton(
-                onClick = {
-                    navController.popBackStack()
-                },
+            IconButton(onClick = {
+                navController.popBackStack()
+            },
                 modifier = Modifier
                     .align(Alignment.Top)
                     .padding(start = 7.dp, top = 7.dp)
                     .width(40.dp)
                     .height(40.dp),
-                content =
-                {
+                content = {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24),
                         contentDescription = "Back icon",
                         tint = Color.Black
                     )
-                }
-            )
+                })
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -207,28 +188,23 @@ fun BottomNavigationBarBusiness(
     )
 
     BottomNavigation(
-        modifier = modifier.height(60.dp).fillMaxSize(),
+        modifier = modifier
+            .height(50.dp)
+            .fillMaxSize(),
         backgroundColor = Color.White,
         elevation = 0.dp
     ) {
         items.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route
-            BottomNavigationItem(
-                icon = {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(painterResource(id = item.icon), contentDescription = item.title)
-                        Text(text = item.title, fontSize = 12.sp, style = Typography.caption)
-                    }
-                },
+            BottomNavigationItem(icon = {
+                Icon(painterResource(id = item.icon), contentDescription = item.title)
+            },
                 selectedContentColor = CoralAccent,
                 unselectedContentColor = Color.Gray,
-                alwaysShowLabel = false,
+                alwaysShowLabel = true,
                 selected = selected,
                 onClick = { onItemClick(item) },
-            )
+                label = { Text(text = item.title, fontSize = 10.sp, style = Typography.caption) })
         }
 
     }
@@ -247,19 +223,26 @@ fun BottomNavigationBarClient(
     )
 
     BottomNavigation(
-        modifier = modifier.height(70.dp),
-        backgroundColor = CoralAccent
+        modifier = modifier
+            .height(60.dp)
+            .fillMaxSize(),
+        backgroundColor = Color.White,
+        elevation = 0.dp
     ) {
         items.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route
-            BottomNavigationItem(
-                icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
-                selectedContentColor = CoralLight,
-                unselectedContentColor = Color.White,
-                alwaysShowLabel = false,
+            BottomNavigationItem(icon = {
+                Icon(
+                    painterResource(id = item.icon),
+                    contentDescription = item.title
+                )
+            },
+                selectedContentColor = CoralAccent,
+                unselectedContentColor = Color.Gray,
+                alwaysShowLabel = true,
                 selected = selected,
-                onClick = { onItemClick(item) }
-            )
+                onClick = { onItemClick(item) },
+                label = { Text(text = item.title, fontSize = 12.sp, style = Typography.caption) })
         }
 
     }

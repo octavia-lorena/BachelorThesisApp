@@ -93,7 +93,8 @@ fun BusinessRegisterStep1Screen(authViewModel: AuthViewModel, navController: Nav
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Welcome to Event Space! Share your art with the world and be part of the greatness of events.")
+                    Text(text = "Welcome to Event Space! Share your art with the world and be part of the greatness of events.",
+                    color = Color.White)
                     Spacer(modifier = Modifier.height(15.dp))
                     BottomClickableText(
                         text = "Already have an account? Sign In here.",

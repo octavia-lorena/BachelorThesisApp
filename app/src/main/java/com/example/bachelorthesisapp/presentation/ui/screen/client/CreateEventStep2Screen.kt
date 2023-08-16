@@ -3,6 +3,7 @@ package com.example.bachelorthesisapp.presentation.ui.screen.client
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -29,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,6 +52,10 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitBut
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.data.model.events.CreatePostEvent
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
+import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import kotlinx.coroutines.delay
 
 @Composable
@@ -73,8 +81,6 @@ fun CreateEventsStep2Screen(
                         navHostController.navigate("home_client/$uid") {
                             popUpTo("home_client/$uid") { inclusive = false }
                         }
-                    Log.d("POP", result.toString())
-
                 }
 
                 else -> Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
@@ -82,41 +88,33 @@ fun CreateEventsStep2Screen(
         }
     }
 
-    Box {
-//        Image(
-//            painter = painterResource(id = R.drawable.create_post_background),
-//            contentDescription = "background",
-//            modifier = Modifier.fillMaxSize(),
-//            contentScale = ContentScale.FillBounds
-//        )
-        Scaffold(
-            topBar = {
-                BusinessSecondaryAppBar(
-                    title = "New Event", navController = navHostController
+    Scaffold(
+        topBar = {
+            BusinessSecondaryAppBar(
+                title = "New Event", navController = navHostController
+            )
+        },
+        scaffoldState = scaffoldState,
+        drawerGesturesEnabled = true,
+        backgroundColor = Color.White
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    bottom = innerPadding.calculateBottomPadding(),
+                    top = 10.dp,
+                    start = 20.dp,
+                    end = 20.dp
                 )
-            },
-            scaffoldState = scaffoldState,
-            drawerGesturesEnabled = true,
-            backgroundColor = Color.White
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        bottom = innerPadding.calculateBottomPadding(),
-                        top = 10.dp,
-                        start = 20.dp,
-                        end = 20.dp
-                    )
-            ) {
-                CreateEventStep2ScreenContent(clientViewModel, navHostController)
-            }
+        ) {
+            CreateEventStep2ScreenContent(clientViewModel, navHostController)
         }
     }
+
 }
 
 @SuppressLint("MutableCollectionMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEventStep2ScreenContent(
     clientViewModel: ClientViewModel, navController: NavHostController
@@ -145,8 +143,8 @@ fun CreateEventStep2ScreenContent(
         }
     }
     Spacer(modifier = Modifier.height(15.dp))
-    Box(modifier = Modifier.wrapContentSize()) {
-        Row {
+    Box(modifier = Modifier.wrapContentSize(), contentAlignment = Alignment.Center) {
+        Row(horizontalArrangement = Arrangement.Center) {
             Divider(
                 modifier = Modifier
                     .width(150.dp)
@@ -167,11 +165,9 @@ fun CreateEventStep2ScreenContent(
             .padding(
                 top = 20.dp, bottom = 0.dp
             ), userScrollEnabled = true,
-        //verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // VENDORS ITEM
-        // TODO: vendor suggestions for each event type
         item {
             var selectedIndex by remember { mutableStateOf(-1) }
             val options = enumValues<BusinessType>()
@@ -215,7 +211,7 @@ fun CreateEventStep2ScreenContent(
                     painterResource = R.drawable.baseline_category_24
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = state.vendors)
+                Text(text = state.vendors.split(";").joinToString(", "), style = Typography.caption)
             }
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -299,17 +295,51 @@ fun CreateEventStep2ScreenContent(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SubmitButton(
+                Button(
                     onClick = {
                         navController.popBackStack()
                     },
-                    text = stringResource(R.string.Previous)
-                )
+                    modifier = Modifier.wrapContentSize(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    border = BorderStroke(
+                        width = 1.dp, brush = Brush.horizontalGradient(
+                            listOf(
+                                CoralAccent,
+                                Coral,
+                                CoralAccent
+                            )
+                        )
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.Previous),
+                        style = Typography.caption,
+                        color = Color.DarkGray
+                    )
+                }
                 Spacer(modifier = Modifier.width(30.dp))
-                SubmitButton(
-                    onClick = { clientViewModel.onCreateEventEvent(CreateEventEvent.Submit) },
-                    text = stringResource(R.string.Submit)
-                )
+                Button(
+                    onClick = {
+                        clientViewModel.onCreateEventEvent(CreateEventEvent.Submit)
+                    },
+                    modifier = Modifier.wrapContentSize(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    border = BorderStroke(
+                        width = 1.dp, brush = Brush.horizontalGradient(
+                            listOf(
+                                CoralAccent,
+                                Coral,
+                                CoralAccent
+                            )
+                        )
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.Submit),
+                        style = Typography.caption,
+                        color = Color.DarkGray
+                    )
+                }
             }
 
         }

@@ -140,7 +140,7 @@ fun ClientHomeScreen(
 
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun ClientHomeScreenContent(
@@ -299,7 +299,7 @@ fun ClientHomeScreenContent(
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(2),
                 modifier = Modifier
-                    .height(290.dp)
+                    .height(320.dp)
                     .fillMaxWidth()
                     .padding(top = 5.dp, bottom = 0.dp),
                 verticalItemSpacing = 15.dp,

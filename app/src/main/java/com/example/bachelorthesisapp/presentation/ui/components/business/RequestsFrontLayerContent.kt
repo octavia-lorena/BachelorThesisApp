@@ -147,9 +147,10 @@ fun RequestsFrontLayerContent(
                                         easing = LinearOutSlowInEasing
                                     )
                                 )
-                                .padding(bottom = 3.dp),
-                            shape = RoundedCornerShape(2.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                                .padding(7.dp),
+                            shape = RoundedCornerShape(7.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.elevatedCardElevation(10.dp)
                         ) {
                             Column(
                                 modifier = Modifier

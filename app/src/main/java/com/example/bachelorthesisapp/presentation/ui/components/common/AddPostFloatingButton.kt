@@ -69,6 +69,32 @@ fun CreateEventFloatingButton(navHostController: NavHostController, uid: String)
                 tint = Color.White
             )
         },
-        containerColor = Rose
+        containerColor = Rose,
+        shape = RoundedCornerShape(50.dp)
+    )
+}
+
+@Composable
+fun CreateEventExpandableFloatingButton(
+    navHostController: NavHostController,
+    uid: String,
+    expanded: Boolean
+) {
+    ExtendedFloatingActionButton(
+        text = { Text(text = "CREATE EVENT", color = Color.White) },
+        onClick = {
+            // Navigate to Create Event Screen
+            navHostController.navigate("create_event_step1/$uid")
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "",
+                tint = Color.White
+            )
+        },
+        containerColor = Rose,
+        expanded = expanded,
+        shape = RoundedCornerShape(50.dp)
     )
 }

@@ -72,8 +72,7 @@ fun <T> DropdownWithCheckboxesMenu(
 
     Box(modifier = modifier.height(IntrinsicSize.Min)) {
         TextField(
-            label = { Text(label, color = Color.DarkGray) },
-            //value = state.type,
+            label = { Text(label, color = Color.DarkGray, style = Typography.caption) },
             value = items.getOrNull(selectedIndex)?.let { selectedItemToString(it) } ?: "",
             enabled = enabled,
             modifier = Modifier.fillMaxWidth(),

@@ -32,6 +32,10 @@ import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueDark
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessProfileAppBar
+import com.example.bachelorthesisapp.presentation.ui.components.common.LoadingScreen
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
@@ -79,16 +83,7 @@ fun EventDetailsScreen(
 
     when (currentEvent) {
         is Resource.Loading -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator(backgroundColor = Rose, color = CoralLight)
-
-            }
+            LoadingScreen(navHostController = navHostController)
         }
 
         is Resource.Success -> {
@@ -102,7 +97,10 @@ fun EventDetailsScreen(
                         title = event.name,
                         navController = navHostController,
                         backgroundColor = CoralLight,
-                        elevation = 0.dp
+                        elevation = 0.dp,
+                        onNavBackClick = {
+                            clientViewModel.clearUpdateEventState()
+                        }
                     )
                 }, drawerGesturesEnabled = true, backgroundColor = Color.White
             ) { innerPadding ->
@@ -134,15 +132,6 @@ fun EventDetailsScreen(
                                 postsList = (postsState as UiState.Success<List<OfferPost>>).value,
                                 onEditClick = { eventId -> navHostController.navigate("update_event/$eventId") },
                                 onPublishClick = { eventId -> clientViewModel.publishEvent(eventId) },
-                                onCollaborationCanceledClicked = { eventId ->
-//                                    clientViewModel.cancelAppointment(
-//                                        requestId =,
-//                                        business =,
-//                                        event =,
-//                                        post =,
-//                                        clientDeviceId =
-//                                    )
-                                }
                             )
                         }
 

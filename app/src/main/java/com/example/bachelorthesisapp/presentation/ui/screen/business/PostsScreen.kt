@@ -35,6 +35,7 @@ import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostExpandableFloatingButton
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -102,9 +103,11 @@ fun BusinessPostsHomeScreen(
                 contentPosts = postBusinessState.value,
                 businessViewModel = businessViewModel,
                 cardsViewModel = cardsViewModel,
-                navHostController = navHostController,
                 listState = listState
-            )
+            ) { post ->
+                businessViewModel.setUpdatePostState(post)
+                navHostController.navigate("update_post/${post.id}")
+            }
         }
     }
 }
@@ -114,8 +117,8 @@ fun BusinessPostsHomeScreenContent(
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
     businessViewModel: BusinessViewModel,
     cardsViewModel: CardSwipeViewModel,
-    navHostController: NavHostController,
     listState: LazyListState,
+    onEditClicked: (OfferPost) -> Unit,
 ) {
     val revealedCardIds by cardsViewModel.revealedCardIdsList.collectAsStateWithLifecycle()
 
@@ -153,7 +156,7 @@ fun BusinessPostsHomeScreenContent(
                             businessViewModel = businessViewModel,
                             cardsViewModel = cardsViewModel,
                             revealedCards = revealedCardIds,
-                            navHostController = navHostController
+                            onEditClicked = onEditClicked
                         )
                     }
                 }

@@ -47,7 +47,8 @@ fun SmallSubmitButton(
     onClick: () -> Unit,
     text: String,
     backgroundColor: Color = Color.Gray,
-    textColor: Color = Color.White
+    textColor: Color = Color.White,
+    enabled: Boolean = true
 ) = Button(
     modifier = Modifier
         .wrapContentHeight()
@@ -55,7 +56,8 @@ fun SmallSubmitButton(
     onClick = onClick,
     colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor),
     elevation = ButtonDefaults.elevation(defaultElevation = 5.dp),
-    shape = RoundedCornerShape(10.dp)
+    shape = RoundedCornerShape(10.dp),
+    enabled = enabled
 ) {
     Text(
         text = text,

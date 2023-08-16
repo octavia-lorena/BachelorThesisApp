@@ -33,6 +33,7 @@ import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGrayDark
 import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
@@ -61,7 +62,7 @@ fun EventDetailsFrontLayerContent(
                 modifier = Modifier
                     .width(120.dp)
                     .height(6.dp)
-                    .background(color = SkyGrayDark, shape = RoundedCornerShape(10.dp))
+                    .background(color = Color.Gray, shape = RoundedCornerShape(10.dp))
             )
         }
         item {
@@ -77,8 +78,8 @@ fun EventDetailsFrontLayerContent(
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 selectedIndex = selectedIndex,
-                textColor = Color.White,
-                iconColor = Color.White
+                textColor = Color.DarkGray,
+             //   iconColor = Color.DarkGray
             )
             Spacer(modifier = Modifier.height(10.dp))
         }
@@ -88,7 +89,7 @@ fun EventDetailsFrontLayerContent(
                 CircularProgressIndicator(
                     modifier = Modifier.padding(20.dp),
                     backgroundColor = Coral,
-                    color = CoralLight
+                    color = CoralAccent
                 )
             }
 

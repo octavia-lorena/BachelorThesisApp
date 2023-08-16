@@ -18,5 +18,6 @@ data class BusinessRegisterFormState(
     val confirmPassword: String = "",
     val confirmPasswordError: String? = null,
     val lat: String = "",
-    val lng: String = ""
+    val lng: String = "",
+    val profilePicture: String = ""
 )

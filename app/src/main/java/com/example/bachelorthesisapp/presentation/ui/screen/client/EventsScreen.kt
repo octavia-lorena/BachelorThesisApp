@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +29,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,17 +47,17 @@ import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarClient
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.business.ClientDrawerContent
-import com.example.bachelorthesisapp.presentation.ui.components.common.CreateEventFloatingButton
 import com.example.bachelorthesisapp.presentation.ui.components.client.PlanningEventsScreenContent
 import com.example.bachelorthesisapp.presentation.ui.components.common.TabItem
 import com.example.bachelorthesisapp.presentation.ui.components.client.UpcomingEventsScreenContent
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.components.common.CreateEventExpandableFloatingButton
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
@@ -90,10 +92,11 @@ fun EventsScreen(
     val context = LocalContext.current
     val loadingState by clientViewModel.isLoading.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState)
-
-    LaunchedEffect(Unit){
-        clientViewModel.clearCreateEventState()
-        clientViewModel.clearUpdateEventState()
+    val listState = rememberLazyListState()
+    val expandedFab by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex == 0
+        }
     }
 
     LaunchedEffect(key1 = deletedEventState.value) {
@@ -171,8 +174,9 @@ fun EventsScreen(
     }
 
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         clientViewModel.loadAllEventsByOrganizerId()
+        clientViewModel.clearCreateEventState()
     }
 
     val tabs = listOf(
@@ -185,7 +189,8 @@ fun EventsScreen(
                     onEventDelete = { id ->
                         isDialogOpen = true
                         eventId = id
-                    }
+                    },
+                    listState = listState
                 )
             }
         ),
@@ -195,10 +200,10 @@ fun EventsScreen(
             screen = {
                 PlanningEventsScreenContent(
                     contentEvents = eventPlanningState.value,
-                    navHostController = navHostController,
                     onEventClick = { eventId ->
                         navHostController.navigate("event_details/$eventId")
-                    }
+                    },
+                    listState = listState
                 )
             }
         )
@@ -222,7 +227,7 @@ fun EventsScreen(
                 })
         },
         floatingActionButton = {
-            CreateEventFloatingButton(navHostController = navHostController, uid = uid)
+            CreateEventExpandableFloatingButton(navHostController = navHostController, uid = uid, expanded = expandedFab)
         },
         scaffoldState = scaffoldState,
         drawerContent = {
@@ -248,17 +253,16 @@ fun EventsScreen(
                     .fillMaxSize()
                     .padding(bottom = innerPadding.calculateBottomPadding() + 50.dp, top = 0.dp)
             ) {
-                // CustomTabs()
-                //Spacer(modifier = Modifier.height(50.dp))
                 TabRow(
                     selectedTabIndex = pagerState.currentPage,
-                    backgroundColor = Rose
+                    backgroundColor = Color.White,
+                    contentColor = CoralAccent
                 ) {
                     tabs.forEachIndexed { index, item ->
                         Tab(
                             selected = index == pagerState.currentPage,
-                            text = { Text(text = item.title) },
-                            icon = { Icon(item.icon, "", tint = Color.White) },
+                            text = { Text(text = item.title, color = Color.DarkGray) },
+                            icon = { Icon(item.icon, "", tint = CoralAccent) },
                             onClick = {
                                 scope.launch {
                                     pagerState.animateScrollToPage(index)

@@ -26,7 +26,7 @@ val IrisBlueDark = Color(0xFF5B64A2)
 
 // EventSpace 1
 val NavyBlue = Color(0xFF1D0455)
-val OffWhite = Color(0xFFE9E7E3)
+val OffWhite = Color(0xFFE6E4E2)
 val Ochre = Color(0xFFDF971B)
 val OchreLight = Color(0xFFFDC96F)
 val OchreDark = Color(0xFFB47302)

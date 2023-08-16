@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
@@ -82,7 +85,7 @@ fun PostDraggableCard(
         label = "cardBgColorTransition",
         transitionSpec = { tween(durationMillis = ANIMATION_DURATION) },
         targetValueByState = {
-            if (isRevealed) CoralLight else OffWhite
+            if (isRevealed) OffWhite else Color.White
         }
     )
     val offsetTransition by transition.animateFloat(
@@ -94,14 +97,14 @@ fun PostDraggableCard(
     val cardElevation by transition.animateDp(
         label = "cardElevation",
         transitionSpec = { tween(durationMillis = ANIMATION_DURATION) },
-        targetValueByState = { if (isRevealed) 10.dp else 2.dp }
+        targetValueByState = { if (isRevealed) 20.dp else 10.dp }
     )
 
 
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 2.dp, vertical = 2.dp)
+            .padding(10.dp)
             .offset { IntOffset(offsetTransition.roundToInt(), 0) }
             .pointerInput(Unit) {
                 detectHorizontalDragGestures { _, dragAmount ->
@@ -112,7 +115,7 @@ fun PostDraggableCard(
                 }
             },
         colors = CardDefaults.cardColors(containerColor = cardBgColor),
-        shape = RectangleShape,
+        shape = RoundedCornerShape(5.dp),
         elevation = CardDefaults.elevatedCardElevation(cardElevation),
         content = {
             Column(
@@ -136,9 +139,8 @@ fun PostDraggableCard(
                         Text(
                             modifier = Modifier.weight(6f),
                             text = post.title,
-                            style = Typography.h6,
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold
+                            style = Typography.body2,
+                            color = Color.DarkGray
                         )
                         Spacer(modifier = Modifier.width(15.dp))
 
@@ -185,7 +187,7 @@ fun PostDraggableCard(
                             )
 
                         }
-                        Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Start,

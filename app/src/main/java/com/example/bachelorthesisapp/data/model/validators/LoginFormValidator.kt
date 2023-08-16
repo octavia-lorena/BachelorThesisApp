@@ -10,8 +10,6 @@ class LoginFormValidator {
     fun validatePassword(password: String): ValidationResult {
         if (password.isEmpty())
             return ValidationResult(false, "This field cannot be blank.")
-        if (password.length < 7)
-            return ValidationResult(false, "Password must be at least 7 characters long.")
         return ValidationResult(success = true)
     }
 }

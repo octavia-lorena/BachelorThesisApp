@@ -52,9 +52,10 @@ import java.time.Period
 fun UpcomingEventsCard(
     contentEventsUpcoming: UiState<List<Event>> = UiState.Success(
         listOf(
-            Event(1, "", "Event1", "",
-            EventType.Wedding, LocalDate.now(), "13:00", 200,
-            5000, 4000, emptyMap(), EventStatus.Upcoming
+            Event(
+                1, "", "Event1", "",
+                EventType.Wedding, LocalDate.now(), "13:00", 200,
+                5000, 4000, emptyMap(), EventStatus.Upcoming
             )
         )
     ),
@@ -64,12 +65,6 @@ fun UpcomingEventsCard(
         modifier = Modifier
             .height(280.dp)
             .fillMaxWidth(),
-//            .animateContentSize(
-//                animationSpec = tween(
-//                    durationMillis = 300,
-//                    easing = LinearOutSlowInEasing
-//                )
-//            ),
         backgroundColor = Color.White,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp),
@@ -233,24 +228,6 @@ fun UpcomingEventElement(
                     color = Color.Gray
                 )
             }
-//            Spacer(modifier = Modifier.height(3.dp))
-//            Row(
-//                modifier = Modifier.height(15.dp),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.baseline_calendar_today_24),
-//                    contentDescription = "",
-//                    tint = Color.Gray
-//                )
-//                Spacer(modifier = Modifier.width(5.dp))
-//                Text(
-//                    text = "${event.date}",
-//                    style = Typography.caption,
-//                    color = Color.Gray
-//                )
-//            }
         }
     }
 

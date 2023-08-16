@@ -1018,7 +1018,7 @@ class ClientViewModel @Inject constructor(
                     }
                 }
             }
-            validationCreateEventEventChannel.send(ValidationEvent.Success)
+         //   validationCreateEventEventChannel.send(ValidationEvent.Success)
             createEventState = createEventState.copy(
                 title = "",
                 titleError = null,

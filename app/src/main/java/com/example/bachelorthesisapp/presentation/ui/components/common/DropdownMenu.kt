@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.google.android.material.color.MaterialColors
 
@@ -59,27 +60,33 @@ fun <T> LargeDropdownMenu(
     },
     painterResource: Int,
     textColor: Color = Color.DarkGray,
-    iconColor: Color = Color.DarkGray
+   // iconColor: Color,
+    initialValue: String = ""
 
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var dropdownValue by remember {
+        mutableStateOf(initialValue)
+    }
 
     Box(modifier = modifier.height(IntrinsicSize.Min)) {
         TextField(
             label = { Text(label, color = textColor) },
-            //value = state.type,
-            value = items.getOrNull(selectedIndex)?.let { selectedItemToString(it) } ?: "",
+            value = dropdownValue,
             enabled = enabled,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = painterResource),
                     contentDescription = "",
-                    tint = iconColor
+                   // tint = iconColor,
+                    modifier = Modifier.clickable { }
                 )
             },
             trailingIcon = {
                 Icon(Icons.Filled.ArrowDropDown, "")
+                dropdownValue = items.getOrNull(selectedIndex)?.let { selectedItemToString(it) } ?: ""
             },
             onValueChange = {
                 Log.d("TYPE_SELECTED", it)
@@ -90,7 +97,7 @@ fun <T> LargeDropdownMenu(
                 backgroundColor = Color.Transparent,
                 focusedLabelColor = Color.Gray,
                 unfocusedLabelColor = Color.Transparent,
-                focusedIndicatorColor = Coral,
+                focusedIndicatorColor = CoralAccent,
                 unfocusedIndicatorColor = Color.Gray,
                 cursorColor = Color.Gray,
                 textColor = Color.Black

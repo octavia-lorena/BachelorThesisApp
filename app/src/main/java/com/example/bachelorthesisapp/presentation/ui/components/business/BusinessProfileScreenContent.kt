@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
@@ -47,6 +49,7 @@ import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.data.notifications.PushNotification
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.domain.model.Rating
 
 @Preview
 @Composable
@@ -67,7 +70,24 @@ fun BusinessProfileScreenContent(
         deviceToken = null
     ),
     onPostClick: (Int, PushNotification) -> Unit = { _, _ -> },
-    postsState: UiState<List<OfferPost>> = UiState.Loading,
+    postsState: UiState<List<OfferPost>> = UiState.Success(
+        listOf(
+            OfferPost(
+                1, "", "Full Pack 1", "This is the post description.", listOf(
+                    "https://firebasestorage.googleapis.com/v0/b/eventspace-24f7d.appspot.com/o/images%2Fposts%2FSrjjuuIevANOmCBvDPQhFe5MnJo2%2F1691838598076.jpeg?alt=media&token=c1da6e38-35df-4a96-8162-c986ded88224",
+                    "https://firebasestorage.googleapis.com/v0/b/eventspace-24f7d.appspot.com/o/images%2Fposts%2FSrjjuuIevANOmCBvDPQhFe5MnJo2%2F1691838602407.jpeg?alt=media&token=66a4faf0-b93c-4c25-a307-671d470aa252",
+                    "https://firebasestorage.googleapis.com/v0/b/eventspace-24f7d.appspot.com/o/images%2Fposts%2FSrjjuuIevANOmCBvDPQhFe5MnJo2%2F1691838605854.jpeg?alt=media&token=ead1b5d6-0010-4d73-8316-3822dd34e647"
+                ), 2000, Rating(3.3, 1)
+            ),
+            OfferPost(
+                1, "", "Full Pack 1", "This is the post description.", listOf(
+                    "https://firebasestorage.googleapis.com/v0/b/eventspace-24f7d.appspot.com/o/images%2Fposts%2FSrjjuuIevANOmCBvDPQhFe5MnJo2%2F1691838598076.jpeg?alt=media&token=c1da6e38-35df-4a96-8162-c986ded88224",
+                    "https://firebasestorage.googleapis.com/v0/b/eventspace-24f7d.appspot.com/o/images%2Fposts%2FSrjjuuIevANOmCBvDPQhFe5MnJo2%2F1691838602407.jpeg?alt=media&token=66a4faf0-b93c-4c25-a307-671d470aa252",
+                    "https://firebasestorage.googleapis.com/v0/b/eventspace-24f7d.appspot.com/o/images%2Fposts%2FSrjjuuIevANOmCBvDPQhFe5MnJo2%2F1691838605854.jpeg?alt=media&token=ead1b5d6-0010-4d73-8316-3822dd34e647"
+                ), 2000, Rating(3.3, 1)
+            ),
+        )
+    ),
     pastEventsState: UiState<List<Event>> = UiState.Loading,
     onRatingClick: (Int, Int) -> Unit = { _, _ -> }
 ) {
@@ -79,7 +99,7 @@ fun BusinessProfileScreenContent(
         is UiState.Success -> {
             val posts = postsState.value
             LazyColumn(
-                modifier = Modifier,
+                modifier = Modifier.padding(bottom = 10.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -121,7 +141,9 @@ fun BusinessProfileScreenContent(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     AsyncImage(
-                                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape),
                                         model = business.profilePicture,
                                         contentDescription = null,
                                         contentScale = ContentScale.Crop,
@@ -157,8 +179,6 @@ fun BusinessProfileScreenContent(
                                             tint = Color.Gray,
                                         )
                                     }
-
-
                                 }
                             }
                             Spacer(modifier = Modifier.height(10.dp))
@@ -167,7 +187,11 @@ fun BusinessProfileScreenContent(
                             Text(text = business.city)
                             Spacer(modifier = Modifier.height(3.dp))
                             Text(text = business.address)
-                            Divider(thickness = 1.dp, color = Color.DarkGray)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Divider(
+                                thickness = Dp.Hairline, color = Color.Gray,
+
+                            )
                         }
                     }
                 }
@@ -179,8 +203,6 @@ fun BusinessProfileScreenContent(
                         onRatingClick = onRatingClick
                     )
                 }
-                // Posts
-
             }
         }
 

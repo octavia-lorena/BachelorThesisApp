@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
@@ -18,10 +19,11 @@ import com.example.bachelorthesisapp.domain.model.EventType
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.theme.Coral
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterialApi::class)
-@Preview
 @Composable
 fun UpcomingEventsScreenContent(
     contentEvents: UiState<List<Event>> = UiState.Success(
@@ -56,7 +58,8 @@ fun UpcomingEventsScreenContent(
             )
         )
     ),
-    onEventDelete: (Int) -> Unit = {}
+    onEventDelete: (Int) -> Unit = {},
+    listState: LazyListState
     ) {
     Column(
         modifier = Modifier
@@ -66,9 +69,9 @@ fun UpcomingEventsScreenContent(
         when (contentEvents) {
             is UiState.Loading -> {
                 CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    backgroundColor = Rose,
-                    color = CoralLight
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(10.dp),
+                    backgroundColor = CoralLight,
+                    color = CoralAccent
                 )
             }
 
@@ -78,6 +81,7 @@ fun UpcomingEventsScreenContent(
                     modifier = Modifier
                         .padding(0.dp)
                         .fillMaxSize(),
+                    state = listState
                 ) {
                     items(eventList.size) { index ->
                         val event = eventList[index]

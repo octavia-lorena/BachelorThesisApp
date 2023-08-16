@@ -82,7 +82,7 @@ class BusinessViewModel @Inject constructor(
             }
         }
 
-    private val postResultState: Flow<UiState<OfferPost>> =
+    val postResultState: Flow<UiState<OfferPost>> =
         postsRepository.postResultFlow.map { postResult ->
             when (postResult) {
                 is Resource.Error -> UiState.Error(postResult.exception)
@@ -488,7 +488,7 @@ class BusinessViewModel @Inject constructor(
             updatePostState = updatePostState.copy(
                 title = post.title,
                 description = post.description,
-                images = post.images.joinToString(";") { it.toString() },
+                images = post.images.joinToString(";") { it },
                 price = post.price.toString()
             )
             delay(1000L)

@@ -1,6 +1,7 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.business
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -50,38 +52,30 @@ fun CreateOfferPostScreen(
         businessViewModel.clearCreatePostForm()
     }
 
-    Box {
-//        Image(
-//            painter = painterResource(id = R.drawable.register_gradient_background),
-//            contentDescription = "background",
-//            modifier = Modifier.fillMaxSize(),
-//            contentScale = ContentScale.FillBounds
-//        )
-        Scaffold(
-            topBar = {
-                BusinessSecondaryAppBar(
-                    title = "New Post",
-                    navController = navController,
-                    backgroundColor = Coral,
-                    elevation = 10.dp
+    Scaffold(
+        topBar = {
+            BusinessSecondaryAppBar(
+                title = "New Post",
+                navController = navController,
+                backgroundColor = Coral,
+                elevation = 10.dp
+            )
+        },
+        scaffoldState = scaffoldState,
+        drawerGesturesEnabled = true,
+        backgroundColor = Color.White
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    bottom = innerPadding.calculateBottomPadding(),
+                    top = 10.dp,
+                    start = 20.dp,
+                    end = 20.dp
                 )
-            },
-            scaffoldState = scaffoldState,
-            drawerGesturesEnabled = true,
-            backgroundColor = Color.White
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        bottom = innerPadding.calculateBottomPadding(),
-                        top = 10.dp,
-                        start = 20.dp,
-                        end = 20.dp
-                    )
-            ) {
-                CreateOfferPostScreenContent(businessViewModel, navController)
-            }
+        ) {
+            CreateOfferPostScreenContent(businessViewModel, navController)
         }
     }
 }
@@ -127,7 +121,7 @@ fun CreateOfferPostScreenContent(
                 bottom = 0.dp
             ),
         userScrollEnabled = true,
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // TITLE ITEM
         item {
@@ -223,12 +217,21 @@ fun CreateOfferPostScreenContent(
             Button(
                 onClick = { businessViewModel.onCreatePostEvent(CreatePostEvent.Submit) },
                 modifier = Modifier.wrapContentSize(),
-                colors = ButtonDefaults.buttonColors(backgroundColor = CoralAccent)
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                border = BorderStroke(
+                    width = 1.dp, brush = Brush.horizontalGradient(
+                        listOf(
+                            CoralAccent,
+                            Coral,
+                            CoralAccent
+                        )
+                    )
+                )
             ) {
                 Text(
                     text = stringResource(R.string.Submit),
                     style = Typography.caption,
-                    color = Color.White
+                    color = Color.DarkGray
                 )
             }
         }

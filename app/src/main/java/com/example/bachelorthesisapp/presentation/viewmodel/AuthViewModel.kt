@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -334,6 +335,10 @@ class AuthViewModel @Inject constructor(
                 registerBusinessState = registerBusinessState.copy(lng = event.lng)
             }
 
+            is BusinessRegisterEvent.ProfilePictureChanged -> {
+                registerBusinessState = registerBusinessState.copy(profilePicture = event.profilePicture)
+            }
+
 
             is BusinessRegisterEvent.Submit -> {
                 submitBusinessRegisterForm()
@@ -342,6 +347,7 @@ class AuthViewModel @Inject constructor(
             is BusinessRegisterEvent.PartialSubmit -> {
                 partialSubmitBusinessRegisterForm()
             }
+
         }
     }
 
@@ -513,24 +519,22 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             login(email, password)
             delay(3000L)
-//            loginState1.collectLatest {
-//                when (it) {
-//                    is UiState.Loading -> {}
-//                    is UiState.Success -> {
-//                        validationLoginEventChannel.send(ValidationEvent.Success)
-//                        delay(2000L)
+            loginState1.collect {
+                when (it) {
+                    is UiState.Loading -> {}
+                    is UiState.Success -> {
+                        validationLoginEventChannel.send(ValidationEvent.Success)
+                    }
 
-//                    }
-//
-//                    is UiState.Error -> {
-//                        validationLoginEventChannel.send(ValidationEvent.Failure)
-//                    }
-//                }
-//            }
+                    is UiState.Error -> {
+                        validationLoginEventChannel.send(ValidationEvent.Failure)
+                    }
+                }
+            }
             loginState = loginState.copy(
                 email = "", emailError = null, password = "", passwordError = null
             )
-            validationLoginEventChannel.send(ValidationEvent.Success)
+            // validationLoginEventChannel.send(ValidationEvent.Success)
 
         }
     }
@@ -667,6 +671,7 @@ class AuthViewModel @Inject constructor(
             val city = registerBusinessState.city
             val lat = registerBusinessState.lat
             val lng = registerBusinessState.lng
+            val profilePictureState = registerBusinessState.profilePicture
             val latitude: Double?
             val longitude: Double?
             if (lat.isEmpty() || lng.isEmpty()) {
@@ -676,6 +681,9 @@ class AuthViewModel @Inject constructor(
                 latitude = lat.toDouble()
                 longitude = lng.toDouble()
             }
+            val profilePicture: String? = if (profilePictureState == "") {
+                null
+            } else profilePictureState
             val user = BusinessEntity(
                 id = "new",
                 businessName = name,
@@ -688,7 +696,7 @@ class AuthViewModel @Inject constructor(
                 email = email,
                 password = password,
                 username = username,
-                profilePicture = "",
+                profilePicture = profilePicture,
                 deviceToken = Firebase.messaging.token.await()
             )
             Log.d("REGISTER", user.toString())
@@ -770,7 +778,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
 //            _loginFlow.value = Resource.Loading()
             val result = authRepository.login(email, password)
-            _loginFlow.value = result
+            //_loginFlow.value = result
         }
     }
 
@@ -788,11 +796,11 @@ class AuthViewModel @Inject constructor(
     fun subscribeToTopic(uid: String) {
         Log.d("TOKEN", FirebaseMessageService.token!!)
         Firebase.messaging.subscribeToTopic("/topics/$uid").addOnCompleteListener { task ->
-                var msg = "Subscribed"
-                if (!task.isSuccessful) {
-                    msg = "Subscribe failed"
-                }
+            var msg = "Subscribed"
+            if (!task.isSuccessful) {
+                msg = "Subscribe failed"
             }
+        }
     }
 
     fun clearLoginStateForm() {

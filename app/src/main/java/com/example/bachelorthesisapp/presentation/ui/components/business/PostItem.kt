@@ -2,6 +2,7 @@ package com.example.bachelorthesisapp.presentation.ui.components.business
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -25,19 +25,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
-import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
 import com.example.bachelorthesisapp.core.resources.Resource
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 
 @Composable
 fun PostItem(
@@ -45,12 +45,9 @@ fun PostItem(
     businessViewModel: BusinessViewModel,
     cardsViewModel: CardSwipeViewModel,
     revealedCards: List<Int>,
-    navHostController: NavHostController
+    onEditClicked: (OfferPost) -> Unit = {}
 ) {
     val postState = businessViewModel.postState1
-    val storageRef = businessViewModel.storageRef
-
-
     var isDialogOpen by remember {
         mutableStateOf(false)
     }
@@ -85,14 +82,25 @@ fun PostItem(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(
-                            onClick = { isDialogOpen = false },
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = SkyGray)
+                            onClick = {
+                                isDialogOpen = false
+                            },
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Gray,
+                                        Color.LightGray,
+                                        Color.Gray
+                                    )
+                                )
+                            )
                         ) {
-                            Text(text = "Cancel", color = Color.White, style = Typography.button)
+                            Text(
+                                text = "Cancel",
+                                style = Typography.button,
+                                color = Color.DarkGray
+                            )
                         }
                         Spacer(modifier = Modifier.padding(15.dp))
                         Button(
@@ -111,13 +119,22 @@ fun PostItem(
                                         .show()
                                 }
                             },
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Coral)
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            border = BorderStroke(
+                                width = 1.dp, brush = Brush.horizontalGradient(
+                                    listOf(
+                                        CoralAccent,
+                                        Coral,
+                                        CoralAccent
+                                    )
+                                )
+                            )
                         ) {
-                            Text(text = "Delete", style = Typography.button)
+                            Text(
+                                text = "Delete",
+                                style = Typography.button,
+                                color = Color.DarkGray
+                            )
                         }
                     }
                 }
@@ -137,13 +154,13 @@ fun PostItem(
                 cardsViewModel.reset()
             },
             onEdit = {
-                Log.d("EDIT", "requested by ${post.id}")
+                Log.d("EDIT", "requested by $post")
                 when (postState.value) {
                     is Resource.Loading -> {}
                     is Resource.Error -> {}
                     is Resource.Success -> {
                         cardsViewModel.reset()
-                        navHostController.navigate("update_post/${post.id}")
+                        onEditClicked(post)
                     }
                 }
 

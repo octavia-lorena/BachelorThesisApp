@@ -10,8 +10,10 @@ import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,8 +25,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,9 +45,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.authentication.await
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
@@ -52,20 +64,17 @@ import java.io.ByteArrayOutputStream
 fun GalleryImagePicker(
     postId: Int = 0,
     postName: String = "",
+    initialValues: List<String> = emptyList(),
     onValueChanged: (String) -> Unit = {}
 ) {
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val context = LocalContext.current
-    val urisList by remember {
+    var urisList by remember {
         mutableStateOf<MutableList<Uri?>>(
-            mutableListOf(
-            )
+            initialValues.map { Uri.parse(it) }.toMutableList()
         )
     }
-    val bitmap = remember {
-        mutableStateOf<Bitmap?>(null)
-    }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -103,6 +112,7 @@ fun GalleryImagePicker(
                 },
                 text = stringResource(id = R.string.Upload)
             )
+            Spacer(modifier = Modifier.width(20.dp))
         }
         Spacer(modifier = Modifier.height(10.dp))
         LazyRow(
@@ -110,25 +120,42 @@ fun GalleryImagePicker(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(3.dp),
-            state = rememberLazyListState(initialFirstVisibleItemIndex = 0)
         ) {
             Log.d("IMAGES", urisList.toString())
             items(urisList.size) { imageIndex ->
                 val imgUri = urisList[imageIndex]
                 imgUri?.let {
-                    val source = ImageDecoder
-                        .createSource(context.contentResolver, it)
-                    bitmap.value = ImageDecoder.decodeBitmap(source)
-                    bitmap.value?.let { btm ->
+//                    val source = ImageDecoder
+//                        .createSource(context.contentResolver, it)
+//                    bitmap.value = ImageDecoder.decodeBitmap(source)
+                    // bitmap.value?.let { btm ->
+
+                    Box(contentAlignment = Alignment.TopEnd, modifier = Modifier.animateContentSize { _, _ ->  }) {
                         Image(
-                            bitmap = btm.asImageBitmap(),
+                            painter = rememberAsyncImagePainter(model = imgUri),
                             contentDescription = null,
                             modifier = Modifier
                                 .size(200.dp)
                                 .padding(5.dp),
                             contentScale = ContentScale.Crop
                         )
+                        IconButton(
+                            onClick = {
+                                urisList.removeAt(imageIndex)
+                                val imagesString = urisList.joinToString(";") { it.toString() }
+                                onValueChanged(imagesString)
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Cancel,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                        }
+
                     }
+
+                    //   }
                 }
             }
         }

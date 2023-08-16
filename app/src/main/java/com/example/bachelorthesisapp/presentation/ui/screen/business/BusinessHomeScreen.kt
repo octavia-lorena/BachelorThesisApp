@@ -140,9 +140,7 @@ fun BusinessHomeScreen(
                     appointmentsContent = appointmentsState.value,
                     requestsContent = requestsState.value,
                     onUpcomingCardClick = { navHostController.navigate("appointments/$uid") },
-                    onRequestsCardClick = { navHostController.navigate("requests/$uid") },
-                    onFeedCardClick = { navHostController.navigate("posts_business/$uid") }
-                )
+                    onRequestsCardClick = { navHostController.navigate("requests/$uid") })
             }
         }
 
@@ -159,9 +157,7 @@ fun BusinessHomeScreenContent(
     postContent: UiState<List<OfferPost>> = UiState.Loading,
     eventContent: UiState<List<Event>> = UiState.Loading,
     onUpcomingCardClick: () -> Unit = {},
-    onRequestsCardClick: () -> Unit = {},
-    onFeedCardClick: () -> Unit = {}
-
+    onRequestsCardClick: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier
@@ -216,26 +212,5 @@ fun BusinessHomeScreenContent(
                 }
             }
         }
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(63.dp)
-                    .padding(top = 10.dp, bottom = 10.dp)
-                    .clickable { onFeedCardClick() },
-                backgroundColor = Color.White,
-                elevation = 10.dp,
-                shape = RoundedCornerShape(30.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text = "MY FEED", color = CoralAccent)
-                }
-
-            }
-        }
-
     }
 }

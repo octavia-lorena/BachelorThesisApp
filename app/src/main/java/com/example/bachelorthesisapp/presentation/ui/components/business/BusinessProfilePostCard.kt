@@ -3,6 +3,7 @@ package com.example.bachelorthesisapp.presentation.ui.components.business
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,10 +50,9 @@ import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.notifications.NotificationData
 import com.example.bachelorthesisapp.data.notifications.PushNotification
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.BusinessType
-import com.example.bachelorthesisapp.domain.model.Rating
+import com.example.bachelorthesisapp.data.model.BusinessType
+import com.example.bachelorthesisapp.data.model.Rating
 import com.example.bachelorthesisapp.presentation.ui.components.common.ImageCarrousel
-import com.example.bachelorthesisapp.presentation.ui.components.common.SmallSubmitButton
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
@@ -104,8 +105,7 @@ fun BusinessProfilePostCard(
         ) {
             Card(
                 modifier = Modifier
-                    .wrapContentWidth()
-                    .height(120.dp)
+                    .wrapContentSize()
                     .padding(10.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -118,7 +118,8 @@ fun BusinessProfilePostCard(
                     Text(
                         modifier = Modifier.padding(7.dp),
                         text = "Are you sure you want to request this service?",
-                        color = Color.Gray
+                        color = Color.Gray,
+                        style = Typography.caption
                     )
                     Row(
                         modifier = Modifier
@@ -192,7 +193,8 @@ fun BusinessProfilePostCard(
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .padding(bottom = 10.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
@@ -205,7 +207,8 @@ fun BusinessProfilePostCard(
                     modifier = Modifier.weight(6f),
                     text = post.title,
                     style = Typography.h6,
-                    color = Color.Black
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 IconButton(onClick = { expanded = true }, modifier = Modifier.weight(1f)) {
@@ -213,6 +216,7 @@ fun BusinessProfilePostCard(
                         imageVector = Icons.Default.MoreVert, contentDescription = ""
                     )
                     DropdownMenu(
+                        modifier = Modifier.background(color = Color.White),
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
                         properties = PopupProperties()
@@ -320,6 +324,7 @@ fun BusinessProfilePostCard(
                     text = post.description, style = Typography.caption
                 )
             }
+
 
         }
     }

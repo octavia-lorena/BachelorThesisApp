@@ -49,7 +49,7 @@ fun RequestsCard(
     Card(
         modifier = Modifier
             .height(130.dp)
-            .fillMaxWidth()
+            .width(180.dp)
             .clickable { onCardClick() },
         backgroundColor = Color.White,
         elevation = 10.dp,

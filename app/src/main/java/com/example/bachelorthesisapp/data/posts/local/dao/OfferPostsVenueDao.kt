@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.bachelorthesisapp.data.BaseDao
-import com.example.bachelorthesisapp.domain.model.OfferPostVenue
+import com.example.bachelorthesisapp.data.model.OfferPostVenue
 
 @Dao
 abstract class OfferPostsVenueDao : BaseDao<OfferPostVenue> {

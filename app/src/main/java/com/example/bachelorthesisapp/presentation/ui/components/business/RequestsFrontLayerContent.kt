@@ -109,19 +109,27 @@ fun RequestsFrontLayerContent(
                             .fillMaxWidth()
                             .height(400.dp)
                             .animateContentSize { _, _ -> },
-                        onDayClick = { date, _ -> pickedDate = LocalDate.parse(date.toString()) }
+                        onDayClick = { date, _ ->
+                            pickedDate = LocalDate.parse(date.toString())
+                            Log.d("APPOINTMENTS", "Searching appointments for $pickedDate")
+                        }
                     )
                 }
 
                 val eventsContent = eventsState.value
                 if (contentPosts is UiState.Success && eventsContent is UiState.Success && contentClients is UiState.Success) {
                     val posts = contentPosts.value.filter { it.businessId == businessId }
+                    Log.d("APPOINTMENTS", "POSTS for bid $businessId: ${posts.map { it.id }}")
                     val postsIds = posts.map { it.id }
                     val events =
-                        eventsContent.value.filter { it.date == pickedDate }
+                        eventsContent.value.filter { it.date.toString() == pickedDate.toString() }
+                    Log.d("APPOINTMENTS", "EVENTS: $events")
+
                     val eventsIds = events.map { it.id }
                     val appointments =
                         contentRequests.value.filter { it.postId in postsIds && it.eventId in eventsIds }
+
+                    Log.d("REQUESTS", "${contentRequests.value}")
 
                     item {
                         Spacer(modifier = Modifier.height(10.dp))
@@ -132,6 +140,7 @@ fun RequestsFrontLayerContent(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                     }
+                    Log.d("APPOINTMENTS", "Found appointments for $pickedDate: $appointments")
 
                     items(appointments.size) { index ->
                         val request = appointments[index]

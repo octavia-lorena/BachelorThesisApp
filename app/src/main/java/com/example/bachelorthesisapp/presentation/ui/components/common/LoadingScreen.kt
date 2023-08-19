@@ -1,5 +1,6 @@
 package com.example.bachelorthesisapp.presentation.ui.components.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +31,7 @@ fun LoadingScreen(navHostController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = innerPadding.calculateBottomPadding(), top = 10.dp)
+                .background(color = Color.White)
         ) {
             Column(
                 modifier = Modifier

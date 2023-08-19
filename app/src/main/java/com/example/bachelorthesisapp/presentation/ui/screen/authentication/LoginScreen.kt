@@ -2,7 +2,12 @@ package com.example.bachelorthesisapp.presentation.ui.screen.authentication
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,16 +30,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -70,50 +81,100 @@ fun LoginScreenContent(
     val userType = authViewModel.userTypeState.collectAsStateWithLifecycle(initialValue = "")
     val scope = rememberCoroutineScope()
     val loginState = authViewModel.loginState1.collectAsStateWithLifecycle(UiState.Loading)
-    val loginFlow = authViewModel.loginFlow.collectAsState()
+    val isLoading = authViewModel.isLoading.collectAsState()
+    var _isLoading by remember {
+        mutableStateOf(false)
+    }
+
 
     val context = LocalContext.current
-    LaunchedEffect(key1 = loginState) {
-        authViewModel.validationLoginEvents.collect { event ->
-            when (event) {
-                is AuthViewModel.ValidationEvent.Success -> {
-                    Toast.makeText(
-                        context,
-                        "We are logging you in.",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
 
-                    val loginContent = loginState.value
-                    if (loginContent is UiState.Success) {
-                        if (loginContent.value.type == "clients") {
-                            navController.navigate(
-                                "home_client/${loginContent.value.id}"
-                            )
-                        } else if (loginContent.value.type == "businesses") {
-                            navController.navigate(
-                                "home_business/${loginContent.value.id}"
-                            )
-                        }
-                    }
-                    else{
-                        Toast.makeText(
-                            context,
-                            "Error/Loading.",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                    }
-                }
+    LaunchedEffect(key1 = isLoading.value) {
+        _isLoading = isLoading.value
+    }
 
-                is AuthViewModel.ValidationEvent.Failure -> Toast.makeText(
+    LaunchedEffect(key1 = loginState.value, key2 = Unit) {
+        Log.d("LOGIN", "STATE: ${loginState.value}")
+        when (val loginContent = loginState.value) {
+            is UiState.Success -> {
+                Toast.makeText(
                     context,
-                    "Error logging in.",
+                    "Success",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                if (loginContent.value.type == "clients") {
+                    navController.navigate(
+                        "home_client/${loginContent.value.id}"
+                    )
+                } else if (loginContent.value.type == "businesses") {
+                    navController.navigate(
+                        "home_business/${loginContent.value.id}"
+                    )
+                }
+            }
+
+            is UiState.Loading -> {
+                Toast.makeText(
+                    context,
+                    "Loading...",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
+
+            is UiState.Error -> {
+                Toast.makeText(
+                    context,
+                    "Error",
                     Toast.LENGTH_SHORT
                 )
                     .show()
             }
         }
+//        authViewModel.validationLoginEvents.collect { event ->
+//            when (event) {
+//                is AuthViewModel.ValidationEvent.Success -> {
+//                    _isLoading = false
+//                    Toast.makeText(
+//                        context,
+//                        "We are logging you in.",
+//                        Toast.LENGTH_SHORT
+//                    )
+//                        .show()
+//
+//                    val loginContent = loginState.value
+//                    if (loginContent is UiState.Success) {
+//                        if (loginContent.value.type == "clients") {
+//                            navController.navigate(
+//                                "home_client/${loginContent.value.id}"
+//                            )
+//                        } else if (loginContent.value.type == "businesses") {
+//                            navController.navigate(
+//                                "home_business/${loginContent.value.id}"
+//                            )
+//                        }
+//                    } else {
+//                        Toast.makeText(
+//                            context,
+//                            "Error/Loading.",
+//                            Toast.LENGTH_SHORT
+//                        )
+//                            .show()
+//                    }
+//                }
+//
+//                is AuthViewModel.ValidationEvent.Failure -> {
+//                    _isLoading = true
+//                    Toast.makeText(
+//                        context,
+//                        "Error logging in.",
+//                        Toast.LENGTH_SHORT
+//                    )
+//                        .show()
+//                }
+//            }
+//        }
     }
 
     Box(
@@ -240,7 +301,8 @@ fun LoginScreenContent(
                                 delay(3000L)
                             }
                         },
-                        text = "Sign In"
+                        text = "Sign In",
+                        isLoading = _isLoading
                     )
                     Spacer(modifier = Modifier.height(220.dp))
                     BottomClickableText(

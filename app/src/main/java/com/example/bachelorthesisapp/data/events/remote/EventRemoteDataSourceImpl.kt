@@ -1,7 +1,7 @@
 package com.example.bachelorthesisapp.data.events.remote
 
 import android.util.Log
-import com.example.bachelorthesisapp.domain.model.toEventData
+import com.example.bachelorthesisapp.data.model.toEventData
 import com.example.bachelorthesisapp.data.notifications.NotificationApi
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.events.remote.api.EventApi

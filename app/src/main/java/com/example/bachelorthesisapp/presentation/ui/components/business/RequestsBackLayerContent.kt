@@ -18,7 +18,7 @@ import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.data.model.RequestStatus
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel

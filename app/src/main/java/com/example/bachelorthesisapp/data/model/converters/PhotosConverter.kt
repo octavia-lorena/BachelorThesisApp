@@ -3,7 +3,7 @@ package com.example.bachelorthesisapp.data.model.converters
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.room.TypeConverter
-import com.example.bachelorthesisapp.domain.model.Rating
+import com.example.bachelorthesisapp.data.model.Rating
 
 class PhotosConverter {
 

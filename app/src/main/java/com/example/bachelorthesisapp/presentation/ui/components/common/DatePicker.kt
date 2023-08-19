@@ -68,7 +68,8 @@ fun DropdownDateMenu(
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_calendar_today_24),
-                    contentDescription = ""
+                    contentDescription = "",
+                    tint = Color.Gray
                 )
             },
             trailingIcon = {

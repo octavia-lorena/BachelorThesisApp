@@ -4,9 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.bachelorthesisapp.data.model.converters.EventConverter
-import com.example.bachelorthesisapp.domain.model.BusinessType
-import com.example.bachelorthesisapp.domain.model.EventStatus
-import com.example.bachelorthesisapp.domain.model.EventType
+import com.example.bachelorthesisapp.data.model.BusinessType
+import com.example.bachelorthesisapp.data.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventType
 import java.time.LocalDate
 
 @Entity(tableName = "events")

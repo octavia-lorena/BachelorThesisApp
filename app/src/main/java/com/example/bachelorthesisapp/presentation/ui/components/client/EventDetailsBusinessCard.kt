@@ -40,7 +40,7 @@ import coil.compose.AsyncImage
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.data.model.BusinessType
 
 @Composable
 @Preview
@@ -106,7 +106,9 @@ fun EventDetailsBusinessCard(
                     model = business.profilePicture,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    placeholder = painterResource(id = R.drawable.profile_picture_placeholder)
+                    placeholder = painterResource(id = R.drawable.profile_picture_placeholder),
+                    error = painterResource(id = R.drawable.profile_picture_placeholder)
+
                 )
             }
             Spacer(modifier = Modifier.width(20.dp))
@@ -127,7 +129,7 @@ fun EventDetailsBusinessCard(
             }
             Spacer(modifier = Modifier.width(170.dp))
             IconButton(
-             //   modifier = Modifier.weight(1f),
+                //   modifier = Modifier.weight(1f),
                 onClick = {
                     // Navigate to business profile
                     onBusinessClick(business.id)

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.events.local.entity.Event
-import com.example.bachelorthesisapp.domain.model.EventStatus
-import com.example.bachelorthesisapp.domain.model.EventType
+import com.example.bachelorthesisapp.data.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventType
 import com.example.bachelorthesisapp.presentation.ui.theme.Green
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
@@ -63,7 +64,7 @@ fun UpcomingEventsCard(
 ) {
     Card(
         modifier = Modifier
-            .height(280.dp)
+            .wrapContentHeight()
             .fillMaxWidth(),
         backgroundColor = Color.White,
         elevation = 10.dp,
@@ -80,15 +81,12 @@ fun UpcomingEventsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.width(5.dp))
-                Text(
-                    text = "UPCOMING",
-                    style = Typography.h1.copy(fontSize = 15.sp),
-                    color = Color.Black
-                )
+                Text(text = "UPCOMING", style = Typography.h1, color = Color.Black)
+
                 Spacer(modifier = Modifier.width(15.dp))
                 Box(
                     modifier = Modifier
-                        .size(30.dp)
+                        .size(40.dp)
                         .aspectRatio(2f)
                         .padding(top = 0.dp)
                         .background(Green, shape = CircleShape)
@@ -112,7 +110,7 @@ fun UpcomingEventsCard(
                                 text = "${contentEventsUpcoming.value.size}",
                                 color = Color.White,
                                 textAlign = TextAlign.Center,
-                                fontSize = 10.sp
+                                fontSize = 15.sp
                             )
                         }
 

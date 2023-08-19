@@ -3,8 +3,7 @@ package com.example.bachelorthesisapp.data
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.example.bachelorthesisapp.data.BaseDao
-import com.example.bachelorthesisapp.domain.model.ActivityEntity
+import com.example.bachelorthesisapp.data.model.ActivityEntity
 
 @Dao
 abstract class ActivitiesDao: BaseDao<ActivityEntity> {

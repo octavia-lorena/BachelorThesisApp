@@ -25,6 +25,7 @@ fun EventDetailsBackdrop(
     onBusinessClick: (String) -> Unit = {},
     onCityClicked: (String) -> Unit = {},
     postsList: List<OfferPost>,
+    businessType: String,
     onEditClick: (Int) -> Unit = {},
     onPublishClick: (Int) -> Unit = {},
     onCollaborationCanceledClicked: (Int) -> Unit = {}
@@ -58,6 +59,7 @@ fun EventDetailsBackdrop(
                 postsList = postsList,
                 onBusinessClick = onBusinessClick,
                 onCityClicked = onCityClicked,
+                businessType = businessType
             )
         })
 }

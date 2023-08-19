@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.Rating
+import com.example.bachelorthesisapp.data.model.Rating
 import com.example.bachelorthesisapp.data.model.events.CreatePostEvent
 import com.example.bachelorthesisapp.data.model.events.UpdatePostEvent
 import com.example.bachelorthesisapp.data.model.states.CreatePostFormState

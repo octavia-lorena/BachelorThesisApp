@@ -1,5 +1,6 @@
 package com.example.bachelorthesisapp.data.clients.remote
 
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.clients.remote.api.ClientApi
 import com.example.bachelorthesisapp.data.clients.remote.dto.ClientDto
 import com.example.bachelorthesisapp.data.notifications.NotificationApi
@@ -21,4 +22,6 @@ class ClientRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun updateClientDeviceToken(id: String, token: String): ClientDto =
         api.updateClientDeviceToken(id, token)
+
+    override suspend fun addClient(client: ClientEntity): ClientDto = api.addClient(client)
 }

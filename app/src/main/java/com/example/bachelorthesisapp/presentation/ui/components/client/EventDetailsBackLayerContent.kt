@@ -1,13 +1,11 @@
 package com.example.bachelorthesisapp.presentation.ui.components.client
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,17 +13,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,34 +29,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.events.local.entity.Event
-import com.example.bachelorthesisapp.data.notifications.NotificationData
-import com.example.bachelorthesisapp.data.notifications.PushNotification
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.BusinessType
-import com.example.bachelorthesisapp.domain.model.EventStatus
-import com.example.bachelorthesisapp.domain.model.EventType
-import com.example.bachelorthesisapp.domain.model.Rating
+import com.example.bachelorthesisapp.data.model.BusinessType
+import com.example.bachelorthesisapp.data.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventType
+import com.example.bachelorthesisapp.data.model.Rating
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.DarkGray
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlue
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueDark
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueLight
 import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
-import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
-import com.gowtham.ratingbar.RatingBar
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalDate
@@ -85,12 +72,12 @@ fun EventDetailsBackLayerContent(
         200,
         mapOf(
             Pair(BusinessType.Beauty, -1),
-            Pair(BusinessType.CakeShop, 1),
+            Pair(BusinessType.Catering, 1),
             Pair(BusinessType.Florist, -1),
             Pair(BusinessType.Venue, -1),
             Pair(BusinessType.DecorDesign, 2),
             Pair(BusinessType.Entertainment, -1),
-            Pair(BusinessType.Musician, -1),
+            Pair(BusinessType.Music, -1),
             Pair(BusinessType.PhotoVideo, 3)
         ),
         EventStatus.Planning
@@ -176,6 +163,7 @@ fun EventDetailsBackLayerContent(
                                 tint = Color.Gray
                             )
                             DropdownMenu(
+                                modifier = Modifier.background(color = Color.White),
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false },
                                 properties = PopupProperties()
@@ -183,6 +171,12 @@ fun EventDetailsBackLayerContent(
                                 DropdownMenuItem(onClick = {
                                     onEditClick(event.id)
                                 }) {
+                                    Icon(
+                                        painterResource(id = R.drawable.baseline_edit_24),
+                                        contentDescription = null,
+                                        tint = Color.Gray
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
                                     Text(
                                         text = "Edit",
                                         fontSize = 16.sp,
@@ -196,6 +190,12 @@ fun EventDetailsBackLayerContent(
                                     },
                                     enabled = enablePublishButton
                                 ) {
+                                    Icon(
+                                        painterResource(id = R.drawable.baseline_done_outline_24),
+                                        contentDescription = null,
+                                        tint = Color.Gray
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
                                     Text(
                                         text = "Publish",
                                         fontSize = 16.sp,
@@ -207,20 +207,33 @@ fun EventDetailsBackLayerContent(
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        val totalVendors = event.vendors.size
+                        val unresolved = event.vendors.values.toList().filter { it == -1 }.size
+                        Text(
+                            text = "$unresolved/$totalVendors",
+                            style = Typography.subtitle2,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = "steps to go",
+                            style = Typography.subtitle2,
+                            color = Color.Black
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
                     Text(
                         text = event.type.name,
                         style = Typography.subtitle2,
                         color = Color.Black
                     )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    val totalVendors = event.vendors.size
-                    val unresolved = event.vendors.values.toList().filter { it == -1 }.size
-                    Text(
-                        text = "$unresolved/$totalVendors steps to go",
-                        style = Typography.subtitle2,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = event.description,
                         style = Typography.subtitle2,
@@ -338,7 +351,7 @@ fun EventDetailsBackLayerContent(
                             text = "Budget status",
                             style = Typography.subtitle2,
                             color = Color.DarkGray,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -347,6 +360,12 @@ fun EventDetailsBackLayerContent(
                             color = color
                         )
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Divider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = Dp.Hairline,
+                        color = OffWhite
+                    )
                     Spacer(modifier = Modifier.height(40.dp))
                 }
             }

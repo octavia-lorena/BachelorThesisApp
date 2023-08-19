@@ -7,7 +7,7 @@ import com.example.bachelorthesisapp.data.appointment_requests.local.RequestsLoc
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
 import com.example.bachelorthesisapp.data.appointment_requests.remote.RequestRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.appointment_requests.remote.dto.toEntity
-import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.data.model.RequestStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject

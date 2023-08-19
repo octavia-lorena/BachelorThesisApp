@@ -1,4 +1,4 @@
-package com.example.bachelorthesisapp.domain.model;
+package com.example.bachelorthesisapp.data.model;
 
 public enum Cities {
     Cluj,

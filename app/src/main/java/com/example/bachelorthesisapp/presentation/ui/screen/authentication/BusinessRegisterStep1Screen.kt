@@ -22,7 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.data.model.BusinessType
 import com.example.bachelorthesisapp.data.model.events.BusinessRegisterEvent
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomClickableText
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
@@ -30,7 +30,6 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextF
 import com.example.bachelorthesisapp.presentation.ui.components.common.LargeDropdownMenu
 import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
-import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel

@@ -5,12 +5,15 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,7 +31,7 @@ import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.data.model.RequestStatus
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessAppointmentCard
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarBusiness
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessDrawerContent
@@ -39,9 +42,11 @@ import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun AppointmentsScreen(
@@ -97,7 +102,6 @@ fun AppointmentsScreen(
         scaffoldState = scaffoldState,
         drawerContent = {
             BusinessDrawerContent(
-                uid = uid,
                 authVM = authViewModel,
                 navController = navHostController
             )
@@ -111,6 +115,8 @@ fun AppointmentsScreen(
                 scope.launch {
                     clientViewModel.loadRequests(uid)
                     clientViewModel.findBusinessById(uid)
+                    clientViewModel.loadAllEvents()
+                    clientViewModel.findPostsByBusinessId(uid)
                 }
             }
         ) {
@@ -174,18 +180,41 @@ fun AppointmentsScreenContent(
                 modifier = Modifier
                     .padding(5.dp)
                     .fillMaxSize(),
+                horizontalAlignment = Alignment.Start
             ) {
                 val appointmentsList = contentAppointments.value
                 if (contentPosts is UiState.Success && contentEvents is UiState.Success && contentClients is UiState.Success) {
+                    val eventsList = contentEvents.value.sortedBy { it.date }
                     items(appointmentsList.size) { index ->
                         val appointment =
                             appointmentsList[index]
                         val post = contentPosts.value.first { it.id == appointment.postId }
-                        val event = contentEvents.value.first { it.id == appointment.eventId }
+                        val event = eventsList.first { it.id == appointment.eventId }
                         val client = contentClients.value.first { it.id == event.organizerId }
                         Log.d("NEW_REQUEST_CARD", "rid ${appointment.id}, cid ${client.id}")
                         if (contentBusiness is UiState.Success) {
                             val business = contentBusiness.value
+                            if (index == 0) {
+                                Text(
+                                    text = event.date.format(DateTimeFormatter.ofPattern("d MMM uuuu")),
+                                    style = Typography.body2,
+                                    color = Color.Gray
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                            }
+
+                            if (index > 0) {
+                                val previousAppointment = appointmentsList[index - 1]
+                                val previousEvent =
+                                    eventsList.first { it.id == previousAppointment.eventId }
+                                if (previousEvent.date != event.date)
+                                    Text(
+                                        text = event.date.format(DateTimeFormatter.ofPattern("d MMM uuuu")),
+                                        style = Typography.body2,
+                                        color = Color.Gray
+                                    )
+                                Spacer(modifier = Modifier.height(20.dp))
+                            }
                             BusinessAppointmentCard(
                                 post = post,
                                 event = event,

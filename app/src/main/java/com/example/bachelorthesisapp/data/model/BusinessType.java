@@ -1,12 +1,12 @@
-package com.example.bachelorthesisapp.domain.model;
+package com.example.bachelorthesisapp.data.model;
 
 public enum BusinessType {
     Venue,
     Florist,
     Beauty,
     PhotoVideo,
-    CakeShop,
-    Musician,
+    Catering,
+    Music,
     Entertainment,
     DecorDesign
 }

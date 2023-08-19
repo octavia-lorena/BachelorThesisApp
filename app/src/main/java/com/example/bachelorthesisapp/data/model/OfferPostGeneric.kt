@@ -1,6 +1,4 @@
-package com.example.bachelorthesisapp.domain.model
-
-import android.net.Uri
+package com.example.bachelorthesisapp.data.model
 
 
 abstract class OfferPostGeneric(

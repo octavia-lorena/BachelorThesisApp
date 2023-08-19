@@ -3,10 +3,12 @@ package com.example.bachelorthesisapp.data.authentication
 import android.util.Log
 import com.example.bachelorthesisapp.data.businesses.remote.BusinessRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.clients.remote.ClientRemoteDataSourceImpl
-import com.example.bachelorthesisapp.domain.model.UserEntity
-import com.example.bachelorthesisapp.domain.model.UserModel
-import com.example.bachelorthesisapp.domain.model.toUserModel
+import com.example.bachelorthesisapp.data.model.UserEntity
+import com.example.bachelorthesisapp.data.model.UserModel
+import com.example.bachelorthesisapp.data.model.toUserModel
 import com.example.bachelorthesisapp.core.resources.Resource
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
+import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -46,7 +48,7 @@ class AuthRepository @Inject constructor(
 
     override suspend fun login(email: String, password: String): Resource<UserModel> {
         return try {
-            //  _loginFlow.emit(Resource.Loading())
+            _loginFlow.emit(Resource.Loading())
             val result = auth.signInWithEmailAndPassword(email, password).await()
             delay(1000L)
             val userModel = result.user?.toUserModel()!!
@@ -112,6 +114,46 @@ class AuthRepository @Inject constructor(
             val firebaseId = firebaseUser?.uid!!
             userEntity.id = firebaseId
             database.child(userType).child(firebaseUser.uid).setValue(userEntity)
+            delay(1000L)
+            Resource.Success(firebaseUser)
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    suspend fun registerClient(clientEntity: ClientEntity): Resource<FirebaseUser> {
+        return try {
+            val result = auth.createUserWithEmailAndPassword(clientEntity.email, clientEntity.password).await()
+            val profileUpdates = userProfileChangeRequest {
+                displayName = clientEntity.username
+            }
+            val firebaseUser = result.user
+            firebaseUser?.updateProfile(profileUpdates)?.await()
+            delay(2000L)
+            val firebaseId = firebaseUser?.uid!!
+            clientEntity.id = firebaseId
+            database.child("clients").child(firebaseUser.uid).setValue(clientEntity)
+            clientRemoteDataSource.addClient(clientEntity)
+            delay(1000L)
+            Resource.Success(firebaseUser)
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    suspend fun registerBusiness(businessEntity: BusinessEntity): Resource<FirebaseUser> {
+        return try {
+            val result = auth.createUserWithEmailAndPassword(businessEntity.email, businessEntity.password).await()
+            val profileUpdates = userProfileChangeRequest {
+                displayName = businessEntity.username
+            }
+            val firebaseUser = result.user
+            firebaseUser?.updateProfile(profileUpdates)?.await()
+            delay(2000L)
+            val firebaseId = firebaseUser?.uid!!
+            businessEntity.id = firebaseId
+            database.child("businesses").child(firebaseUser.uid).setValue(businessEntity)
+            businessRemoteDataSource.addBusiness(businessEntity)
             delay(1000L)
             Resource.Success(firebaseUser)
         } catch (e: Exception) {

@@ -6,7 +6,7 @@ import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.data.model.RequestStatus
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
 
@@ -23,6 +23,7 @@ fun RequestsScreenContent(
             )
         )
     ),
+    contentAppointments: UiState<List<AppointmentRequest>>,
     contentBusiness: UiState<BusinessEntity> = UiState.Loading,
     clientViewModel: ClientViewModel,
     contentEvents: UiState<List<Event>> = UiState.Loading,
@@ -37,6 +38,7 @@ fun RequestsScreenContent(
         contentRequests = contentRequests,
         contentEvents = contentEvents,
         contentPosts = contentPosts,
-        clientViewModel = clientViewModel
+        clientViewModel = clientViewModel,
+        contentAppointments = contentAppointments
     )
 }

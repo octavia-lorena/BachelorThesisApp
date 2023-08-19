@@ -15,7 +15,7 @@ import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.data.model.RequestStatus
 import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 
@@ -37,7 +37,9 @@ fun RequestsScreenBackdrop(
     clientViewModel: ClientViewModel,
     contentEvents: UiState<List<Event>> = UiState.Loading,
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
-    contentClients: UiState<List<ClientEntity>> = UiState.Loading
+    contentClients: UiState<List<ClientEntity>> = UiState.Loading,
+    contentAppointments: UiState<List<AppointmentRequest>> = UiState.Loading
+
 ) {
     BackdropScaffold(
         modifier = Modifier,
@@ -69,7 +71,7 @@ fun RequestsScreenBackdrop(
                 clientViewModel = clientViewModel,
                 contentPosts = contentPosts,
                 contentClients = contentClients,
-                contentRequests = contentRequests
+                contentRequests = contentAppointments
             )
         })
 }

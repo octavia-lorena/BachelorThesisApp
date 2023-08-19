@@ -1,7 +1,7 @@
 package com.example.bachelorthesisapp.data.authentication
 
-import com.example.bachelorthesisapp.domain.model.UserEntity
-import com.example.bachelorthesisapp.domain.model.UserModel
+import com.example.bachelorthesisapp.data.model.UserEntity
+import com.example.bachelorthesisapp.data.model.UserModel
 import com.example.bachelorthesisapp.core.resources.Resource
 import com.google.firebase.auth.FirebaseUser
 

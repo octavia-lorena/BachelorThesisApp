@@ -1,8 +1,7 @@
 package com.example.bachelorthesisapp.data.posts.remote.api
 
-import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.data.posts.remote.dto.OfferPostDto
-import com.example.bachelorthesisapp.domain.model.OfferPostModel
+import com.example.bachelorthesisapp.data.model.OfferPostModel
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field

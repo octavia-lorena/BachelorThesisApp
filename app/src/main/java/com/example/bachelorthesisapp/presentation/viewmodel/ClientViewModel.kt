@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
-import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.data.model.BusinessType
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
-import com.example.bachelorthesisapp.domain.model.EventStatus
-import com.example.bachelorthesisapp.domain.model.EventType
+import com.example.bachelorthesisapp.data.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventType
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.data.model.RequestStatus
 import com.example.bachelorthesisapp.data.model.events.CreateEventEvent
 import com.example.bachelorthesisapp.data.model.events.UpdateEventEvent
 import com.example.bachelorthesisapp.data.model.states.CreateEventFormState

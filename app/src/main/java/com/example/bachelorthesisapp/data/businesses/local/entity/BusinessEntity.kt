@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.bachelorthesisapp.data.model.converters.BusinessTypeConverter
-import com.example.bachelorthesisapp.domain.model.BusinessType
-import com.example.bachelorthesisapp.domain.model.UserEntity
+import com.example.bachelorthesisapp.data.model.BusinessType
+import com.example.bachelorthesisapp.data.model.UserEntity
 
 @Entity(tableName = "businesses")
 @TypeConverters(BusinessTypeConverter::class)

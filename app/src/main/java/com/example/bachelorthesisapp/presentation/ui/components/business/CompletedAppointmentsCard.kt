@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
 import com.example.bachelorthesisapp.data.events.local.entity.Event
-import com.example.bachelorthesisapp.domain.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventStatus
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Green
 import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
@@ -50,13 +49,7 @@ fun CompletedAppointmentsCard(
     Card(
         modifier = Modifier
             .height(130.dp)
-            .fillMaxWidth(),
-//            .animateContentSize(
-//                animationSpec = tween(
-//                    durationMillis = 300,
-//                    easing = LinearOutSlowInEasing
-//                )
-//            ),
+            .width(180.dp),
         backgroundColor = Color.White,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp)

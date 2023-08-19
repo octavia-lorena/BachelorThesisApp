@@ -11,15 +11,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bachelorthesisapp.data.events.local.entity.Event
-import com.example.bachelorthesisapp.domain.model.EventStatus
-import com.example.bachelorthesisapp.domain.model.EventType
+import com.example.bachelorthesisapp.data.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventType
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.core.presentation.UiState
-import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import java.time.LocalDate
 

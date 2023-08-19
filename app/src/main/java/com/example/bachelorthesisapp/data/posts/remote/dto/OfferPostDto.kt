@@ -1,8 +1,7 @@
 package com.example.bachelorthesisapp.data.posts.remote.dto
 
-import androidx.core.net.toUri
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
-import com.example.bachelorthesisapp.domain.model.Rating
+import com.example.bachelorthesisapp.data.model.Rating
 
 data class OfferPostDto(
     val id: Int,

@@ -3,17 +3,16 @@ package com.example.bachelorthesisapp.presentation.ui.screen.client
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.data.events.local.entity.Event
-import com.example.bachelorthesisapp.domain.model.EventStatus
-import com.example.bachelorthesisapp.domain.model.EventType
+import com.example.bachelorthesisapp.data.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventType
 import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarClient
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.business.ClientDrawerContent
@@ -104,7 +103,6 @@ fun ClientHomeScreen(
         scaffoldState = scaffoldState,
         drawerContent = {
             ClientDrawerContent(
-                uid = uid,
                 authVM = authViewModel,
                 navController = navHostController
             )
@@ -280,7 +278,23 @@ fun ClientHomeScreenContent(
             )
         )
     ),
-    contentEventsPast: UiState<List<Event>> = UiState.Loading,
+    contentEventsPast: UiState<List<Event>> = UiState.Success(
+        listOf(
+            Event(
+                1,
+                "",
+                "A+B's wedding",
+                "Wedd",
+                EventType.Wedding,
+                LocalDate.parse("2023-07-19"),
+                "15:30",
+                200,
+                1000, 0,
+                mapOf(),
+                EventStatus.Planning
+            )
+        )
+    ),
     onUpcomingCardClick: () -> Unit = {},
     onPlanningCardClick: () -> Unit = {}
 ) {
@@ -293,30 +307,24 @@ fun ClientHomeScreenContent(
     ) {
         item {
             TodayEventsCard(contentEventsToday)
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(20.dp))
         }
         item {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
-                modifier = Modifier
-                    .height(320.dp)
-                    .fillMaxWidth()
-                    .padding(top = 5.dp, bottom = 0.dp),
-                verticalItemSpacing = 15.dp,
-                horizontalArrangement = Arrangement.spacedBy(15.dp)
-            ) {
-                item {
-                    UpcomingEventsCard(
-                        contentEventsUpcoming = contentEventsUpcoming,
-                        onCardClick = onUpcomingCardClick
-                    )
-                }
-                item {
-                    PlanningEventsCard(contentEventsPlanning = contentEventsPlanning, onCardClick = onPlanningCardClick)
-                }
-                item {
-                    PastEventsCard(contentEventsPast = contentEventsPast)
-                }
+            UpcomingEventsCard(
+                contentEventsUpcoming = contentEventsUpcoming,
+                onCardClick = onUpcomingCardClick
+            )
+        }
+        item {
+            Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center) {
+                PlanningEventsCard(
+                    contentEventsPlanning = contentEventsPlanning,
+                    onCardClick = onPlanningCardClick
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                PastEventsCard(contentEventsPast = contentEventsPast)
             }
         }
 

@@ -132,6 +132,7 @@ fun EventDetailsScreen(
                                 postsList = (postsState as UiState.Success<List<OfferPost>>).value,
                                 onEditClick = { eventId -> navHostController.navigate("update_event/$eventId") },
                                 onPublishClick = { eventId -> clientViewModel.publishEvent(eventId) },
+                                businessType = businessType
                             )
                         }
 

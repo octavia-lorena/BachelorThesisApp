@@ -39,7 +39,7 @@ fun ImageCarrousel(
                     .fillMaxSize(),
                 model = imgUri,
                 contentDescription = null,
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.baseline_image_24)
             )
         }

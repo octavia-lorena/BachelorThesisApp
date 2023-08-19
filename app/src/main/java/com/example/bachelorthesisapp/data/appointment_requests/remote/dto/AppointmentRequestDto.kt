@@ -1,7 +1,7 @@
 package com.example.bachelorthesisapp.data.appointment_requests.remote.dto
 
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
-import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.data.model.RequestStatus
 
 data class AppointmentRequestDto(
     val id: Int,

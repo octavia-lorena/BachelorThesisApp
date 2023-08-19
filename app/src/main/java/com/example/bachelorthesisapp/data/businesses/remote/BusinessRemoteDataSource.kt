@@ -1,5 +1,6 @@
 package com.example.bachelorthesisapp.data.businesses.remote
 
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.businesses.remote.dto.BusinessDto
 
 interface BusinessRemoteDataSource {
@@ -8,4 +9,5 @@ interface BusinessRemoteDataSource {
     suspend fun getBusinessByCity(city: String): List<BusinessDto>
     suspend fun getBusinessById(businessId: String): BusinessDto
     suspend fun updateBusinessDeviceToken(id: String, token: String): BusinessDto
+    suspend fun addBusiness(business: BusinessEntity): BusinessDto
 }

@@ -60,7 +60,7 @@ fun <T> LargeDropdownMenu(
     },
     painterResource: Int,
     textColor: Color = Color.DarkGray,
-   // iconColor: Color,
+    // iconColor: Color,
     initialValue: String = ""
 
 ) {
@@ -80,13 +80,15 @@ fun <T> LargeDropdownMenu(
                 Icon(
                     painter = painterResource(id = painterResource),
                     contentDescription = "",
-                   // tint = iconColor,
-                    modifier = Modifier.clickable { }
+                    // tint = iconColor,
+                    modifier = Modifier.clickable { },
+                    tint = Color.Gray
                 )
             },
             trailingIcon = {
                 Icon(Icons.Filled.ArrowDropDown, "")
-                dropdownValue = items.getOrNull(selectedIndex)?.let { selectedItemToString(it) } ?: ""
+                dropdownValue =
+                    items.getOrNull(selectedIndex)?.let { selectedItemToString(it) } ?: ""
             },
             onValueChange = {
                 Log.d("TYPE_SELECTED", it)
@@ -120,6 +122,7 @@ fun <T> LargeDropdownMenu(
         ) {
             Surface(
                 shape = RoundedCornerShape(12.dp),
+                color = Color.White
             ) {
                 val listState = rememberLazyListState()
                 if (selectedIndex > -1) {

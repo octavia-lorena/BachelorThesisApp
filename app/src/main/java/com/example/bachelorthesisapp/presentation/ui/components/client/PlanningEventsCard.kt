@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -47,13 +48,7 @@ fun PlanningEventsCard(
     Card(
         modifier = Modifier
             .height(130.dp)
-            .fillMaxWidth(),
-//            .animateContentSize(
-//                animationSpec = tween(
-//                    durationMillis = 300,
-//                    easing = LinearOutSlowInEasing
-//                )
-//            ),
+            .width(180.dp),
         backgroundColor = Color.White,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp),

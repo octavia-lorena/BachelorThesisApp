@@ -1,4 +1,4 @@
-package com.example.bachelorthesisapp.domain.model
+package com.example.bachelorthesisapp.data.model
 
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import java.time.LocalDate

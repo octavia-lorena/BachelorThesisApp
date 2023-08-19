@@ -3,6 +3,7 @@ package com.example.bachelorthesisapp.presentation.ui.components.client
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -21,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,13 +53,13 @@ fun PlanningEventsClickableCard(
                     easing = LinearOutSlowInEasing
                 )
             )
-            .padding(10.dp),
+            .padding(10.dp)
+            .clickable {              // Navigate to the Event Details Screen
+                onEventClick(event.id)
+            },
         shape = RoundedCornerShape(5.dp),
-        onClick = {
-            // Navigate to the Event Details Screen
-            onEventClick(event.id)
-        },
-        elevation = 10.dp
+        elevation = CardDefaults.elevatedCardElevation(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         // MAIN COLUMN
         Column(
@@ -80,11 +82,14 @@ fun PlanningEventsClickableCard(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
-                    Text(text = event.name, overflow = TextOverflow.Ellipsis, maxLines = 1,
+                    Text(
+                        text = event.name, overflow = TextOverflow.Ellipsis, maxLines = 1,
                         style = Typography.h6,
-                        color = Color.DarkGray)
+                        color = Color.DarkGray
+                    )
                     Spacer(modifier = Modifier.height(2.dp))
-                    Text(text = event.type.name,
+                    Text(
+                        text = event.type.name,
                         style = Typography.caption,
                     )
                 }

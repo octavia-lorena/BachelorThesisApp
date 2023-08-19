@@ -7,10 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
-import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.data.model.BusinessType
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
-import com.example.bachelorthesisapp.domain.model.UserEntity
-import com.example.bachelorthesisapp.domain.model.UserModel
+import com.example.bachelorthesisapp.data.model.UserModel
 import com.example.bachelorthesisapp.data.model.events.BusinessRegisterEvent
 import com.example.bachelorthesisapp.data.model.events.ClientRegisterEvent
 import com.example.bachelorthesisapp.data.model.events.LoginEvent
@@ -25,7 +24,6 @@ import com.example.bachelorthesisapp.data.authentication.AuthRepository
 import com.example.bachelorthesisapp.data.authentication.await
 import com.example.bachelorthesisapp.data.notifications.FirebaseMessageService
 import com.example.bachelorthesisapp.core.presentation.UiState
-import com.example.bachelorthesisapp.data.model.validators.ValidationResult
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -38,7 +36,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -65,9 +62,9 @@ class AuthViewModel @Inject constructor(
     private val validationLoginEventChannel = Channel<ValidationEvent>()
     val validationLoginEvents = validationLoginEventChannel.receiveAsFlow()
 
-    // LOGIN FLOW
-    private var _loginFlow = MutableStateFlow<Resource<UserModel>?>(Resource.Loading())
-    val loginFlow: StateFlow<Resource<UserModel>?> = _loginFlow
+//    // LOGIN FLOW
+//    private var _loginFlow = MutableStateFlow<Resource<UserModel>?>(Resource.Loading())
+//    val loginFlow: StateFlow<Resource<UserModel>?> = _loginFlow
 
     // LOADING STATE
     private val _isLoading = MutableStateFlow(false)
@@ -336,7 +333,8 @@ class AuthViewModel @Inject constructor(
             }
 
             is BusinessRegisterEvent.ProfilePictureChanged -> {
-                registerBusinessState = registerBusinessState.copy(profilePicture = event.profilePicture)
+                registerBusinessState =
+                    registerBusinessState.copy(profilePicture = event.profilePicture)
             }
 
 
@@ -519,25 +517,26 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             login(email, password)
             delay(3000L)
-            loginState1.collect {
-                when (it) {
-                    is UiState.Loading -> {}
-                    is UiState.Success -> {
-                        validationLoginEventChannel.send(ValidationEvent.Success)
-                    }
-
-                    is UiState.Error -> {
-                        validationLoginEventChannel.send(ValidationEvent.Failure)
-                    }
-                }
-            }
-            loginState = loginState.copy(
-                email = "", emailError = null, password = "", passwordError = null
-            )
-            // validationLoginEventChannel.send(ValidationEvent.Success)
-
+//            loginState1.collect {
+//                when (it) {
+//                    is UiState.Loading -> {
+//                       // _isLoading.value = true
+//                    }
+//                    is UiState.Success -> {
+//                      //  _isLoading.value = false
+//                        validationLoginEventChannel.send(ValidationEvent.Success)
+//                    }
+//
+//                    is UiState.Error -> {
+//                       // _isLoading.value = false
+//                        Log.d("LOGIN", "Error: ${it.cause.message}")
+//                        validationLoginEventChannel.send(ValidationEvent.Failure)
+//                    }
+//                }
+//            }
         }
     }
+
 
     private fun validateEmailLoginEventForm() {
         val result = loginValidator.validateEmail(loginState.email)
@@ -625,7 +624,7 @@ class AuthViewModel @Inject constructor(
                 profilePicture = "",
                 deviceToken = Firebase.messaging.token.await()
             )
-            register(email, password, CLIENTS_TABLE_NAME, user)
+            registerClient(user)
             validationClientRegisterEventChannel.send(ValidationEvent.Success)
             registerClientState = registerClientState.copy(
                 firstName = "",
@@ -662,7 +661,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             val email = registerBusinessState.email
             val password = registerBusinessState.password
-            val username = registerBusinessState.name.lowercase()
+            val username = registerBusinessState.name.lowercase().split(" ").joinToString("_")
             val name = registerBusinessState.name
             val phoneNumber = registerBusinessState.phoneNumber
             val type = registerBusinessState.type
@@ -700,7 +699,7 @@ class AuthViewModel @Inject constructor(
                 deviceToken = Firebase.messaging.token.await()
             )
             Log.d("REGISTER", user.toString())
-            register(email, password, BUSINESS_TABLE_NAME, user)
+            registerBusiness(user)
             delay(4000L)
             validationBusinessRegisterEventChannel.send(ValidationEvent.Success)
 
@@ -776,15 +775,21 @@ class AuthViewModel @Inject constructor(
 
     private fun login(email: String, password: String) {
         viewModelScope.launch {
-//            _loginFlow.value = Resource.Loading()
+            //_loginFlow.value = Resource.Loading()
             val result = authRepository.login(email, password)
-            //_loginFlow.value = result
+            // _loginFlow.value = result
         }
     }
 
-    private fun register(email: String, password: String, userType: String, user: UserEntity) {
+    private fun registerClient(clientEntity: ClientEntity) {
         viewModelScope.launch {
-            authRepository.register(email, password, userType, user)
+            authRepository.registerClient(clientEntity)
+        }
+    }
+
+    private fun registerBusiness(businessEntity: BusinessEntity) {
+        viewModelScope.launch {
+            authRepository.registerBusiness(businessEntity)
         }
     }
 

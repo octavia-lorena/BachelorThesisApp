@@ -23,7 +23,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,20 +41,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.model.events.CreateEventEvent
+import com.example.bachelorthesisapp.data.model.BusinessType
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.common.DropdownWithCheckboxesMenu
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
-import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
-import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.core.presentation.UiState
-import com.example.bachelorthesisapp.data.model.events.CreatePostEvent
+import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitCreateFormButton
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
+import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
+import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import kotlinx.coroutines.delay
 
 @Composable
@@ -69,21 +67,31 @@ fun CreateEventsStep2Screen(
     val eventState =
         clientViewModel.eventResultState.collectAsStateWithLifecycle(UiState.Loading)
 
-    LaunchedEffect(eventState.value) {
-        clientViewModel.validationCreateEventEvents.collect { event ->
-            when (event) {
-                is ClientViewModel.ValidationEvent.Success -> {
-                    Toast.makeText(
-                        context, "Successful registration!", Toast.LENGTH_SHORT
-                    ).show()
-                    delay(3000L)
-                    val result =
-                        navHostController.navigate("home_client/$uid") {
-                            popUpTo("home_client/$uid") { inclusive = false }
-                        }
-                }
 
-                else -> Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+
+    LaunchedEffect(eventState.value) {
+        when (eventState.value) {
+            is UiState.Loading -> {
+                Toast.makeText(
+                    context, "Loading...", Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            is UiState.Success -> {
+                Toast.makeText(
+                    context, "Event successfully created!", Toast.LENGTH_SHORT
+                ).show()
+                delay(3000L)
+                val route = "home_client/$uid"
+                navHostController.navigate(route) {
+                    popUpTo(route) { inclusive = false }
+                }
+            }
+
+            is UiState.Error -> {
+                Toast.makeText(
+                    context, "Error!", Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -121,27 +129,35 @@ fun CreateEventStep2ScreenContent(
 ) {
     val state = clientViewModel.createEventState
     val context = LocalContext.current
+//    val isLoading = clientViewModel.isLoading.collectAsState()
+//    var _isLoading by remember {
+//        mutableStateOf(false)
+//    }
 
-    LaunchedEffect(key1 = context) {
-        clientViewModel.validationCreateEventEvents.collect { event ->
-            when (event) {
-                is ClientViewModel.ValidationEvent.Success -> {
-                    Toast.makeText(
-                        context, "Offer posted successfully!", Toast.LENGTH_SHORT
-                    ).show()
-                    navController.popBackStack()
-                }
+//    LaunchedEffect(key1 = isLoading.value) {
+//        _isLoading = isLoading.value
+//    }
 
-                is ClientViewModel.ValidationEvent.Failure -> {
-                    Toast.makeText(
-                        context,
-                        "Something went wrong!\n Check your internet connection or try again.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-    }
+//    LaunchedEffect(key1 = context) {
+//        clientViewModel.validationCreateEventEvents.collect { event ->
+//            when (event) {
+//                is ClientViewModel.ValidationEvent.Success -> {
+//                    Toast.makeText(
+//                        context, "Offer posted successfully!", Toast.LENGTH_SHORT
+//                    ).show()
+//                    navController.popBackStack()
+//                }
+//
+//                is ClientViewModel.ValidationEvent.Failure -> {
+//                    Toast.makeText(
+//                        context,
+//                        "Something went wrong!\n Check your internet connection or try again.",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//        }
+//    }
     Spacer(modifier = Modifier.height(15.dp))
     Box(modifier = Modifier.wrapContentSize(), contentAlignment = Alignment.Center) {
         Row(horizontalArrangement = Arrangement.Center) {
@@ -244,7 +260,8 @@ fun CreateEventStep2ScreenContent(
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_person_24),
-                                contentDescription = "person icon"
+                                contentDescription = "person icon",
+                                tint = Color.Gray
                             )
                         },
                         trailingIcon = null,
@@ -274,7 +291,8 @@ fun CreateEventStep2ScreenContent(
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_attach_money_24),
-                                contentDescription = "money icon"
+                                contentDescription = "money icon",
+                                tint = Color.Gray
                             )
                         },
                         trailingIcon = null,
@@ -318,28 +336,9 @@ fun CreateEventStep2ScreenContent(
                     )
                 }
                 Spacer(modifier = Modifier.width(30.dp))
-                Button(
-                    onClick = {
-                        clientViewModel.onCreateEventEvent(CreateEventEvent.Submit)
-                    },
-                    modifier = Modifier.wrapContentSize(),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    border = BorderStroke(
-                        width = 1.dp, brush = Brush.horizontalGradient(
-                            listOf(
-                                CoralAccent,
-                                Coral,
-                                CoralAccent
-                            )
-                        )
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.Submit),
-                        style = Typography.caption,
-                        color = Color.DarkGray
-                    )
-                }
+                SubmitCreateFormButton(onButtonClick = {
+                    clientViewModel.onCreateEventEvent(CreateEventEvent.Submit)
+                }, text = stringResource(id = R.string.Submit))
             }
 
         }

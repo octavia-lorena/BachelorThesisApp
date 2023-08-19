@@ -1,10 +1,11 @@
 package com.example.bachelorthesisapp.presentation.ui.components.client
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,16 +27,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
-import com.example.bachelorthesisapp.domain.model.Cities
+import com.example.bachelorthesisapp.data.model.Cities
 import com.example.bachelorthesisapp.presentation.ui.components.common.LargeDropdownMenu
-import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
-import com.example.bachelorthesisapp.presentation.ui.theme.SkyGrayDark
 import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
+import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun EventDetailsFrontLayerContent(
@@ -43,6 +42,7 @@ fun EventDetailsFrontLayerContent(
     postsList: List<OfferPost> = listOf(),
     onBusinessClick: (String) -> Unit = {},
     onCityClicked: (String) -> Unit = {},
+    businessType: String = ""
 ) {
     val citiesList = enumValues<Cities>().toList().map { it.name }
     val items = mutableListOf("-")
@@ -66,6 +66,15 @@ fun EventDetailsFrontLayerContent(
             )
         }
         item {
+            Text(
+                text = "Category: $businessType",
+                style = Typography.body2,
+                color = Color.DarkGray
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
+        item {
             LargeDropdownMenu(
                 label = "City", items = items,
                 onItemSelected = { index, item ->
@@ -79,26 +88,33 @@ fun EventDetailsFrontLayerContent(
                     .wrapContentHeight(),
                 selectedIndex = selectedIndex,
                 textColor = Color.DarkGray,
-             //   iconColor = Color.DarkGray
+                //iconColor = Color.DarkGray
             )
             Spacer(modifier = Modifier.height(10.dp))
         }
 
         when (businessState) {
             is UiState.Loading -> item {
-                CircularProgressIndicator(
-                    modifier = Modifier.padding(20.dp),
-                    backgroundColor = Coral,
-                    color = CoralAccent
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 30.dp)
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        backgroundColor = CoralLight,
+                        color = CoralAccent
+                    )
+                }
             }
 
             is UiState.Success -> {
                 // Display the list of businesses filtered by type
                 var businessList = businessState.value
+                if (businessList.isNotEmpty())
                 // Filter by city if a city is selected from the dropdown
-                if (selectedCity != "-")
-                    businessList = businessList.filter { it.city == selectedCity }
+                    if (selectedCity != "-")
+                        businessList = businessList.filter { it.city == selectedCity }
                 items(businessList.size) { index ->
                     val business = businessList[index]
                     EventDetailsBusinessCard(

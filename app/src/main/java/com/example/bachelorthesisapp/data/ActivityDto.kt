@@ -1,6 +1,6 @@
 package com.example.bachelorthesisapp.data
 
-import com.example.bachelorthesisapp.domain.model.ActivityEntity
+import com.example.bachelorthesisapp.data.model.ActivityEntity
 import com.squareup.moshi.Json
 
 data class ActivityDto(

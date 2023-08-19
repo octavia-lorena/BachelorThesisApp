@@ -343,7 +343,7 @@ fun BusinessAppointmentCard(
                     ) {
                         Button(
                             onClick = { isCancelDialogOpen = true },
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White, disabledBackgroundColor = Color.Gray),
                             border = BorderStroke(
                                 width = 1.dp, brush = Brush.horizontalGradient(
                                     listOf(

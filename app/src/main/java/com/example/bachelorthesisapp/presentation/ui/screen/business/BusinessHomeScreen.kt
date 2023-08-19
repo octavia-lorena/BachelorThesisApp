@@ -4,22 +4,19 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +45,6 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessH
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -113,7 +109,6 @@ fun BusinessHomeScreen(
         scaffoldState = scaffoldState,
         drawerContent = {
             BusinessDrawerContent(
-                uid = uid,
                 authVM = authViewModel,
                 navController = navHostController
             )
@@ -176,40 +171,35 @@ fun BusinessHomeScreenContent(
             Spacer(modifier = Modifier.height(20.dp))
         }
         item {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
+            UpcomingAppointmentsCard(
+                businessId = businessId,
+                contentAppointmentsUpcoming = appointmentsContent,
+                contentPosts = postContent,
+                contentEvents = eventContent,
+                onCardClick = onUpcomingCardClick
+            )
+        }
+        item {
+            Row(
                 modifier = Modifier
-                    .height(320.dp)
                     .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 5.dp),
-                verticalItemSpacing = 15.dp,
-                horizontalArrangement = Arrangement.spacedBy(15.dp)
+                    .padding(top = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                item {
-                    UpcomingAppointmentsCard(
-                        businessId = businessId,
-                        contentAppointmentsUpcoming = appointmentsContent,
-                        contentPosts = postContent,
-                        contentEvents = eventContent,
-                        onCardClick = onUpcomingCardClick
-                    )
-                }
-                item {
-                    RequestsCard(
-                        businessId = businessId,
-                        contentRequests = requestsContent,
-                        contentPosts = postContent,
-                        onCardClick = onRequestsCardClick
-                    )
-                }
-                item {
-                    CompletedAppointmentsCard(
-                        businessId = businessId,
-                        contentAppointments = appointmentsContent,
-                        contentPosts = postContent,
-                        contentEvents = eventContent,
-                    )
-                }
+                RequestsCard(
+                    businessId = businessId,
+                    contentRequests = requestsContent,
+                    contentPosts = postContent,
+                    onCardClick = onRequestsCardClick
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                CompletedAppointmentsCard(
+                    businessId = businessId,
+                    contentAppointments = appointmentsContent,
+                    contentPosts = postContent,
+                    contentEvents = eventContent,
+                )
             }
         }
     }

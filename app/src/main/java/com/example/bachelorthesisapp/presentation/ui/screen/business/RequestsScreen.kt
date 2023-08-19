@@ -37,6 +37,8 @@ fun RequestsScreen(
 
     val requestsState =
         clientViewModel.requestsState.collectAsStateWithLifecycle(UiState.Loading)
+    val appointmentsState =
+        clientViewModel.appointmentsState.collectAsStateWithLifecycle(UiState.Loading)
     val businessState =
         clientViewModel.businessResultState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val loadingState by clientViewModel.isLoading.collectAsState()
@@ -80,7 +82,6 @@ fun RequestsScreen(
         scaffoldState = scaffoldState,
         drawerContent = {
             BusinessDrawerContent(
-                uid = uid,
                 authVM = authViewModel,
                 navController = navHostController
             )
@@ -109,7 +110,8 @@ fun RequestsScreen(
                     clientViewModel = clientViewModel,
                     contentEvents = eventsState.value,
                     contentPosts = postsState.value,
-                    contentClients = clientsState.value
+                    contentClients = clientsState.value,
+                    contentAppointments = appointmentsState.value
                 )
             }
         }

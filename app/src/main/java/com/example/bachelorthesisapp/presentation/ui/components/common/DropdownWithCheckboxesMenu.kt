@@ -79,7 +79,8 @@ fun <T> DropdownWithCheckboxesMenu(
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = painterResource),
-                    contentDescription = ""
+                    contentDescription = "",
+                    tint = Color.Gray
                 )
             },
             trailingIcon = {
@@ -115,6 +116,7 @@ fun <T> DropdownWithCheckboxesMenu(
         ) {
             Surface(
                 shape = RoundedCornerShape(12.dp),
+                color = Color.White
             ) {
                 val listState = rememberLazyListState()
                 if (selectedIndex > -1) {

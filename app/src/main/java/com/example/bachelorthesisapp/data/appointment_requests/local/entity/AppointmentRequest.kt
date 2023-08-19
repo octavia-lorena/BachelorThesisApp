@@ -2,7 +2,7 @@ package com.example.bachelorthesisapp.data.appointment_requests.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.bachelorthesisapp.domain.model.RequestStatus
+import com.example.bachelorthesisapp.data.model.RequestStatus
 
 @Entity(tableName = "requests")
 data class AppointmentRequest(

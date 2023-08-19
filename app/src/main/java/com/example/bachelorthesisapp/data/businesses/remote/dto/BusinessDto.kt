@@ -1,7 +1,7 @@
 package com.example.bachelorthesisapp.data.businesses.remote.dto
 
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
-import com.example.bachelorthesisapp.domain.model.BusinessType
+import com.example.bachelorthesisapp.data.model.BusinessType
 
 data class BusinessDto(
     val id: String,

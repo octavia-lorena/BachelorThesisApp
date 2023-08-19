@@ -8,7 +8,7 @@ import com.example.bachelorthesisapp.data.businesses.local.dao.BusinessesDao
 import com.example.bachelorthesisapp.data.clients.local.dao.ClientsDao
 import com.example.bachelorthesisapp.data.events.local.dao.EventsDao
 import com.example.bachelorthesisapp.data.posts.local.dao.OfferPostsDao
-import com.example.bachelorthesisapp.domain.model.ActivityEntity
+import com.example.bachelorthesisapp.data.model.ActivityEntity
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
@@ -23,7 +23,7 @@ import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
         Event::class,
         AppointmentRequest::class,
         ClientEntity::class],
-    version = 18
+    version = 19
 )
 abstract class EventSpaceDatabase : RoomDatabase() {
     companion object {

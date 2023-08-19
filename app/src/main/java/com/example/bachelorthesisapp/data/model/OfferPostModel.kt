@@ -1,6 +1,5 @@
-package com.example.bachelorthesisapp.domain.model
+package com.example.bachelorthesisapp.data.model
 
-import android.net.Uri
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 
 data class OfferPostModel(

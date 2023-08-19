@@ -52,15 +52,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.data.events.local.entity.Event
-import com.example.bachelorthesisapp.domain.model.EventStatus
-import com.example.bachelorthesisapp.domain.model.EventType
-import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
+import com.example.bachelorthesisapp.data.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventType
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
-import com.example.bachelorthesisapp.presentation.ui.theme.GreenDark
-import com.example.bachelorthesisapp.presentation.ui.theme.GreenLight
 import com.example.bachelorthesisapp.presentation.ui.theme.RedSoft
-import com.example.bachelorthesisapp.presentation.ui.theme.SkyGray
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.ui.theme.WhiteTransparent
 import kotlinx.coroutines.launch
@@ -351,7 +347,10 @@ fun UpcomingEventsExpandableCard(
                     ) {
                         Button(
                             onClick = { isCancelDialogOpen = true },
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.White,
+                                disabledBackgroundColor = Color.Gray
+                            ),
                             border = BorderStroke(
                                 width = 1.dp, brush = Brush.horizontalGradient(
                                     listOf(

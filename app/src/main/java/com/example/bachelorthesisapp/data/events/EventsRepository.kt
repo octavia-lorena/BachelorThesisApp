@@ -11,7 +11,7 @@ import com.example.bachelorthesisapp.data.events.local.EventsLocalDataSource
 import com.example.bachelorthesisapp.data.events.local.entity.Event
 import com.example.bachelorthesisapp.data.events.remote.EventRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.events.remote.dto.toEntity
-import com.example.bachelorthesisapp.domain.model.EventStatus
+import com.example.bachelorthesisapp.data.model.EventStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -266,7 +266,7 @@ class EventsRepository @Inject constructor(
         },
         compareData = { _, _ ->
             // fetchEvents()
-            delay(2000L)
+          //  delay(2000L)
         },
         onResult = { event ->
             //    _eventCurrentFlow.emit(

@@ -1,7 +1,6 @@
 package com.example.bachelorthesisapp.presentation.ui.components.business
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,20 +22,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueDark
-import com.example.bachelorthesisapp.presentation.ui.theme.SkyBlue
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 
 
 @Composable
 fun BusinessDrawerContent(
-    uid: String,
     authVM: AuthViewModel,
-    navController: NavHostController,
-    busyDatesList: List<String> = emptyList()
+    navController: NavHostController
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -83,12 +78,10 @@ fun BusinessDrawerContent(
 
 @Composable
 fun ClientDrawerContent(
-    uid: String,
     authVM: AuthViewModel,
-    navController: NavHostController,
-    busyDatesList: List<String> = emptyList()
+    navController: NavHostController
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally

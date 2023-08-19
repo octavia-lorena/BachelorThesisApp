@@ -1,7 +1,7 @@
 package com.example.bachelorthesisapp.data.events.remote.api
 
 import com.example.bachelorthesisapp.data.events.remote.dto.EventDto
-import com.example.bachelorthesisapp.domain.model.EventData
+import com.example.bachelorthesisapp.data.model.EventData
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field

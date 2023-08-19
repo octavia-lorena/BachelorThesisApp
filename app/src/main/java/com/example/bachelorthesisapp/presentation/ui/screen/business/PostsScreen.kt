@@ -35,7 +35,6 @@ import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostExpandableFloatingButton
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -86,7 +85,6 @@ fun BusinessPostsHomeScreen(
         scaffoldState = scaffoldState,
         drawerContent = {
             BusinessDrawerContent(
-                uid = uid,
                 authVM = authViewModel,
                 navController = navHostController
             )
@@ -141,7 +139,7 @@ fun BusinessPostsHomeScreenContent(
             }
 
             is UiState.Success -> {
-                val postsList = contentPosts.value
+                val postsList = contentPosts.value.reversed()
                 Log.d("POSTS", postsList.toString())
                 LazyColumn(
                     state = listState,

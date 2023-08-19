@@ -60,6 +60,7 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.CreateEve
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -201,7 +202,10 @@ fun EventsScreen(
                 PlanningEventsScreenContent(
                     contentEvents = eventPlanningState.value,
                     onEventClick = { eventId ->
-                        navHostController.navigate("event_details/$eventId")
+                        scope.launch {
+                            clientViewModel.findEventById(eventId)
+                            navHostController.navigate("event_details/$eventId")
+                        }
                     },
                     listState = listState
                 )
@@ -232,7 +236,6 @@ fun EventsScreen(
         scaffoldState = scaffoldState,
         drawerContent = {
             ClientDrawerContent(
-                uid = uid,
                 authVM = authViewModel,
                 navController = navHostController
             )

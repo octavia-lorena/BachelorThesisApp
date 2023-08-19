@@ -1,5 +1,6 @@
 package com.example.bachelorthesisapp.data.businesses.remote
 
+import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.businesses.remote.api.BusinessApi
 import com.example.bachelorthesisapp.data.businesses.remote.dto.BusinessDto
 import com.example.bachelorthesisapp.data.notifications.NotificationApi
@@ -25,6 +26,8 @@ class BusinessRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun updateBusinessDeviceToken(id: String, token: String): BusinessDto =
         api.updateBusinessDeviceToken(id, token)
+
+    override suspend fun addBusiness(business: BusinessEntity): BusinessDto = api.addBusiness(business)
 
     suspend fun sendNotification(pushNotification: PushNotification) =
         notificationApi.postNotification(pushNotification)

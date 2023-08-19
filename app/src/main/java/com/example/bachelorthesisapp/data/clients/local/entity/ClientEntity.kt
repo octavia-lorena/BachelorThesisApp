@@ -2,7 +2,7 @@ package com.example.bachelorthesisapp.data.clients.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.bachelorthesisapp.domain.model.UserEntity
+import com.example.bachelorthesisapp.data.model.UserEntity
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties

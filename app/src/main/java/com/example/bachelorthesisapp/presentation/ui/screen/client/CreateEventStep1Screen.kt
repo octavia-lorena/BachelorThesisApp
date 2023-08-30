@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -31,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -41,6 +39,7 @@ import com.example.bachelorthesisapp.data.model.events.CreateEventEvent
 import com.example.bachelorthesisapp.data.model.EventType
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.common.DropdownDateMenu
+import com.example.bachelorthesisapp.presentation.ui.components.common.DropdownTimeMenu
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
 import com.example.bachelorthesisapp.presentation.ui.components.common.LargeDropdownMenu
@@ -275,58 +274,30 @@ fun CreateEventStep1ScreenContent(
             }
             // TIME FIELD
             item {
-                Column(horizontalAlignment = Alignment.Start) {
-                    Spacer(modifier = Modifier.height(2.dp))
-                    FormTextField(
-                        labelText = stringResource(R.string.Time),
-                        value = state.time,
-                        onValueChange = {
+                DropdownTimeMenu(
+                    label = "Event Time",
+                    onItemSelected = { time ->
+                        run {
                             clientViewModel.onCreateEventEvent(
-                                CreateEventEvent.TimeChanged(
-                                    it
-                                )
+                                CreateEventEvent.TimeChanged(time)
                             )
-                        },
-                        error = state.timeError,
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_access_time_24),
-                                contentDescription = "time icon",
-                                tint = Color.Gray
-                            )
-                        },
-                        trailingIcon = {
-                            PlainTooltipBox(
-                                tooltip = {
-                                    Text(
-                                        "Format must be 24h hh:mm",
-                                        style = Typography.caption
-                                    )
-                                },
-                                containerColor = WhiteTransparent
-                            ) {
-                                Icon3(
-                                    imageVector = Icons.Filled.QuestionMark,
-                                    contentDescription = "Present now",
-                                    modifier = Modifier
-                                        .tooltipAnchor()
-                                        .size(15.dp)
-                                )
-                            }
-                        },
-                        keyboardType = KeyboardType.Text
-                    )
-                    if (state.timeError != null) {
-                        ErrorText(text = state.timeError.toString())
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
+                        }
+                    },
+                    initialTime = state.time
+                )
+                if (state.timeError != null) {
+                    ErrorText(text = state.timeError.toString())
                 }
+                Spacer(modifier = Modifier.height(20.dp))
             }
             // NEXT BUTTON
             item {
-                SubmitCreateFormButton(onButtonClick = {
-                    clientViewModel.onCreateEventEvent(CreateEventEvent.PartialSubmit)
-                }, text =stringResource(R.string.Next),)
+                SubmitCreateFormButton(
+                    onButtonClick = {
+                        clientViewModel.onCreateEventEvent(CreateEventEvent.PartialSubmit)
+                    },
+                    text = stringResource(R.string.Next),
+                )
 
             }
         }

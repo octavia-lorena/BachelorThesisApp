@@ -36,7 +36,7 @@ class CreatePostFormValidator {
             return ValidationResult(false, "Invalid numeric format.")
         else {
             if (priceValue <= 0)
-                return ValidationResult(false, "Price cannot be <= 0")
+                return ValidationResult(false, "Price cannot be less than or equal to 0")
         }
         return ValidationResult(success = true)
     }

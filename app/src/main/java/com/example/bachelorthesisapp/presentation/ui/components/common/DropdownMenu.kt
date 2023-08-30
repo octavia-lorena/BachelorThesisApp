@@ -60,7 +60,7 @@ fun <T> LargeDropdownMenu(
     },
     painterResource: Int,
     textColor: Color = Color.DarkGray,
-    // iconColor: Color,
+    iconColor: Color  = Color.Gray,
     initialValue: String = ""
 
 ) {
@@ -82,7 +82,7 @@ fun <T> LargeDropdownMenu(
                     contentDescription = "",
                     // tint = iconColor,
                     modifier = Modifier.clickable { },
-                    tint = Color.Gray
+                    tint = iconColor
                 )
             },
             trailingIcon = {
@@ -91,8 +91,7 @@ fun <T> LargeDropdownMenu(
                     items.getOrNull(selectedIndex)?.let { selectedItemToString(it) } ?: ""
             },
             onValueChange = {
-                Log.d("TYPE_SELECTED", it)
-
+                dropdownValue = it
             },
             readOnly = true,
             colors = TextFieldDefaults.textFieldColors(
@@ -150,6 +149,7 @@ fun <T> LargeDropdownMenu(
                             true
                         ) {
                             onItemSelected(index, item)
+                            dropdownValue = item.toString()
                             expanded = false
                         }
 

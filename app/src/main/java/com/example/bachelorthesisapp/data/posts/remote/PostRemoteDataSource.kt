@@ -13,7 +13,7 @@ interface PostRemoteDataSource {
         id: Int,
         title: String,
         description: String,
-        photos: List<String>,
+        photos: String,
         price: Int
     ): OfferPostDto
     suspend fun ratePost(

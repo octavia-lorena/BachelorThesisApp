@@ -55,4 +55,6 @@ class EventRemoteDataSourceImpl @Inject constructor(
     )
 
     override suspend fun publishEvent(eventId: Int): EventDto = api.publishEvent(eventId)
+
+    suspend fun setPastEvents() = api.setPastEvents()
 }

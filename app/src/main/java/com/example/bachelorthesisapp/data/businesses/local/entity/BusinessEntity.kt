@@ -20,8 +20,6 @@ data class BusinessEntity(
     var businessType: BusinessType,
     var city: String,
     var address: String,
-    var lat: Double?,
-    var lng: Double?,
     var phoneNumber: String,
     var deviceToken: String?,
 ) : UserEntity()

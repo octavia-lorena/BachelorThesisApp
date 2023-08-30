@@ -90,6 +90,35 @@ class AppointmentRequestsRepository @Inject constructor(
         }
     )
 
+    suspend fun fetchAppointmentsByBusinessId(businessId: String) = networkCall(
+        localSource = { requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId) },
+        remoteSource = { requestRemoteDataSource.getRequestsByBusinessId(businessId) },
+        compareData = { _, _ ->
+            fetchAllRequests()
+        },
+        onResult = { requests ->
+            _appointmentFlow.emit(
+                when (requests) {
+                    is Resource.Success -> {
+                        Resource.Success(requests.data.map { it.toEntity() }
+                            .filter { it.status == RequestStatus.Accepted })
+                    }
+
+                    is Resource.Loading -> {
+                        Resource.Loading()
+                    }
+
+                    is Resource.Error -> {
+                        Resource.Error<Exception>(requests.exception)
+                        val requestsLocal =
+                            requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId)
+                        Resource.Success(requestsLocal.filter { it.status == RequestStatus.Accepted })
+                    }
+                }
+            )
+        }
+    )
+
     suspend fun createRequest(appointmentRequest: AppointmentRequest) {
         try {
             _requestResultFlow.emit(Resource.Loading())

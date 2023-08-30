@@ -359,6 +359,14 @@ class EventsRepository @Inject constructor(
         }
     }
 
+    suspend fun setPastEvents(){
+        try{
+            eventRemoteDataSource.setPastEvents()
+        }catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     suspend fun publishEvent(eventId: Int) {
         try {
             eventRemoteDataSource.publishEvent(eventId)

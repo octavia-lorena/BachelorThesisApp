@@ -145,7 +145,7 @@ fun PostItem(
     Box(
         Modifier
             .fillMaxWidth()
-            .height(300.dp),
+            .height(330.dp),
     ) {
         ActionsRow(
             actionIconSize = 56.dp,

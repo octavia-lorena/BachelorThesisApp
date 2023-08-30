@@ -128,36 +128,7 @@ fun CreateEventStep2ScreenContent(
     clientViewModel: ClientViewModel, navController: NavHostController
 ) {
     val state = clientViewModel.createEventState
-    val context = LocalContext.current
-//    val isLoading = clientViewModel.isLoading.collectAsState()
-//    var _isLoading by remember {
-//        mutableStateOf(false)
-//    }
 
-//    LaunchedEffect(key1 = isLoading.value) {
-//        _isLoading = isLoading.value
-//    }
-
-//    LaunchedEffect(key1 = context) {
-//        clientViewModel.validationCreateEventEvents.collect { event ->
-//            when (event) {
-//                is ClientViewModel.ValidationEvent.Success -> {
-//                    Toast.makeText(
-//                        context, "Offer posted successfully!", Toast.LENGTH_SHORT
-//                    ).show()
-//                    navController.popBackStack()
-//                }
-//
-//                is ClientViewModel.ValidationEvent.Failure -> {
-//                    Toast.makeText(
-//                        context,
-//                        "Something went wrong!\n Check your internet connection or try again.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        }
-//    }
     Spacer(modifier = Modifier.height(15.dp))
     Box(modifier = Modifier.wrapContentSize(), contentAlignment = Alignment.Center) {
         Row(horizontalArrangement = Arrangement.Center) {
@@ -185,7 +156,7 @@ fun CreateEventStep2ScreenContent(
     ) {
         // VENDORS ITEM
         item {
-            var selectedIndex by remember { mutableStateOf(-1) }
+            val selectedIndex by remember { mutableStateOf(-1) }
             val options = enumValues<BusinessType>()
             val vendorsList by remember {
                 mutableStateOf(mutableListOf<String>())

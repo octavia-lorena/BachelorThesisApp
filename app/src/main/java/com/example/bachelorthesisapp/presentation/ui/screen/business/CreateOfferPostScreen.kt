@@ -28,8 +28,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.model.events.CreatePostEvent
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
@@ -87,8 +89,33 @@ fun CreateOfferPostScreenContent(
 ) {
     val state = businessViewModel.createPostState
     val context = LocalContext.current
+    val postResultState =
+        businessViewModel.postResultState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
 
     LaunchedEffect(key1 = context) {
+        when (postResultState.value) {
+            is UiState.Success -> {
+                Toast.makeText(
+                    context,
+                    "Offer posted successfully!",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                businessViewModel.clearCreatePostForm()
+                navController.popBackStack()
+            }
+
+            is UiState.Loading ->
+                Toast.makeText(
+                    context, "Loading...", Toast.LENGTH_SHORT
+                ).show()
+
+
+            is UiState.Error -> Toast.makeText(
+                context, "Something went wrong!\n Check your internet connection or try again.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
         businessViewModel.validationCreatePostEvents.collect { event ->
             when (event) {
                 is BusinessViewModel.ValidationEvent.Success -> {

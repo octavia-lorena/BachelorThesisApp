@@ -12,8 +12,6 @@ data class BusinessDto(
     val businessType: BusinessType,
     val city: String,
     val address: String,
-    val lat: Double?,
-    val lng: Double?,
     val phoneNumber: String,
     val profilePicture: String?,
     val deviceToken: String?
@@ -28,8 +26,6 @@ fun BusinessDto.toEntity(): BusinessEntity = BusinessEntity(
     businessType = businessType,
     city = city,
     address = address,
-    lat = lat,
-    lng = lng,
     phoneNumber = phoneNumber,
     profilePicture = profilePicture,
     deviceToken = deviceToken

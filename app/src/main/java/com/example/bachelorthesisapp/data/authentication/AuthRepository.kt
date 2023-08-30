@@ -63,14 +63,11 @@ class AuthRepository @Inject constructor(
                     userModel.id,
                     deviceToken
                 )
-
                 "businesses" -> businessRemoteDataSource.updateBusinessDeviceToken(
                     userModel.id,
                     deviceToken
                 )
-
             }
-
             delay(3000L)
             Log.d("LOGIN", userModel.toString())
             _loginFlow.emit(Resource.Success(userModel))
@@ -84,13 +81,10 @@ class AuthRepository @Inject constructor(
     suspend fun getUserType(id: String): String {
         var typeFound = false
         var result = database.child(CLIENTS_TABLE_NAME).child(id).get().await()
-
         if (result.value != null)
             typeFound = true
-
         if (typeFound)
             return CLIENTS_TABLE_NAME
-
         result = database.child(BUSINESS_TABLE_NAME).child(id).get().await()
         if (result.value != null)
             return BUSINESS_TABLE_NAME

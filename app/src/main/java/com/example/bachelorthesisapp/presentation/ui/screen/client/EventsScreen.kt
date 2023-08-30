@@ -188,8 +188,7 @@ fun EventsScreen(
                 UpcomingEventsScreenContent(
                     contentEvents = eventUpcomingState.value,
                     onEventDelete = { id ->
-                        isDialogOpen = true
-                        eventId = id
+                        onEventDelete(id)
                     },
                     listState = listState
                 )

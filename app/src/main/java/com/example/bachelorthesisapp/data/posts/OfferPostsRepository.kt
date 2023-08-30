@@ -135,12 +135,18 @@ class OfferPostsRepository @Inject constructor(
         id: Int,
         title: String,
         description: String,
-        photos: List<String>,
+        photos: String,
         price: Int
     ) {
         try {
             _postResultFlow.emit(Resource.Loading())
-            val result = postRemoteDataSource.updatePost(id, title, description, photos, price)
+            val result = postRemoteDataSource.updatePost(
+                id = id,
+                title = title,
+                description = description,
+                photos = photos,
+                price = price
+            )
             _postResultFlow.emit(Resource.Success(result.toEntity()))
         } catch (e: Exception) {
             Log.d("UPDATE_ERROR", e.stackTraceToString())
@@ -153,6 +159,7 @@ class OfferPostsRepository @Inject constructor(
         try {
             //_postResultFlow.emit(Resource.Loading())
             val result = postRemoteDataSource.addPost(post)
+            fetchAllPosts()
             _postResultFlow.emit(Resource.Success(result.toEntity()))
         } catch (e: Exception) {
             e.printStackTrace()
@@ -165,7 +172,8 @@ class OfferPostsRepository @Inject constructor(
         try {
             _postResultFlow.emit(Resource.Loading())
             val result = postRemoteDataSource.deletePost(post.id)
-            fetchPostsByBusinessId(post.businessId)
+           // fetchAllPosts()
+           fetchPostsByBusinessId(post.businessId)
             _postResultFlow.emit(Resource.Success(result.toEntity()))
         } catch (e: Exception) {
             e.printStackTrace()

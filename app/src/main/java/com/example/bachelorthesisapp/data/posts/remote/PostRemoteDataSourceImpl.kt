@@ -44,7 +44,7 @@ class PostRemoteDataSourceImpl @Inject constructor(
         id: Int,
         title: String,
         description: String,
-        photos: List<String>,
+        photos: String,
         price: Int
     ): OfferPostDto = api.updatePost(id, title, description, photos, price)
 

@@ -6,6 +6,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +21,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -29,6 +30,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PlainTooltipBox
 import androidx.compose.runtime.Composable
@@ -99,7 +102,7 @@ fun UpcomingEventsExpandableCard(
                     .height(120.dp)
                     .padding(10.dp),
                 shape = RoundedCornerShape(8.dp),
-                backgroundColor = Color.White
+                colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(1f),
@@ -134,6 +137,7 @@ fun UpcomingEventsExpandableCard(
                         Spacer(modifier = Modifier.padding(15.dp))
                         Button(
                             onClick = {
+                                expandedState = false
                                 isCancelDialogOpen = false
                                 scope.launch {
                                     onEventDelete(event.id)
@@ -166,10 +170,13 @@ fun UpcomingEventsExpandableCard(
                     durationMillis = 300, easing = LinearOutSlowInEasing
                 )
             )
-            .padding(10.dp), shape = RoundedCornerShape(5.dp), onClick = {
-            expandedState = !expandedState
-        }, elevation = 10.dp,
-        backgroundColor = Color.White
+            .padding(bottom = 10.dp)
+            .clickable {
+                expandedState = !expandedState
+            },
+        shape = RoundedCornerShape(5.dp),
+        elevation = CardDefaults.cardElevation(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         // MAIN COLUMN
         Column(

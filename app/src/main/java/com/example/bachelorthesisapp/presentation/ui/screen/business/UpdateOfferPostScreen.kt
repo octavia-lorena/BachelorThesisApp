@@ -96,29 +96,28 @@ fun UpdateOfferPostScreenContent(
 
     state.id = postId
 
-    LaunchedEffect(key1 = postResultState.value, key2 = state.images) {
-        businessViewModel.validationUpdatePostEvents.collect { event ->
-            when (event) {
-                is BusinessViewModel.ValidationEvent.Success -> {
-                    Toast.makeText(
-                        context,
-                        "Offer updated successfully!",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                    businessViewModel.clearUpdatePostForm()
-                    navController.popBackStack()
-                }
-
-                is BusinessViewModel.ValidationEvent.Failure -> {
-                    Toast.makeText(
-                        context,
-                        "Something went wrong!\n Check your internet connection or try again.",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
+    LaunchedEffect(key1 = postResultState.value) {
+        when (postResultState.value) {
+            is UiState.Success -> {
+                Toast.makeText(
+                    context,
+                    "Offer updated successfully!",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                businessViewModel.clearUpdatePostForm()
+                navController.popBackStack()
             }
+
+            is UiState.Loading ->
+                Toast.makeText(
+                    context, "Loading...", Toast.LENGTH_SHORT
+                ).show()
+
+
+            is UiState.Error -> Toast.makeText(
+                context, "Error!", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -237,7 +236,8 @@ fun UpdateOfferPostScreenContent(
                             CoralAccent
                         )
                     )
-                )            ) {
+                )
+            ) {
                 Text(
                     text = stringResource(R.string.Update),
                     style = Typography.caption,

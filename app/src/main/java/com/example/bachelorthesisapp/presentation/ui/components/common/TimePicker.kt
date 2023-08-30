@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
@@ -35,28 +36,28 @@ import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerColors
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import java.time.LocalDate
+import java.time.LocalTime
 
+@Preview
 @Composable
-fun DropdownDateMenu(
+fun DropdownTimeMenu(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    label: String,
-    onItemSelected: (item: String) -> Unit,
+    label: String = "Time",
+    onItemSelected: (item: String) -> Unit = {},
     busyDates: List<String> = emptyList(),
-    initialDate: String = "Pick a date"
+    initialTime: String = "Pick a time"
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var pickedDate by remember {
-        mutableStateOf(LocalDate.now())
+    var pickedTime by remember {
+        mutableStateOf(LocalTime.now())
     }
     val dateDialogState = rememberMaterialDialogState()
     var dateValue by remember {
-        mutableStateOf(initialDate)
+        mutableStateOf(initialTime)
     }
 
     Box(modifier = modifier.height(IntrinsicSize.Min)) {
@@ -68,7 +69,7 @@ fun DropdownDateMenu(
                 .fillMaxWidth(),
             leadingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_calendar_today_24),
+                    painter = painterResource(id = R.drawable.baseline_access_time_24),
                     contentDescription = "",
                     tint = Color.Gray
                 )
@@ -90,7 +91,7 @@ fun DropdownDateMenu(
                 unfocusedIndicatorColor = Color.Gray,
                 cursorColor = Color.Gray,
                 textColor = Color.Black
-            )
+            ),
         )
 
         // Transparent clickable surface on top of TextField
@@ -113,12 +114,14 @@ fun DropdownDateMenu(
             backgroundColor = Rose,
             buttons = {
                 positiveButton(text = "Ok", textStyle = TextStyle(color = Color.White)) {
-                    onItemSelected(pickedDate.toString())
-                    dateValue = pickedDate.toString()
+                    val selectedTime = pickedTime.toString().split(":")
+                    val timeString = selectedTime[0] + ":" + selectedTime[1]
+                    onItemSelected(timeString)
+                    dateValue = timeString
                     expanded = false
                 }
                 negativeButton(text = "Cancel", textStyle = TextStyle(color = Color.White)) {
-                    //  onItemSelected(pickedDate.toString())
+                   // onItemSelected(pickedTime.toString())
                     expanded = false
                 }
             },
@@ -127,20 +130,21 @@ fun DropdownDateMenu(
             Surface(
                 shape = RoundedCornerShape(12.dp),
             ) {
-                datepicker(
-                    initialDate = LocalDate.now(),
-                    title = "Pick a date",
-                    allowedDateValidator = { it.toString() !in busyDates },
-                    colors = DatePickerDefaults.colors(
-                        headerBackgroundColor = Rose,
-                        headerTextColor = Color.White,
-                        calendarHeaderTextColor = Rose,
-                        dateActiveBackgroundColor = CoralAccent
-                    )
-                ) {
-                    pickedDate = it
-
-                }
+                timepicker(
+                    initialTime = LocalTime.now(),
+                    title = "Pick the time",
+                    colors = TimePickerDefaults.colors(
+                        headerTextColor = Color.Gray,
+                        activeBackgroundColor = CoralLight,
+                        selectorColor = CoralAccent,
+                        selectorTextColor = Color.White,
+                    ),
+                    waitForPositiveButton = true,
+                    is24HourClock = true,
+                    onTimeChange = {
+                        pickedTime = it
+                    }
+                )
             }
 
         }

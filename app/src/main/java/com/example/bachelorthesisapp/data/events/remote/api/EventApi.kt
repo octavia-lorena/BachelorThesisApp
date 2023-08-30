@@ -85,4 +85,7 @@ interface EventApi {
             encoded = true
         ) eventId: Int
     ): EventDto
+
+    @PUT("/events/past")
+    suspend fun setPastEvents(): List<EventDto>
 }

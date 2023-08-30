@@ -39,8 +39,6 @@ fun BusinessRegisterStep1Screen(authViewModel: AuthViewModel, navController: Nav
 
     LaunchedEffect(Unit) {
         authViewModel.clearLoginStateForm()
-        authViewModel.clearRegisterBusinessStateForm()
-        authViewModel.clearRegisterClientStateForm()
     }
 
     Box {
@@ -70,14 +68,7 @@ fun BusinessRegisterStep1Screen(authViewModel: AuthViewModel, navController: Nav
                     authViewModel.validationBusinessRegisterEvents.collect { event ->
                         when (event) {
                             is AuthViewModel.ValidationEvent.Success -> {
-                                Toast.makeText(
-                                    context,
-                                    "Successful registration!",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                //navController.navigate(Routes.BusinessRegisterStep2Screen.route)
-
+                                navController.navigate(Routes.BusinessRegisterStep2Screen.route)
                             }
 
                             else -> Toast.makeText(context, "Error", Toast.LENGTH_SHORT)
@@ -92,12 +83,17 @@ fun BusinessRegisterStep1Screen(authViewModel: AuthViewModel, navController: Nav
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Welcome to Event Space! Share your art with the world and be part of the greatness of events.",
-                    color = Color.White)
+                    Text(
+                        text = "Welcome to Event Space! Share your art with the world and be part of the greatness of events.",
+                        color = Color.White
+                    )
                     Spacer(modifier = Modifier.height(15.dp))
                     BottomClickableText(
                         text = "Already have an account? Sign In here.",
-                        onClick = { navController.navigate(Routes.LoginScreen.route) },
+                        onClick = {
+                            navController.navigate(Routes.LoginScreen.route)
+                            authViewModel.clearRegisterBusinessStateForm()
+                        },
                         color = CoralAccent
                     )
                     Spacer(modifier = Modifier.height(37.dp))
@@ -165,20 +161,27 @@ fun BusinessRegisterStep1Screen(authViewModel: AuthViewModel, navController: Nav
                         item {
                             var selectedIndex by remember { mutableStateOf(-1) }
                             val options = enumValues<BusinessType>()
-                            LargeDropdownMenu(
-                                label = "Business Type",
-                                items = options.map { it.name },
-                                selectedIndex = selectedIndex,
-                                onItemSelected = { index, type ->
-                                    run {
-                                        selectedIndex = index
-                                        authViewModel.onBusinessRegisterEvent(
-                                            BusinessRegisterEvent.TypeChanged(type)
-                                        )
-                                    }
-                                },
-                                painterResource = R.drawable.baseline_category_24
-                            )
+                            Column(horizontalAlignment = Alignment.Start) {
+                                LargeDropdownMenu(
+                                    label = "Business Type",
+                                    items = options.map { it.name },
+                                    selectedIndex = selectedIndex,
+                                    onItemSelected = { index, type ->
+                                        run {
+                                            selectedIndex = index
+                                            authViewModel.onBusinessRegisterEvent(
+                                                BusinessRegisterEvent.TypeChanged(type)
+                                            )
+                                        }
+                                    },
+                                    painterResource = R.drawable.baseline_category_24,
+                                    iconColor = Color.DarkGray
+                                )
+                                if (state.typeError != null) {
+                                    ErrorText(text = state.typeError.toString())
+                                }
+                            }
+
                             Spacer(modifier = Modifier.height(10.dp))
                         }
                         // EMAIL FIELD
@@ -329,8 +332,6 @@ fun BusinessRegisterStep1Screen(authViewModel: AuthViewModel, navController: Nav
                             SubmitButton(
                                 onClick = {
                                     authViewModel.onBusinessRegisterEvent(BusinessRegisterEvent.PartialSubmit)
-                                    navController.navigate(Routes.BusinessRegisterStep2Screen.route)
-
                                 },
                                 text = "Next"
                             )

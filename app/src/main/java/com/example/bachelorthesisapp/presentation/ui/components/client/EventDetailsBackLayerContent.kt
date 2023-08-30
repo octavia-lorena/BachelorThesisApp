@@ -375,8 +375,7 @@ fun EventDetailsBackLayerContent(
             BusinessTypeCardGrid(
                 event = event,
                 postsList = postsList,
-                onBusinessTypeFilterClick = onBusinessTypeFilterClick,
-                onCollaborationCanceledClicked = onCollaborationCanceledClicked
+                onBusinessTypeFilterClick = onBusinessTypeFilterClick
             )
             Spacer(modifier = Modifier.height(30.dp))
         }

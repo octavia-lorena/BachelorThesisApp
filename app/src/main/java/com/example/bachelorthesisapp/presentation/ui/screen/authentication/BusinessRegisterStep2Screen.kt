@@ -86,6 +86,7 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                                     .show()
                                 delay(1500L)
                                 navController.navigate(Routes.LoginScreen.route)
+                                authVM.clearRegisterBusinessStateForm()
                             }
 
                             else -> Toast.makeText(context, "Error", Toast.LENGTH_SHORT)
@@ -195,82 +196,6 @@ fun BusinessRegisterStep2Screen(authVM: AuthViewModel, navController: NavHostCon
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
                             }
-                        }
-                        item {
-                            Text(
-                                text = "Optionally, you can provide more details about your location, so that clients can find you easier on the map.",
-                                style = Typography.subtitle1,
-                                color = Color.White
-                            )
-                        }
-                        // LAT-LNG FIELD
-                        item {
-                            val focusManager = LocalFocusManager.current
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Row {
-                                TextField(
-                                    label = { Text(text = "Latitude", color = Color.DarkGray) },
-                                    value = state.lat,
-                                    modifier = Modifier.width(150.dp),
-                                    onValueChange = {
-                                        authVM.onBusinessRegisterEvent(
-                                            BusinessRegisterEvent.LatChanged(it)
-                                        )
-                                    },
-                                    colors = TextFieldDefaults.textFieldColors(
-                                        backgroundColor = Color.Transparent,
-                                        focusedLabelColor = Color.Gray,
-                                        unfocusedLabelColor = Color.Transparent,
-                                        focusedIndicatorColor = CoralAccent,
-                                        unfocusedIndicatorColor = Color.Gray,
-                                        cursorColor = Color.Gray
-                                    ),
-                                    leadingIcon = {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.baseline_my_location_24),
-                                            contentDescription = ""
-                                        )
-                                    },
-                                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                                    keyboardOptions = KeyboardOptions.Default.copy(
-                                        imeAction = ImeAction.Done,
-                                        keyboardType = KeyboardType.Number
-                                    )
-                                )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                TextField(
-                                    label = { Text(text = "Longitude", color = Color.DarkGray) },
-                                    value = state.lng,
-                                    modifier = Modifier.width(150.dp),
-                                    onValueChange = {
-                                        authVM.onBusinessRegisterEvent(
-                                            BusinessRegisterEvent.LngChanged(it)
-                                        )
-                                    },
-                                    colors = TextFieldDefaults.textFieldColors(
-                                        backgroundColor = Color.Transparent,
-                                        focusedLabelColor = Color.Gray,
-                                        unfocusedLabelColor = Color.Transparent,
-                                        focusedIndicatorColor = CoralAccent,
-                                        unfocusedIndicatorColor = Color.Gray,
-                                        cursorColor = Color.Gray
-                                    ),
-                                    leadingIcon = {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.baseline_my_location_24),
-                                            contentDescription = ""
-                                        )
-                                    },
-                                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                                    keyboardOptions = KeyboardOptions.Default.copy(
-                                        imeAction = ImeAction.Done,
-                                        keyboardType = KeyboardType.Number
-                                    )
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(20.dp))
-
                         }
                         item {
                             Text(

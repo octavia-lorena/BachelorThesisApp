@@ -11,6 +11,8 @@ class BusinessRegisterFormValidator {
     fun validateEmail(email: String): ValidationResult {
         if (email.isEmpty())
             return ValidationResult(false, "This field cannot be blank.")
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())
+            return ValidationResult(false, "Invalid email format.")
         return ValidationResult(success = true)
     }
 
@@ -51,9 +53,6 @@ class BusinessRegisterFormValidator {
     fun validateAddress(address: String): ValidationResult{
         if (address.isEmpty())
             return ValidationResult(false, "This field cannot be blank.")
-//        val addressRegex = """.+;.+;.+""".toRegex()
-//        if (!addressRegex.matches(address))
-//            return ValidationResult(false, "Wrong address format")
         return ValidationResult(success = true)
     }
 }

@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -48,10 +49,7 @@ import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BusinessTypeCardGrid(
-    event: Event,
-    postsList: List<OfferPost>,
-    onBusinessTypeFilterClick: (String) -> Unit,
-    onCollaborationCanceledClicked: (Int) -> Unit
+    event: Event, postsList: List<OfferPost>, onBusinessTypeFilterClick: (String) -> Unit
 ) {
     var expandedState by remember {
         mutableStateOf(false)
@@ -59,10 +57,6 @@ fun BusinessTypeCardGrid(
     var postType by remember {
         mutableStateOf("")
     }
-    var isDeleteExpanded by remember {
-        mutableStateOf(false)
-    }
-    val context = LocalContext.current
 
     if (expandedState) {
         Dialog(
@@ -149,7 +143,10 @@ fun BusinessTypeCardGrid(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            text = post.description, style = Typography.caption
+                            text = post.description,
+                            style = Typography.caption,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -166,8 +163,7 @@ fun BusinessTypeCardGrid(
         verticalItemSpacing = 10.dp,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        val vendorsSorted =
-            event.vendors.toList().sortedBy { (_, value) -> value }.toMap()
+        val vendorsSorted = event.vendors.toList().sortedBy { (_, value) -> value }.toMap()
         items(vendorsSorted.keys.size) { index ->
             var id by remember {
                 mutableStateOf(R.drawable.outline_cancel_24)

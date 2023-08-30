@@ -63,8 +63,6 @@ fun BusinessProfileScreenContent(
         BusinessType.PhotoVideo,
         "Cluj",
         "Str. Florilor, nr. 10",
-        1.1,
-        1.1,
         "",
         deviceToken = null
     ),
@@ -165,20 +163,18 @@ fun BusinessProfileScreenContent(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start
                             ) {
-                                if (business.lat != null && business.lng != null) {
-                                    IconButton(onClick = {
-                                        val gmmIntentUri =
-                                            Uri.parse("google.streetview:cbll=${business.lat},${business.lng}")
-                                        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                                        mapIntent.setPackage("com.google.android.apps.maps")
-                                        startActivity(context, mapIntent, null)
-                                    }, modifier = Modifier) {
-                                        Icon(
-                                            imageVector = Icons.Default.Map,
-                                            contentDescription = "",
-                                            tint = Color.Gray,
-                                        )
-                                    }
+                                IconButton(onClick = {
+                                    val gmmIntentUri =
+                                        Uri.parse("geo:0,0?q=${business.address}+${business.city}")
+                                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                                    mapIntent.setPackage("com.google.android.apps.maps")
+                                    startActivity(context, mapIntent, null)
+                                }, modifier = Modifier) {
+                                    Icon(
+                                        imageVector = Icons.Default.Map,
+                                        contentDescription = "",
+                                        tint = Color.Gray,
+                                    )
                                 }
                                 Text(text = "${business.city}, ${business.address}   •   ${posts.size} posts")
 

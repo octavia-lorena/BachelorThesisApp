@@ -61,8 +61,6 @@ class ClientViewModel @Inject constructor(
         Firebase.database.getReference(AuthRepository.USERS_TABLE_NAME)
 
     init {
-        // deleteAllEvents()
-        //deleteAllPosts()
         viewModelScope.launch {
             loadAllEventsByOrganizerId()
             loadBusinesses()
@@ -576,6 +574,13 @@ class ClientViewModel @Inject constructor(
     suspend fun loadRequests(businessId: String) {
         viewModelScope.launch {
             requestsRepository.fetchRequestsByBusinessId(businessId)
+            delay(2000L)
+        }
+    }
+
+    suspend fun loadAppointments(businessId: String) {
+        viewModelScope.launch {
+            requestsRepository.fetchAppointmentsByBusinessId(businessId)
             delay(2000L)
         }
     }
@@ -1250,6 +1255,7 @@ class ClientViewModel @Inject constructor(
         viewModelScope.launch {
             eventsRepository.deleteEvent(eventId = eventId)
             requestsRepository.deleteRequestByEventId(eventId = eventId)
+            loadAllEventsByOrganizerId()
         }
     }
 
@@ -1329,6 +1335,13 @@ class ClientViewModel @Inject constructor(
                 vendors = "",
                 vendorsError = null
             )
+        }
+    }
+
+    fun setPastEvents(){
+        viewModelScope.launch {
+            eventsRepository.setPastEvents()
+            Log.d("PAST_SET", "DONE")
         }
     }
 

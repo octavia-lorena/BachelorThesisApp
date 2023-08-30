@@ -8,7 +8,7 @@ import com.example.bachelorthesisapp.data.model.Rating
 class PhotosConverter {
 
     companion object {
-        const val SEPARATOR = ","
+        const val SEPARATOR = ";"
     }
 
     @TypeConverter

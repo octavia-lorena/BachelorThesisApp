@@ -324,14 +324,6 @@ class AuthViewModel @Inject constructor(
                 validateCityBusinessRegisterEventForm()
             }
 
-            is BusinessRegisterEvent.LatChanged -> {
-                registerBusinessState = registerBusinessState.copy(lat = event.lat)
-            }
-
-            is BusinessRegisterEvent.LngChanged -> {
-                registerBusinessState = registerBusinessState.copy(lng = event.lng)
-            }
-
             is BusinessRegisterEvent.ProfilePictureChanged -> {
                 registerBusinessState =
                     registerBusinessState.copy(profilePicture = event.profilePicture)
@@ -668,18 +660,7 @@ class AuthViewModel @Inject constructor(
             val address = registerBusinessState.address
             val businessType = findBusinessType(type)
             val city = registerBusinessState.city
-            val lat = registerBusinessState.lat
-            val lng = registerBusinessState.lng
             val profilePictureState = registerBusinessState.profilePicture
-            val latitude: Double?
-            val longitude: Double?
-            if (lat.isEmpty() || lng.isEmpty()) {
-                latitude = null
-                longitude = null
-            } else {
-                latitude = lat.toDouble()
-                longitude = lng.toDouble()
-            }
             val profilePicture: String? = if (profilePictureState == "") {
                 null
             } else profilePictureState
@@ -690,8 +671,6 @@ class AuthViewModel @Inject constructor(
                 phoneNumber = phoneNumber,
                 address = address,
                 city = city,
-                lat = latitude,
-                lng = longitude,
                 email = email,
                 password = password,
                 username = username,
@@ -720,8 +699,6 @@ class AuthViewModel @Inject constructor(
                 confirmPasswordError = null,
                 city = "",
                 cityError = null,
-                lat = "",
-                lng = "",
             )
         }
     }
@@ -854,8 +831,6 @@ class AuthViewModel @Inject constructor(
                 passwordError = null,
                 confirmPassword = "",
                 confirmPasswordError = null,
-                lat = "",
-                lng = ""
             )
         }
     }

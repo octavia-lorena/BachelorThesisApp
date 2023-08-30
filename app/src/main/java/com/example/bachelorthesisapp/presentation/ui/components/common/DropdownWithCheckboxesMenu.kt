@@ -1,6 +1,7 @@
 package com.example.bachelorthesisapp.presentation.ui.components.common
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.google.android.material.color.MaterialColors
@@ -95,7 +97,7 @@ fun <T> DropdownWithCheckboxesMenu(
                 backgroundColor = Color.Transparent,
                 focusedLabelColor = Color.Gray,
                 unfocusedLabelColor = Color.Transparent,
-                focusedIndicatorColor = Ochre,
+                focusedIndicatorColor = CoralAccent,
                 unfocusedIndicatorColor = Color.Gray,
                 cursorColor = Color.Gray
             ),
@@ -172,7 +174,7 @@ fun DropdownWithCheckboxesMenuItem(
 ) {
     val contentColor = when {
         !enabled -> MaterialTheme.colors.onSurface.copy(alpha = MaterialColors.ALPHA_DISABLED)
-        selected -> MaterialTheme.colors.primary.copy(alpha = MaterialColors.ALPHA_FULL)
+        selected -> CoralAccent
         else -> MaterialTheme.colors.onSurface.copy(alpha = MaterialColors.ALPHA_FULL)
     }
     var checkedState by remember { mutableStateOf(selected) }
@@ -183,6 +185,7 @@ fun DropdownWithCheckboxesMenuItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
+                .background(color = Color.White)
         ) {
             Row(
                 horizontalArrangement = Arrangement.Start,

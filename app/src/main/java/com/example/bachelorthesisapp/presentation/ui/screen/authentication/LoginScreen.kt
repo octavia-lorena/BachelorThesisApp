@@ -78,7 +78,6 @@ fun LoginScreenContent(
     authViewModel: AuthViewModel,
     navController: NavHostController
 ) {
-    val userType = authViewModel.userTypeState.collectAsStateWithLifecycle(initialValue = "")
     val scope = rememberCoroutineScope()
     val loginState = authViewModel.loginState1.collectAsStateWithLifecycle(UiState.Loading)
     val isLoading = authViewModel.isLoading.collectAsState()

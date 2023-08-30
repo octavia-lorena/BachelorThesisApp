@@ -374,7 +374,7 @@ class BusinessViewModel @Inject constructor(
         val hasError = listOf(
             titleResult,
             descriptionResult,
-            //imagesResult,
+            imagesResult,
             priceResult
         ).any { !it.success }
         if (hasError) {
@@ -433,14 +433,13 @@ class BusinessViewModel @Inject constructor(
             imagesList.forEach {
                 val randomNumber = System.currentTimeMillis()
                 val path = "$randomNumber.jpeg"
-               // pathList.add(path)
-                storageRef.child("$businessId/$path").putFile(Uri.parse(it)).addOnSuccessListener {
-                    task ->
-                    task.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
-                        url ->
-                        pathList.add(url.toString())
-                    }
-                }.await()
+                // pathList.add(path)
+                storageRef.child("$businessId/$path").putFile(Uri.parse(it))
+                    .addOnSuccessListener { task ->
+                        task.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
+                            pathList.add(url.toString())
+                        }
+                    }.await()
                 delay(2000L)
             }
             val post = OfferPost(
@@ -464,8 +463,9 @@ class BusinessViewModel @Inject constructor(
         price: String
     ) {
         viewModelScope.launch {
-            val imagesList = images.split(";")
-            postsRepository.updatePost(id, title, description, imagesList, price.toInt())
+//            val imagesList = images.split(";")
+//            Log.d("Images", imagesList.toString())
+            postsRepository.updatePost(id, title, description, images, price.toInt())
         }
     }
 

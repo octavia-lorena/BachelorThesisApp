@@ -7,7 +7,7 @@ data class OfferPostModel(
     val businessId: String,
     val title: String,
     val description: String,
-    val images: List<String>,
+    val images: String,
     val price: Int,
     val rating: Map<String, String>,
 )
@@ -17,7 +17,7 @@ fun OfferPost.toModel() = OfferPostModel(
     businessId = businessId,
     title = title,
     description = description,
-    images = images,
+    images = images.joinToString(";"),
     price = price,
     rating = mapOf(
         Pair("value", rating.value.toString()),

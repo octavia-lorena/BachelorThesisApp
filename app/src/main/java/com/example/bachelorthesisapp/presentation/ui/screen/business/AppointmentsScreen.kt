@@ -42,6 +42,7 @@ import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -75,11 +76,12 @@ fun AppointmentsScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = context) {
-        clientViewModel.loadRequests(uid)
+        //clientViewModel.loadRequests(uid)
         clientViewModel.findBusinessById(uid)
         clientViewModel.loadAllEvents()
         clientViewModel.findPostsByBusinessId(uid)
         clientViewModel.loadAllClients()
+        clientViewModel.loadAppointments(uid)
     }
 
     Scaffold(
@@ -167,8 +169,8 @@ fun AppointmentsScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CircularProgressIndicator(
-                    backgroundColor = Rose,
-                    color = CoralLight,
+                    backgroundColor = CoralLight,
+                    color = CoralAccent,
                 )
             }
 

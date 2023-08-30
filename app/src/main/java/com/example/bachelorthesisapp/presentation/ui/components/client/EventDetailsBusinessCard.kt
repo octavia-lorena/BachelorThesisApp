@@ -47,7 +47,7 @@ import com.example.bachelorthesisapp.data.model.BusinessType
 fun EventDetailsBusinessCard(
     business: BusinessEntity = BusinessEntity(
         "",
-        "Name",
+        "Nameeeeee eeeeeeee eeeeeeee ",
         "username",
         "email",
         "pss",
@@ -55,8 +55,6 @@ fun EventDetailsBusinessCard(
         BusinessType.PhotoVideo,
         "Cluj",
         "",
-        null,
-        null,
         "",
         ""
     ),
@@ -77,7 +75,7 @@ fun EventDetailsBusinessCard(
         elevation = CardDefaults.elevatedCardElevation(7.dp)
     ) {
         Row(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(10.dp).fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
@@ -126,19 +124,6 @@ fun EventDetailsBusinessCard(
                 )
                 Text(text = business.city)
                 Text(text = "${postsList.size} posts")
-            }
-            Spacer(modifier = Modifier.width(170.dp))
-            IconButton(
-                //   modifier = Modifier.weight(1f),
-                onClick = {
-                    // Navigate to business profile
-                    onBusinessClick(business.id)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowRight,
-                    contentDescription = ""
-                )
             }
         }
     }

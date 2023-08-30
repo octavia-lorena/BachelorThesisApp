@@ -48,7 +48,7 @@ interface PostApi {
         @Path("id") id: Int,
         @Field("title") title: String,
         @Field("description") description: String,
-        @Field("photos") photos: List<String>,
+        @Field("photos") photos: String,
         @Field("price") price: Int
     ): OfferPostDto
 

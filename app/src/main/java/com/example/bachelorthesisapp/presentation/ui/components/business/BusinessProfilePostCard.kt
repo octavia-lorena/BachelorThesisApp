@@ -80,8 +80,6 @@ fun BusinessProfilePostCard(
         BusinessType.PhotoVideo,
         "city",
         "addr",
-        null,
-        null,
         "nr",
         "token"
     ),
@@ -111,7 +109,7 @@ fun BusinessProfilePostCard(
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.wrapContentSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

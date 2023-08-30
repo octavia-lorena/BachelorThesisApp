@@ -6,6 +6,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +21,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -29,6 +30,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PlainTooltipBox
 import androidx.compose.runtime.Composable
@@ -109,7 +111,7 @@ fun BusinessAppointmentCard(
                     .height(120.dp)
                     .padding(10.dp),
                 shape = RoundedCornerShape(8.dp),
-                backgroundColor = Color.White
+                colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(
                     modifier = Modifier
@@ -119,7 +121,8 @@ fun BusinessAppointmentCard(
                     Text(
                         modifier = Modifier.padding(7.dp),
                         text = "Are you sure you want to cancel this appointment?",
-                        color = Color.Gray
+                        color = Color.Gray,
+                        style = Typography.caption
                     )
                     Row(
                         modifier = Modifier
@@ -184,17 +187,16 @@ fun BusinessAppointmentCard(
             .fillMaxWidth()
             .animateContentSize(
                 animationSpec = tween(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 300, easing = LinearOutSlowInEasing
                 )
             )
-            .padding(bottom = 10.dp),
+            .padding(bottom = 10.dp)
+            .clickable {
+                expandedState = !expandedState
+            },
         shape = RoundedCornerShape(5.dp),
-        onClick = {
-            expandedState = !expandedState
-        },
-        elevation = 10.dp,
-        backgroundColor = Color.White
+        elevation = CardDefaults.cardElevation(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier
@@ -343,7 +345,10 @@ fun BusinessAppointmentCard(
                     ) {
                         Button(
                             onClick = { isCancelDialogOpen = true },
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White, disabledBackgroundColor = Color.Gray),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.White,
+                                disabledBackgroundColor = Color.Gray
+                            ),
                             border = BorderStroke(
                                 width = 1.dp, brush = Brush.horizontalGradient(
                                     listOf(

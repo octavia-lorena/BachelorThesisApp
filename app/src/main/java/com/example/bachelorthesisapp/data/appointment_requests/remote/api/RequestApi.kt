@@ -57,7 +57,7 @@ interface RequestApi {
         eventId: Int
     ): List<AppointmentRequestDto>
 
-    @DELETE("/appointment@gmail.com/{id}")
+    @DELETE("/appointment/{id}")
     suspend fun deleteAppointment(
         @Path(
             value = "id",

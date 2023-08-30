@@ -97,23 +97,29 @@ fun UpdateEventScreenContent(
     state.id = eventId
 
     LaunchedEffect(key1 = eventResultState.value) {
-        clientViewModel.validationCreateEventEvents.collect { event ->
-            when (event) {
-                is ClientViewModel.ValidationEvent.Success -> {
-                    Toast.makeText(
-                        context, "Event details updated successfully!", Toast.LENGTH_SHORT
-                    ).show()
-                    navController.popBackStack()
-                    clientViewModel.clearUpdateEventState()
-                }
+        when (eventResultState.value) {
+            is UiState.Success -> {
+                Toast.makeText(
+                    context, "Event details updated successfully!", Toast.LENGTH_SHORT
+                ).show()
+                navController.popBackStack()
+                clientViewModel.clearUpdateEventState()
+            }
 
-                is ClientViewModel.ValidationEvent.Failure -> {
-                    Toast.makeText(
-                        context,
-                        "Something went wrong!\n Check your internet connection or try again.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            is UiState.Loading -> {
+                Toast.makeText(
+                    context,
+                    "Loading...",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            is UiState.Error -> {
+                Toast.makeText(
+                    context,
+                    "Something went wrong!\n Check your internet connection or try again.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -157,7 +163,8 @@ fun UpdateEventScreenContent(
                                 contentDescription = "Question mark",
                                 modifier = Modifier
                                     .tooltipAnchor()
-                                    .size(15.dp)
+                                    .size(15.dp),
+                                tint = Color.Gray
                             )
                         }
                     },
@@ -228,7 +235,8 @@ fun UpdateEventScreenContent(
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_access_time_24),
-                            contentDescription = "time icon"
+                            contentDescription = "time icon",
+                            tint = Color.Gray
                         )
                     },
                     trailingIcon = {
@@ -246,7 +254,8 @@ fun UpdateEventScreenContent(
                                 contentDescription = "Present now",
                                 modifier = Modifier
                                     .tooltipAnchor()
-                                    .size(15.dp)
+                                    .size(15.dp),
+                                tint = Color.Gray
                             )
                         }
                     },
@@ -276,7 +285,8 @@ fun UpdateEventScreenContent(
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_attach_money_24),
-                            contentDescription = "money icon"
+                            contentDescription = "money icon",
+                            tint = Color.Gray
                         )
                     },
                     trailingIcon = {
@@ -307,7 +317,8 @@ fun UpdateEventScreenContent(
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_person_24),
-                            contentDescription = "person icon"
+                            contentDescription = "person icon",
+                            tint = Color.Gray
                         )
                     },
                     trailingIcon = {
@@ -324,7 +335,8 @@ fun UpdateEventScreenContent(
         // SUBMIT BUTTON
         item {
             Button(
-                onClick = {                     clientViewModel.onUpdateEventEvent(UpdateEventEvent.Submit)
+                onClick = {
+                    clientViewModel.onUpdateEventEvent(UpdateEventEvent.Submit)
                 },
                 modifier = Modifier.wrapContentSize(),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
@@ -336,7 +348,8 @@ fun UpdateEventScreenContent(
                             CoralAccent
                         )
                     )
-                )            ) {
+                )
+            ) {
                 Text(
                     text = stringResource(R.string.Update),
                     style = Typography.caption,

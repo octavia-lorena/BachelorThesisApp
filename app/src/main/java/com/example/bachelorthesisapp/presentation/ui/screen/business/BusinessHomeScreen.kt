@@ -92,7 +92,7 @@ fun BusinessHomeScreen(
                 easing = LinearOutSlowInEasing
             )
         ),
-        topBar = { BusinessHomeAppBar(title = "My Space", scaffoldState = scaffoldState) },
+        topBar = { BusinessHomeAppBar(title = "Welcome, ${authViewModel.currentUser?.displayName}", scaffoldState = scaffoldState) },
         bottomBar = {
             BottomNavigationBarBusiness(
                 navController = navHostController,

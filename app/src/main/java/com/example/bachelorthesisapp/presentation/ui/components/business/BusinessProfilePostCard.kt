@@ -223,7 +223,7 @@ fun BusinessProfilePostCard(
                             isDialogOpen = true
                         }) {
                             Text(
-                                text = "Request post for your event",
+                                text = "Request service for your event",
                                 fontSize = 16.sp,
                                 color = Color.DarkGray,
                                 style = Typography.caption

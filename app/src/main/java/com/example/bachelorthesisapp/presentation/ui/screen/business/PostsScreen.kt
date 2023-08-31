@@ -14,9 +14,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +37,9 @@ import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.presentation.ui.components.common.AddPostExpandableFloatingButton
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -48,12 +53,15 @@ fun BusinessPostsHomeScreen(
     val postBusinessState =
         businessViewModel.postBusinessState.collectAsStateWithLifecycle(UiState.Loading)
     val scaffoldState = rememberScaffoldState()
-    val listState = rememberLazyListState()
+    //val listState = rememberLazyListState()
     val expandedFab by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex == 0
+            false
         }
     }
+    val loadingState by businessViewModel.isLoading.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState)
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
         businessViewModel.loadPostData()
@@ -92,19 +100,28 @@ fun BusinessPostsHomeScreen(
         drawerGesturesEnabled = true,
         backgroundColor = Color.White
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding() + 10.dp, top = 0.dp)
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = {
+                scope.launch {
+                    businessViewModel.loadPostData()
+                }
+            }
         ) {
-            BusinessPostsHomeScreenContent(
-                contentPosts = postBusinessState.value,
-                businessViewModel = businessViewModel,
-                cardsViewModel = cardsViewModel,
-                listState = listState
-            ) { post ->
-                businessViewModel.setUpdatePostState(post)
-                navHostController.navigate("update_post/${post.id}")
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = innerPadding.calculateBottomPadding() + 10.dp, top = 0.dp)
+            ) {
+                BusinessPostsHomeScreenContent(
+                    contentPosts = postBusinessState.value,
+                    businessViewModel = businessViewModel,
+                    cardsViewModel = cardsViewModel,
+                   // listState = listState
+                ) { post ->
+                    businessViewModel.setUpdatePostState(post)
+                    navHostController.navigate("update_post/${post.id}")
+                }
             }
         }
     }
@@ -115,7 +132,7 @@ fun BusinessPostsHomeScreenContent(
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
     businessViewModel: BusinessViewModel,
     cardsViewModel: CardSwipeViewModel,
-    listState: LazyListState,
+   // listState: LazyListState,
     onEditClicked: (OfferPost) -> Unit,
 ) {
     val revealedCardIds by cardsViewModel.revealedCardIdsList.collectAsStateWithLifecycle()
@@ -142,7 +159,7 @@ fun BusinessPostsHomeScreenContent(
                 val postsList = contentPosts.value.reversed()
                 Log.d("POSTS", postsList.toString())
                 LazyColumn(
-                    state = listState,
+                 //   state = listState,
                     modifier = Modifier
                         .padding(5.dp)
                         .fillMaxSize(),

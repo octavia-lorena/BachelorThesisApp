@@ -42,10 +42,12 @@ import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.data.model.EventStatus
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
@@ -75,13 +77,13 @@ fun AppointmentsScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = context) {
-        //clientViewModel.loadRequests(uid)
+    LaunchedEffect(key1 = Unit) {
+        clientViewModel.loadRequests(uid)
         clientViewModel.findBusinessById(uid)
         clientViewModel.loadAllEvents()
         clientViewModel.findPostsByBusinessId(uid)
         clientViewModel.loadAllClients()
-        clientViewModel.loadAppointments(uid)
+        //  clientViewModel.loadAppointments(uid)
     }
 
     Scaffold(
@@ -128,6 +130,7 @@ fun AppointmentsScreen(
                     .padding(bottom = innerPadding.calculateBottomPadding() + 50.dp, top = 10.dp)
             ) {
                 AppointmentsScreenContent(
+                    uid = uid,
                     contentAppointments = appointmentsState.value,
                     contentBusiness = businessState.value,
                     businessViewModel = businessViewModel,
@@ -142,6 +145,7 @@ fun AppointmentsScreen(
 
 @Composable
 fun AppointmentsScreenContent(
+    uid: String,
     contentAppointments: UiState<List<AppointmentRequest>> = UiState.Success(
         listOf(
             AppointmentRequest(
@@ -184,17 +188,28 @@ fun AppointmentsScreenContent(
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.Start
             ) {
-                val appointmentsList = contentAppointments.value
+                // The current business' appointments
+                var appointmentsList = contentAppointments.value
                 if (contentPosts is UiState.Success && contentEvents is UiState.Success && contentClients is UiState.Success) {
-                    val eventsList = contentEvents.value.sortedBy { it.date }
+                    // all events with status != Past, sorted by date
+                    val eventsList = contentEvents.value.filter { it.status != EventStatus.Past }
+                        .sortedBy { it.date }
+                    val eventIds = eventsList.map { it.id }
+                    appointmentsList = appointmentsList.filter { it.eventId in eventIds }
+                    // business' posts
+                    val posts = contentPosts.value.filter { it.businessId == uid }
                     items(appointmentsList.size) { index ->
                         val appointment =
                             appointmentsList[index]
-                        val post = contentPosts.value.first { it.id == appointment.postId }
+                        Log.d("APPOINTMEN", appointment.toString())
+                        val post = posts.first { it.id == appointment.postId}
                         val event = eventsList.first { it.id == appointment.eventId }
-                        val client = contentClients.value.first { it.id == event.organizerId }
-                        Log.d("NEW_REQUEST_CARD", "rid ${appointment.id}, cid ${client.id}")
-                        if (contentBusiness is UiState.Success) {
+                        val client =
+                            contentClients.value.firstOrNull { it.id == event.organizerId }
+                        if (client != null) {
+                            Log.d("NEW_REQUEST_CARD", "rid ${appointment.id}, cid ${client.id}")
+                        }
+                        if (contentBusiness is UiState.Success && client != null) {
                             val business = contentBusiness.value
                             if (index == 0) {
                                 Text(
@@ -232,6 +247,7 @@ fun AppointmentsScreenContent(
                             }
                         }
                     }
+
                 } else {
                     Log.d("NEW_REQUEST_CARD", "Error/Loading")
                 }

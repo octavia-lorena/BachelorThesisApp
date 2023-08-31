@@ -55,6 +55,7 @@ fun RequestsScreenBackdrop(
         // Back layer displays the event details info and the business type selection mechanism
         backLayerContent = {
             RequestsBackLayerContent(
+                uid = businessId,
                 contentPosts = contentPosts,
                 contentRequests = contentRequests,
                 contentEvents = contentEvents,

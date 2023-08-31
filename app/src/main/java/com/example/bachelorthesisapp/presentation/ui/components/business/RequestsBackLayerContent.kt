@@ -23,9 +23,11 @@ import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
 import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.data.model.EventStatus
 
 @Composable
 fun RequestsBackLayerContent(
+    uid: String,
     contentBusiness: UiState<BusinessEntity> = UiState.Loading,
     clientViewModel: ClientViewModel,
     contentEvents: UiState<List<Event>> = UiState.Loading,
@@ -50,7 +52,8 @@ fun RequestsBackLayerContent(
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 CircularProgressIndicator(
                     backgroundColor = Rose,
                     color = CoralLight,
@@ -65,12 +68,16 @@ fun RequestsBackLayerContent(
                     .padding(5.dp)
                     .fillMaxSize(),
             ) {
-                val requestsList = contentRequests.value
+                var requestsList = contentRequests.value
                 if (contentPosts is UiState.Success && contentEvents is UiState.Success && contentClients is UiState.Success) {
+                    val eventsList = contentEvents.value.filter { it.status != EventStatus.Past }
+                    val eventIds = eventsList.map { it.id }
+                    requestsList = requestsList.filter { it.eventId in eventIds }
+                    val posts = contentPosts.value.filter { it.businessId == uid }
                     items(requestsList.size) { index ->
                         val request = requestsList[index]
-                        val post = contentPosts.value.first { it.id == request.postId }
-                        val event = contentEvents.value.first { it.id == request.eventId }
+                        val post = posts.first { it.id == request.postId }
+                        val event = eventsList.first { it.id == request.eventId }
                         val client = contentClients.value.first { it.id == event.organizerId }
                         Log.d("NEW_REQUEST_CARD", "rid ${request.id}, cid ${client.id}")
                         if (contentBusiness is UiState.Success) {

@@ -66,6 +66,7 @@ class ClientViewModel @Inject constructor(
             loadBusinesses()
             loadPostsByBusinessId()
             loadAllRequests()
+            loadAllEvents()
         }
 
     }

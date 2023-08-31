@@ -121,13 +121,14 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
     var database: DatabaseReference = Firebase.database.getReference("users")
 
 //    LaunchedEffect(key1 = Unit) {
-//        clientViewModel.setPastEvents()
+//
 //    }
 
     var startDestination by remember {
         mutableStateOf(Routes.LoginScreen.route)
     }
     LaunchedEffect(key1 = Unit) {
+        clientViewModel.setPastEvents()
         if (Firebase.auth.currentUser != null) {
             var userType = ""
             val id = Firebase.auth.currentUser!!.uid

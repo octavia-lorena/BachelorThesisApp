@@ -2,6 +2,7 @@ package com.example.bachelorthesisapp.presentation.viewmodel
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,6 +33,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -53,12 +57,17 @@ class BusinessViewModel @Inject constructor(
     private val createPostValidator: CreatePostFormValidator = CreatePostFormValidator()
     private val validationCreatePostEventChannel = Channel<ValidationEvent>()
     val validationCreatePostEvents = validationCreatePostEventChannel.receiveAsFlow()
+    var initialPhotos by mutableStateOf(listOf<String>())
 
     // UPDATE POST STATE
     var updatePostState by mutableStateOf(UpdatePostFormState())
     private val updatePostValidator: UpdatePostFormValidator = UpdatePostFormValidator()
     private val validationUpdatePostEventChannel = Channel<ValidationEvent>()
     val validationUpdatePostEvents = validationUpdatePostEventChannel.receiveAsFlow()
+
+    // LOADING STATE
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
 
     val postState: Flow<UiState<List<OfferPost>>> =
@@ -76,9 +85,18 @@ class BusinessViewModel @Inject constructor(
     val postBusinessState: Flow<UiState<List<OfferPost>>> =
         postsRepository.postBusinessFlow.map { postEntities ->
             when (postEntities) {
-                is Resource.Error -> UiState.Error(postEntities.exception)
-                is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(postEntities.data)
+                is Resource.Error -> {
+                    _isLoading.value = false
+                    UiState.Error(postEntities.exception)
+                }
+                is Resource.Loading -> {
+                    _isLoading.value = true
+                    UiState.Loading
+                }
+                is Resource.Success -> {
+                    _isLoading.value = false
+                    UiState.Success(postEntities.data)
+                }
             }
         }
 
@@ -452,6 +470,7 @@ class BusinessViewModel @Inject constructor(
                 Rating(0.0, 0)
             )
             postsRepository.addPost(post)
+
         }
     }
 
@@ -463,9 +482,32 @@ class BusinessViewModel @Inject constructor(
         price: String
     ) {
         viewModelScope.launch {
-//            val imagesList = images.split(";")
-//            Log.d("Images", imagesList.toString())
-            postsRepository.updatePost(id, title, description, images, price.toInt())
+            val businessId = authRepository.currentUser?.uid!!
+            val pastImages = images.split(";").filter { it in initialPhotos }
+            val imagesList = images.split(";").filter { it !in initialPhotos }
+            val pathList = mutableListOf<String>()
+            imagesList.forEach {
+                Log.d("IMAGEE", it)
+                val randomNumber = System.currentTimeMillis()
+                val path = "$randomNumber.jpeg"
+                // pathList.add(path)
+                storageRef.child("$businessId/$path").putFile(Uri.parse(it))
+                    .addOnSuccessListener { task ->
+                        task.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
+                            pathList.add(url.toString())
+                        }
+                    }.await()
+
+                delay(2000L)
+            }
+            pathList.addAll(pastImages)
+            postsRepository.updatePost(
+                id,
+                title,
+                description,
+                pathList.joinToString(";"),
+                price.toInt()
+            )
         }
     }
 
@@ -491,6 +533,7 @@ class BusinessViewModel @Inject constructor(
                 images = post.images.joinToString(";") { it },
                 price = post.price.toString()
             )
+            initialPhotos = post.images
             delay(1000L)
         }
 

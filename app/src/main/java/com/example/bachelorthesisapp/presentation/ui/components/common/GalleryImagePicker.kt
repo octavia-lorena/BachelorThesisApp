@@ -125,10 +125,6 @@ fun GalleryImagePicker(
             items(urisList.size) { imageIndex ->
                 val imgUri = urisList[imageIndex]
                 imgUri?.let {
-//                    val source = ImageDecoder
-//                        .createSource(context.contentResolver, it)
-//                    bitmap.value = ImageDecoder.decodeBitmap(source)
-                    // bitmap.value?.let { btm ->
 
                     Box(contentAlignment = Alignment.TopEnd, modifier = Modifier.animateContentSize { _, _ ->  }) {
                         Image(

@@ -2,7 +2,6 @@ package com.example.bachelorthesisapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.bachelorthesisapp.data.ActivitiesDao
 import com.example.bachelorthesisapp.data.appointment_requests.local.dao.AppointmentRequestDao
 import com.example.bachelorthesisapp.data.businesses.local.dao.BusinessesDao
 import com.example.bachelorthesisapp.data.clients.local.dao.ClientsDao
@@ -31,10 +30,6 @@ object LocalModule {
     ).fallbackToDestructiveMigration()
         .build()
 
-    @Provides
-    @Singleton
-    fun providesActivitiesDao(database: EventSpaceDatabase): ActivitiesDao =
-        database.activitiesDao()
 
     @Provides
     @Singleton

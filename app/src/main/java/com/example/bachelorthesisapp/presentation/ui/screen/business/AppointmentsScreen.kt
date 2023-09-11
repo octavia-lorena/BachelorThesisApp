@@ -195,14 +195,21 @@ fun AppointmentsScreenContent(
                     val eventsList = contentEvents.value.filter { it.status != EventStatus.Past }
                         .sortedBy { it.date }
                     val eventIds = eventsList.map { it.id }
-                    appointmentsList = appointmentsList.filter { it.eventId in eventIds }
+                    appointmentsList =
+                        appointmentsList.filter { it.eventId in eventIds }
+                    val list = mutableListOf<AppointmentRequest>()
+                    var j =1
+                    for (j in eventIds){
+                        appointmentsList.filter { it.eventId == j }.forEach { list.add(it) }
+                    }
+                   // appointmentsList = list
                     // business' posts
                     val posts = contentPosts.value.filter { it.businessId == uid }
-                    items(appointmentsList.size) { index ->
+                    items(list.size) { index ->
                         val appointment =
-                            appointmentsList[index]
+                            list[index]
                         Log.d("APPOINTMEN", appointment.toString())
-                        val post = posts.first { it.id == appointment.postId}
+                        val post = posts.first { it.id == appointment.postId }
                         val event = eventsList.first { it.id == appointment.eventId }
                         val client =
                             contentClients.value.firstOrNull { it.id == event.organizerId }
@@ -221,7 +228,7 @@ fun AppointmentsScreenContent(
                             }
 
                             if (index > 0) {
-                                val previousAppointment = appointmentsList[index - 1]
+                                val previousAppointment = list[index - 1]
                                 val previousEvent =
                                     eventsList.first { it.id == previousAppointment.eventId }
                                 if (previousEvent.date != event.date)

@@ -2,7 +2,6 @@ package com.example.bachelorthesisapp.presentation.ui.screen.business
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,9 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -32,13 +29,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.core.presentation.UiState
-import com.example.bachelorthesisapp.data.model.events.CreatePostEvent
 import com.example.bachelorthesisapp.data.model.events.UpdatePostEvent
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
 import com.example.bachelorthesisapp.presentation.ui.components.common.GalleryImagePicker
-import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
@@ -89,12 +84,12 @@ fun UpdateOfferPostScreenContent(
     businessViewModel: BusinessViewModel,
     navController: NavHostController
 ) {
-    val state = businessViewModel.updatePostState
+    val updatePostFormState = businessViewModel.updatePostState
     val postResultState =
-        businessViewModel.postResultState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+        businessViewModel.postResponseState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val context = LocalContext.current
 
-    state.id = postId
+    updatePostFormState.id = postId
 
     LaunchedEffect(key1 = postResultState.value) {
         when (postResultState.value) {
@@ -105,7 +100,6 @@ fun UpdateOfferPostScreenContent(
                     Toast.LENGTH_SHORT
                 )
                     .show()
-                businessViewModel.clearUpdatePostForm()
                 navController.popBackStack()
             }
 
@@ -116,7 +110,7 @@ fun UpdateOfferPostScreenContent(
 
 
             is UiState.Error -> Toast.makeText(
-                context, "Error!", Toast.LENGTH_SHORT
+                context, "Error updating the offer post..", Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -137,7 +131,7 @@ fun UpdateOfferPostScreenContent(
                 Spacer(modifier = Modifier.height(2.dp))
                 FormTextField(
                     labelText = stringResource(R.string.Title),
-                    value = state.title,
+                    value = updatePostFormState.title,
                     onValueChange = {
                         businessViewModel.onUpdatePostEvent(
                             UpdatePostEvent.TitleChanged(
@@ -145,13 +139,13 @@ fun UpdateOfferPostScreenContent(
                             )
                         )
                     },
-                    error = state.titleError,
+                    error = updatePostFormState.titleError,
                     leadingIcon = null,
                     trailingIcon = null,
                     keyboardType = KeyboardType.Text
                 )
-                if (state.titleError != null) {
-                    ErrorText(text = state.titleError.toString())
+                if (updatePostFormState.titleError != null) {
+                    ErrorText(text = updatePostFormState.titleError.toString())
                 }
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -162,7 +156,7 @@ fun UpdateOfferPostScreenContent(
                 Spacer(modifier = Modifier.height(2.dp))
                 FormTextField(
                     labelText = stringResource(R.string.Description),
-                    value = state.description,
+                    value = updatePostFormState.description,
                     onValueChange = {
                         businessViewModel.onUpdatePostEvent(
                             UpdatePostEvent.DescriptionChanged(
@@ -170,13 +164,13 @@ fun UpdateOfferPostScreenContent(
                             )
                         )
                     },
-                    error = state.descriptionError,
+                    error = updatePostFormState.descriptionError,
                     leadingIcon = null,
                     trailingIcon = null,
                     keyboardType = KeyboardType.Text
                 )
-                if (state.descriptionError != null) {
-                    ErrorText(text = state.descriptionError.toString())
+                if (updatePostFormState.descriptionError != null) {
+                    ErrorText(text = updatePostFormState.descriptionError.toString())
                 }
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -187,7 +181,7 @@ fun UpdateOfferPostScreenContent(
                 Spacer(modifier = Modifier.height(2.dp))
                 FormTextField(
                     labelText = stringResource(R.string.Price),
-                    value = state.price,
+                    value = updatePostFormState.price,
                     onValueChange = {
                         businessViewModel.onUpdatePostEvent(
                             UpdatePostEvent.PriceChanged(
@@ -195,13 +189,13 @@ fun UpdateOfferPostScreenContent(
                             )
                         )
                     },
-                    error = state.priceError,
+                    error = updatePostFormState.priceError,
                     leadingIcon = null,
                     trailingIcon = null,
                     keyboardType = KeyboardType.Number
                 )
-                if (state.priceError != null) {
-                    ErrorText(text = state.priceError.toString())
+                if (updatePostFormState.priceError != null) {
+                    ErrorText(text = updatePostFormState.priceError.toString())
                 }
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -209,7 +203,7 @@ fun UpdateOfferPostScreenContent(
         // IMAGES PICKER ITEM
         item {
             GalleryImagePicker(
-                initialValues = state.images.split(";")
+                initialValues = updatePostFormState.images.split(";")
             ) {
                 businessViewModel.onUpdatePostEvent(
                     UpdatePostEvent.ImagesChanged(
@@ -217,8 +211,8 @@ fun UpdateOfferPostScreenContent(
                     )
                 )
             }
-            if (state.imagesError != null) {
-                ErrorText(text = state.imagesError.toString())
+            if (updatePostFormState.imagesError != null) {
+                ErrorText(text = updatePostFormState.imagesError.toString())
             }
             Spacer(modifier = Modifier.padding(5.dp))
         }

@@ -3,7 +3,7 @@ package com.example.bachelorthesisapp.core.remote
 import com.example.bachelorthesisapp.core.resources.Resource
 
 @Suppress("unused")
-suspend inline fun <ResultType, RequestType> networkCall(
+suspend inline fun <ResultType, RequestType : Any> networkCall(
     crossinline localSource: suspend () -> ResultType,
     crossinline remoteSource: suspend () -> RequestType,
     crossinline compareData: suspend (RequestType, ResultType) -> Unit,

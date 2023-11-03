@@ -87,7 +87,7 @@ class AuthViewModel @Inject constructor(
         when (userModel) {
             is Resource.Error -> {
                 _isLoading.value = false
-                UiState.Error(userModel.exception)
+                UiState.Error(userModel.cause)
             }
 
             is Resource.Loading -> {
@@ -97,7 +97,7 @@ class AuthViewModel @Inject constructor(
 
             is Resource.Success -> {
                 _isLoading.value = false
-                UiState.Success(userModel.data)
+                UiState.Success(userModel.value)
             }
         }
     }

@@ -95,7 +95,7 @@ class EventsRepository @Inject constructor(
                 when (events) {
                     is Resource.Error -> {
                         Log.d("EVENTS", "ERROR")
-                        Resource.Error<Exception>(events.exception)
+                        Resource.Error(events.cause)
                         val eventsList = eventsLocalDataSource.getAllEntities()
                         Resource.Success(eventsList
                             .sortedBy { it.date }
@@ -105,7 +105,7 @@ class EventsRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("EVENTS", "SUCCESS")
-                        Resource.Success(events.data
+                        Resource.Success(events.value
                             .map { it.toEntity() }
                             .sortedBy { it.date }
                             .filter { it.status != EventStatus.Past })
@@ -116,7 +116,7 @@ class EventsRepository @Inject constructor(
                 when (events) {
                     is Resource.Error -> {
                         Log.d("EVENTS", "ERROR")
-                        Resource.Error<Exception>(events.exception)
+                        Resource.Error(events.cause)
                         val eventsList = eventsLocalDataSource.getAllEntities()
                         Resource.Success(eventsList
                             .filter { it.status == EventStatus.Past })
@@ -125,7 +125,7 @@ class EventsRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("EVENTS", "SUCCESS")
-                        Resource.Success(events.data
+                        Resource.Success(events.value
                             .map { it.toEntity() }
                             .filter { it.status == EventStatus.Past })
                     }
@@ -146,7 +146,7 @@ class EventsRepository @Inject constructor(
                 when (events) {
                     is Resource.Error -> {
                         Log.d("EVENTS", "ERROR")
-                        Resource.Error<Exception>(events.exception)
+                        Resource.Error(events.cause)
                         val eventsList = eventsLocalDataSource.getEventsByOrganizerId(organizerId)
                         Resource.Success(eventsList
                             .sortedBy { it.date }
@@ -156,7 +156,7 @@ class EventsRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("EVENTS", "SUCCESS")
-                        Resource.Success(events.data
+                        Resource.Success(events.value
                             .map { it.toEntity() }
                             .sortedBy { it.date }
                             .filter { it.status != EventStatus.Past })
@@ -167,7 +167,7 @@ class EventsRepository @Inject constructor(
                 when (events) {
                     is Resource.Error -> {
                         Log.d("EVENTS", "ERROR")
-                        Resource.Error<Exception>(events.exception)
+                        Resource.Error(events.cause)
                         val eventsList = eventsLocalDataSource.getEventsByOrganizerId(organizerId)
                         Resource.Success(eventsList
                             .sortedBy { it.date }
@@ -177,7 +177,7 @@ class EventsRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("EVENTS", "SUCCESS")
-                        Resource.Success(events.data
+                        Resource.Success(events.value
                             .map { it.toEntity() }
                             .sortedBy { it.date }
                             .filter { it.status == EventStatus.Planning })
@@ -188,7 +188,7 @@ class EventsRepository @Inject constructor(
                 when (events) {
                     is Resource.Error -> {
                         Log.d("EVENTS", "ERROR")
-                        Resource.Error<Exception>(events.exception)
+                        Resource.Error(events.cause)
                         val eventsList = eventsLocalDataSource.getEventsByOrganizerId(organizerId)
                         Resource.Success(eventsList
                             .sortedBy { it.date }
@@ -200,7 +200,7 @@ class EventsRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("EVENTS", "SUCCESS")
-                        Resource.Success(events.data
+                        Resource.Success(events.value
                             .map { it.toEntity() }
                             .sortedBy { it.date }
                             .filter { it.status == EventStatus.Upcoming })
@@ -212,7 +212,7 @@ class EventsRepository @Inject constructor(
                 when (events) {
                     is Resource.Error -> {
                         Log.d("EVENTS", "ERROR")
-                        Resource.Error<Exception>(events.exception)
+                        Resource.Error(events.cause)
                         val eventsList = eventsLocalDataSource.getEventsByOrganizerId(organizerId)
                         Resource.Success(
                             eventsList
@@ -223,7 +223,7 @@ class EventsRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("EVENTS", "SUCCESS")
-                        Resource.Success(events.data
+                        Resource.Success(events.value
                             .map { it.toEntity() }
                             .filter { it.date == LocalDate.now() }
                             .filter { it.status == EventStatus.Upcoming })
@@ -235,7 +235,7 @@ class EventsRepository @Inject constructor(
                 when (events) {
                     is Resource.Error -> {
                         Log.d("EVENTS", "ERROR")
-                        Resource.Error<Exception>(events.exception)
+                        Resource.Error(events.cause)
                         val eventsList = eventsLocalDataSource.getEventsByOrganizerId(organizerId)
                         Resource.Success(
                             eventsList
@@ -245,7 +245,7 @@ class EventsRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("EVENTS", "SUCCESS")
-                        Resource.Success(events.data
+                        Resource.Success(events.value
                             .map { it.toEntity() }
                             .filter { it.status == EventStatus.Past })
                     }
@@ -272,14 +272,14 @@ class EventsRepository @Inject constructor(
             //    _eventCurrentFlow.emit(
             when (event) {
                 is Resource.Error -> {
-                    _eventCurrentFlow.value = Resource.Error(event.exception)
+                    _eventCurrentFlow.value = Resource.Error(event.cause)
                     val posts = eventsLocalDataSource.getEntity(eventId.toString())!!
                     _eventCurrentFlow.value = Resource.Success(posts)
                 }
 
                 is Resource.Loading -> _eventCurrentFlow.value = Resource.Loading()
                 is Resource.Success -> _eventCurrentFlow.value =
-                    Resource.Success(event.data.toEntity())
+                    Resource.Success(event.value.toEntity())
             }
             //  )
         }

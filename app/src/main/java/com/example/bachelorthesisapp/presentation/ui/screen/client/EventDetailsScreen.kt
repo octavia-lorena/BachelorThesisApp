@@ -1,12 +1,9 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.client
 
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -28,21 +24,20 @@ import com.example.bachelorthesisapp.core.resources.Resource
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessSecondaryAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.client.EventDetailsScreenContent
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
-import com.example.bachelorthesisapp.presentation.ui.theme.IrisBlueDark
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
-import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessProfileAppBar
 import com.example.bachelorthesisapp.presentation.ui.components.common.LoadingScreen
-import com.example.bachelorthesisapp.presentation.ui.theme.Coral
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
+import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 @Composable
 fun EventDetailsScreen(
-    eventId: Int, clientViewModel: ClientViewModel, navHostController: NavHostController
+    eventId: Int,
+    clientViewModel: ClientViewModel,
+    navHostController: NavHostController,
+    businessViewModel: BusinessViewModel
 ) {
 
     val currentEvent by remember {
@@ -54,9 +49,7 @@ fun EventDetailsScreen(
             emptyList()
         )
     )
-    val postsState by clientViewModel.postsState.collectAsStateWithLifecycle(
-        initialValue = UiState.Loading
-    )
+    val postsState = businessViewModel.postsState.collectAsStateWithLifecycle()
     val loadingState by clientViewModel.isLoading.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState)
 
@@ -65,9 +58,9 @@ fun EventDetailsScreen(
     }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = null) {
+    LaunchedEffect(Unit) {
         clientViewModel.findEventById(eventId)
-        clientViewModel.loadAllPosts()
+        businessViewModel.getAllPosts()
     }
 
     LaunchedEffect(key1 = businessType, key2 = currentEvent) {
@@ -87,7 +80,7 @@ fun EventDetailsScreen(
         }
 
         is Resource.Success -> {
-            val event = (currentEvent as Resource.Success<Event>).data
+            val event = (currentEvent as Resource.Success<Event>).value
             LaunchedEffect(Unit) {
                 clientViewModel.setUpdateEventState(event)
             }
@@ -109,6 +102,7 @@ fun EventDetailsScreen(
                     onRefresh = {
                         scope.launch {
                             clientViewModel.findEventById(eventId)
+                            businessViewModel.getAllPosts()
                         }
                     }
                 ) {
@@ -117,24 +111,27 @@ fun EventDetailsScreen(
                             .fillMaxSize()
                             .padding(bottom = innerPadding.calculateBottomPadding(), top = 0.dp)
                     ) {
-                        if (postsState is UiState.Success<List<OfferPost>>) {
-                            EventDetailsScreenContent(
-                                event = event,
-                                businessState = businessList,
-                                onBusinessTypeFilterClick = { type ->
-                                    Log.d("FILTER_VENDORS", type)
-                                    businessType = type
-                                    clientViewModel.findBusinessesByType(type)
-                                },
-                                onBusinessTypePostClick = {},
-                                onBusinessClick = { businessId -> navHostController.navigate("business_profile/$businessId/$eventId") },
-                                onCityClicked = { city -> clientViewModel.findBusinessesByCity(city) },
-                                postsList = (postsState as UiState.Success<List<OfferPost>>).value,
-                                onEditClick = { eventId -> navHostController.navigate("update_event/$eventId") },
-                                onPublishClick = { eventId -> clientViewModel.publishEvent(eventId) },
-                                businessType = businessType
-                            )
-                        }
+                        // if (postsState is UiState.Success<List<OfferPost>>) {
+                        EventDetailsScreenContent(
+                            event = event,
+                            businessState = businessList,
+                            onBusinessTypeFilterClick = { type ->
+                                Log.d("FILTER_VENDORS", type)
+                                businessType = type
+                                clientViewModel.findBusinessesByType(type)
+                            },
+                            onBusinessTypePostClick = {},
+                            onBusinessClick = { businessId ->
+                                navHostController.navigate("business_profile/$businessId/$eventId")
+                                businessViewModel.getPostsByBusinessId(businessId)
+                            },
+                            onCityClicked = { city -> clientViewModel.findBusinessesByCity(city) },
+                            postsList = postsState.value,
+                            onEditClick = { eventId -> navHostController.navigate("update_event/$eventId") },
+                            onPublishClick = { eventId -> clientViewModel.publishEvent(eventId) },
+                            businessType = businessType,
+                        )
+                        // }
 
                     }
                 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -53,10 +54,8 @@ fun ClientHomeScreen(
     navHostController: NavHostController,
     askNotificationPermissionCall: () -> Unit
 ) {
-    askNotificationPermissionCall()
+
     authViewModel.subscribeToTopic(uid)
-    val eventState =
-        clientViewModel.eventState.collectAsStateWithLifecycle(UiState.Loading)
     val eventPlanningState =
         clientViewModel.eventPlanningState.collectAsStateWithLifecycle(UiState.Loading)
     val eventUpcomingState =
@@ -69,6 +68,10 @@ fun ClientHomeScreen(
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        askNotificationPermissionCall()
+    }
 
     LaunchedEffect(key1 = context) {
         clientViewModel.loadAllEventsByOrganizerId()
@@ -108,7 +111,7 @@ fun ClientHomeScreen(
             )
         },
         drawerGesturesEnabled = true,
-        backgroundColor = Color.White
+        backgroundColor = MaterialTheme.colors.background
     ) { innerPadding ->
         SwipeRefresh(
             state = swipeRefreshState,
@@ -139,162 +142,12 @@ fun ClientHomeScreen(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview
 @Composable
 fun ClientHomeScreenContent(
-    contentEventsUpcoming: UiState<List<Event>> = UiState.Success(
-        listOf(
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-22"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            ),
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-08-19"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            ),
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2024-08-22"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            ), Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2024-07-19"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            )
-
-        )
-    ),
-    contentEventsToday: UiState<List<Event>> = UiState.Success(
-        listOf(
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-20"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            ),
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-20"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            ),
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-20"),
-                "15:30",
-                200,
-                1000,
-                0,
-                mapOf(),
-                EventStatus.Upcoming
-            ), Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-20"),
-                "15:30",
-                200,
-                1000, 0,
-                mapOf(),
-                EventStatus.Upcoming
-            )
-
-        )
-    ),
-    contentEventsPlanning: UiState<List<Event>> = UiState.Success(
-        listOf(
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-19"),
-                "15:30",
-                200,
-                1000, 0,
-                mapOf(),
-                EventStatus.Planning
-            )
-        )
-    ),
-    contentEventsPast: UiState<List<Event>> = UiState.Success(
-        listOf(
-            Event(
-                1,
-                "",
-                "A+B's wedding",
-                "Wedd",
-                EventType.Wedding,
-                LocalDate.parse("2023-07-19"),
-                "15:30",
-                200,
-                1000, 0,
-                mapOf(),
-                EventStatus.Planning
-            )
-        )
-    ),
+    contentEventsUpcoming: UiState<List<Event>>,
+    contentEventsToday: UiState<List<Event>>,
+    contentEventsPlanning: UiState<List<Event>>,
+    contentEventsPast: UiState<List<Event>>,
     onUpcomingCardClick: () -> Unit = {},
     onPlanningCardClick: () -> Unit = {}
 ) {
@@ -316,9 +169,13 @@ fun ClientHomeScreenContent(
             )
         }
         item {
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
                 PlanningEventsCard(
                     contentEventsPlanning = contentEventsPlanning,
                     onCardClick = onPlanningCardClick

@@ -1,11 +1,6 @@
 package com.example.bachelorthesisapp.data.businesses
 
 import android.util.Log
-import com.example.bachelorthesisapp.data.events.remote.EventRemoteDataSourceImpl
-import com.example.bachelorthesisapp.data.posts.remote.PostRemoteDataSourceImpl
-import com.example.bachelorthesisapp.data.posts.local.PostsLocalDataSource
-import com.example.bachelorthesisapp.data.appointment_requests.remote.RequestRemoteDataSourceImpl
-import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.core.resources.Resource
 import com.example.bachelorthesisapp.core.remote.networkCall
 import com.example.bachelorthesisapp.data.businesses.local.BusinessLocalDataSource
@@ -13,7 +8,6 @@ import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.businesses.remote.BusinessRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.businesses.remote.dto.toEntity
 import com.example.bachelorthesisapp.data.notifications.PushNotification
-import com.example.bachelorthesisapp.data.posts.remote.dto.toEntity
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -67,7 +61,7 @@ class BusinessRepository @Inject constructor(
                 when (businesses) {
                     is Resource.Error -> {
                         Log.d("BUSINESSES", "ERROR")
-                        Resource.Error<Exception>(businesses.exception)
+                        Resource.Error(businesses.cause)
                         val businessesList =
                             businessLocalDataSource.getAllEntities()
                         Resource.Success(businessesList)
@@ -76,7 +70,7 @@ class BusinessRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("BUSINESSES", "SUCCESS")
-                        Resource.Success(businesses.data
+                        Resource.Success(businesses.value
                             .map { it.toEntity() })
                     }
                 }
@@ -102,7 +96,7 @@ class BusinessRepository @Inject constructor(
                 when (businesses) {
                     is Resource.Error -> {
                         Log.d("BUSINESSES", "ERROR")
-                        Resource.Error<Exception>(businesses.exception)
+                        Resource.Error(businesses.cause)
                         val businessesList =
                             businessLocalDataSource.getBusinessesByType(businessType)
                         Resource.Success(businessesList
@@ -112,7 +106,7 @@ class BusinessRepository @Inject constructor(
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
                         Log.d("BUSINESSES", "SUCCESS")
-                        Resource.Success(businesses.data
+                        Resource.Success(businesses.value
                             .map { it.toEntity() }
                             .filter { it.businessType.name == businessType })
                     }
@@ -135,7 +129,7 @@ class BusinessRepository @Inject constructor(
             _businessByCityFlow.emit(
                 when (businesses) {
                     is Resource.Error -> {
-                        Resource.Error<Exception>(businesses.exception)
+                        Resource.Error(businesses.cause)
                         val businessesList =
                             businessLocalDataSource.getBusinessesByCity(city)
                         Resource.Success(businessesList
@@ -144,7 +138,7 @@ class BusinessRepository @Inject constructor(
 
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
-                        Resource.Success(businesses.data
+                        Resource.Success(businesses.value
                             .map { it.toEntity() }
                             .filter { it.city == city })
                     }
@@ -157,7 +151,7 @@ class BusinessRepository @Inject constructor(
         _businessFlow.collectLatest { resource ->
             when (resource) {
                 is Resource.Success -> {
-                    _businessByCityFlow.emit(Resource.Success(resource.data.filter { it.city == city }))
+                    _businessByCityFlow.emit(Resource.Success(resource.value.filter { it.city == city }))
                 }
 
                 is Resource.Loading -> {
@@ -188,7 +182,7 @@ class BusinessRepository @Inject constructor(
             _businessResultFlow.emit(
                 when (business) {
                     is Resource.Error -> {
-                        Resource.Error<Exception>(business.exception)
+                        Resource.Error(business.cause)
                         val businessLocal =
                             businessLocalDataSource.getEntity(businessId)
                         Resource.Success(businessLocal!!)
@@ -196,7 +190,7 @@ class BusinessRepository @Inject constructor(
 
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
-                        Resource.Success(business.data.toEntity())
+                        Resource.Success(business.value.toEntity())
                     }
                 }
             )

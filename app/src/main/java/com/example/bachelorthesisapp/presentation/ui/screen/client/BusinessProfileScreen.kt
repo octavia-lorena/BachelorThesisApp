@@ -27,6 +27,7 @@ import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.presentation.ui.components.common.LoadingScreen
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
+import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
@@ -36,13 +37,13 @@ fun BusinessProfileScreen(
     businessId: String,
     eventId: Int,
     navHostController: NavHostController,
-    clientViewModel: ClientViewModel
+    clientViewModel: ClientViewModel,
+    businessViewModel: BusinessViewModel
 ) {
-
     val businessState =
         clientViewModel.businessResultState.collectAsStateWithLifecycle(UiState.Loading).value
     val postsState =
-        clientViewModel.postBusinessState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+        businessViewModel.postsByBusinessIdState.collectAsStateWithLifecycle()
     val pastEventsState =
         clientViewModel.eventPastBusinessState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val context = LocalContext.current
@@ -52,7 +53,8 @@ fun BusinessProfileScreen(
 
     LaunchedEffect(key1 = context) {
         clientViewModel.findBusinessById(businessId)
-        clientViewModel.findPostsByBusinessId(businessId)
+        businessViewModel.getPostsByBusinessId(businessId)
+       // clientViewModel.findPostsByBusinessId(businessId)
     }
 
     when (businessState) {
@@ -75,7 +77,7 @@ fun BusinessProfileScreen(
                     onRefresh = {
                         scope.launch {
                             clientViewModel.findBusinessById(businessId)
-                            clientViewModel.findPostsByBusinessId(businessId)
+                           // clientViewModel.findPostsByBusinessId(businessId)
                         }
                     }
                 ) {
@@ -106,7 +108,6 @@ fun BusinessProfileScreen(
                     }
                 }
             }
-
         }
 
         is UiState.Error -> {}

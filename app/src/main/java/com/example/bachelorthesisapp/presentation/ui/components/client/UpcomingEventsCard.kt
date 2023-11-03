@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
@@ -66,7 +67,7 @@ fun UpcomingEventsCard(
         modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth(),
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.surface,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp),
         onClick = onCardClick
@@ -81,7 +82,11 @@ fun UpcomingEventsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.width(5.dp))
-                Text(text = "UPCOMING", style = Typography.h1, color = Color.Black)
+                Text(
+                    text = "UPCOMING",
+                    style = Typography.h1,
+                    color = MaterialTheme.colors.primaryVariant
+                )
 
                 Spacer(modifier = Modifier.width(15.dp))
                 Box(
@@ -175,11 +180,15 @@ fun UpcomingEventElement(
                 Text(
                     text = event.name,
                     style = Typography.h3.copy(fontSize = 13.sp),
-                    color = Color.Black,
+                    color = MaterialTheme.colors.primaryVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(text = event.type.name, style = Typography.caption.copy(fontSize = 13.sp))
+                Text(
+                    text = event.type.name,
+                    style = Typography.caption.copy(fontSize = 13.sp),
+                    color = MaterialTheme.colors.primaryVariant
+                )
             }
 
         }
@@ -217,13 +226,13 @@ fun UpcomingEventElement(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_hourglass_top_24),
                     contentDescription = "",
-                    tint = Color.Gray
+                    tint = MaterialTheme.colors.onSurface
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = "$yearsText$monthsText$daysText left",
                     style = Typography.caption,
-                    color = Color.Gray
+                    color = MaterialTheme.colors.onSurface
                 )
             }
         }

@@ -2,7 +2,6 @@ package com.example.bachelorthesisapp.presentation.viewmodel
 
 import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -25,17 +24,35 @@ import com.example.bachelorthesisapp.data.notifications.NotificationData
 import com.example.bachelorthesisapp.data.notifications.PushNotification
 import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.appointment_requests.AppointmentRequestsRepository
+import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
+import com.example.bachelorthesisapp.data.appointment_requests.remote.dto.toEntity
 import com.example.bachelorthesisapp.data.authentication.await
 import com.example.bachelorthesisapp.data.events.EventsRepository
 import com.example.bachelorthesisapp.data.posts.OfferPostsRepository
+import com.example.bachelorthesisapp.data.posts.remote.dto.toEntity
+import com.example.bachelorthesisapp.domain.usecase.business.AddPostUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.AddPostUseCaseArgs
+import com.example.bachelorthesisapp.domain.usecase.business.DeletePostUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.DeletePostUseCaseArgs
+import com.example.bachelorthesisapp.domain.usecase.business.GetAllPostsUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.GetAppointmentsByBusinessIdUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.GetAppointmentsByBusinessIdUseCaseArgs
+import com.example.bachelorthesisapp.domain.usecase.business.GetPostByIdUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.GetPostByIdUseCaseArgs
+import com.example.bachelorthesisapp.domain.usecase.business.GetPostsByBusinessIdUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.GetPostsByBusinessIdUseCaseArgs
+import com.example.bachelorthesisapp.domain.usecase.business.GetRequestsByBusinessIdUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.GetRequestsByBusinessIdUseCaseArgs
+import com.example.bachelorthesisapp.domain.usecase.business.UpdatePostUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.UpdatePostUseCaseArgs
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -47,7 +64,15 @@ class BusinessViewModel @Inject constructor(
     private val postsRepository: OfferPostsRepository,
     private val eventsRepository: EventsRepository,
     private val requestsRepository: AppointmentRequestsRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val getPostsByBusinessIdUseCase: GetPostsByBusinessIdUseCase,
+    private val getRequestsByBusinessIdUseCase: GetRequestsByBusinessIdUseCase,
+    private val getAppointmentsByBusinessIdUseCase: GetAppointmentsByBusinessIdUseCase,
+    private val getAllPostsUseCase: GetAllPostsUseCase,
+    private val getPostByIdUseCase: GetPostByIdUseCase,
+    private val addPostUseCase: AddPostUseCase,
+    private val deletePostUseCase: DeletePostUseCase,
+    private val updatePostUseCase: UpdatePostUseCase
 ) : ViewModel() {
 
     val storageRef = FirebaseStorage.getInstance().getReference("images/posts/")
@@ -69,54 +94,41 @@ class BusinessViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+//    val postResultState: Flow<UiState<OfferPost>> =
+//        postsRepository.postResultFlow.map { postResult ->
+//            when (postResult) {
+//                is Resource.Error -> UiState.Error(postResult.cause)
+//                is Resource.Loading -> UiState.Loading
+//                is Resource.Success -> UiState.Success(postResult.value)
+//            }
+//        }
 
-    val postState: Flow<UiState<List<OfferPost>>> =
-        postsRepository.postsFlow.map { postEntities ->
-            when (postEntities) {
-                is Resource.Error -> UiState.Error(postEntities.exception)
-                is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(postEntities.data)
-            }
-        }
+    private val _postsState: MutableStateFlow<UiState<List<OfferPost>>> =
+        MutableStateFlow(UiState.Loading)
+    val postsState: StateFlow<UiState<List<OfferPost>>> = _postsState
 
-    val postState1 = postsRepository.postFlow
+    private val _postsByBusinessIdState: MutableStateFlow<UiState<List<OfferPost>>> =
+        MutableStateFlow(UiState.Loading)
+    val postsByBusinessIdState: StateFlow<UiState<List<OfferPost>>> = _postsByBusinessIdState
 
+    private val _requestsByBusinessIdState: MutableStateFlow<UiState<List<AppointmentRequest>>> =
+        MutableStateFlow(UiState.Loading)
+    val requestsByBusinessIdState: StateFlow<UiState<List<AppointmentRequest>>> =
+        _requestsByBusinessIdState
 
-    val postBusinessState: Flow<UiState<List<OfferPost>>> =
-        postsRepository.postBusinessFlow.map { postEntities ->
-            when (postEntities) {
-                is Resource.Error -> {
-                    _isLoading.value = false
-                    UiState.Error(postEntities.exception)
-                }
-                is Resource.Loading -> {
-                    _isLoading.value = true
-                    UiState.Loading
-                }
-                is Resource.Success -> {
-                    _isLoading.value = false
-                    UiState.Success(postEntities.data)
-                }
-            }
-        }
+    private val _appointmentsByBusinessIdState: MutableStateFlow<UiState<List<AppointmentRequest>>> =
+        MutableStateFlow(UiState.Loading)
+    val appointmentsByBusinessIdState: StateFlow<UiState<List<AppointmentRequest>>> =
+        _appointmentsByBusinessIdState
 
-    val postResultState: Flow<UiState<OfferPost>> =
-        postsRepository.postResultFlow.map { postResult ->
-            when (postResult) {
-                is Resource.Error -> UiState.Error(postResult.exception)
-                is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(postResult.data)
-            }
-        }
+    private val _postByIdState: MutableStateFlow<UiState<OfferPost>> =
+        MutableStateFlow(UiState.Loading)
+    val postByIdState: StateFlow<UiState<OfferPost>> = _postByIdState
 
-    val postCurrentState: Flow<UiState<OfferPost>> =
-        postsRepository.postCurrentFlow.map { postResult ->
-            when (postResult) {
-                is Resource.Error -> UiState.Error(postResult.exception)
-                is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(postResult.data!!)
-            }
-        }
+    private val _postResponseState: MutableStateFlow<UiState<OfferPost>> =
+        MutableStateFlow(UiState.Loading)
+    val postResponseState: StateFlow<UiState<OfferPost>> = _postResponseState
+
 
     fun onCreatePostEvent(event: CreatePostEvent) {
         when (event) {
@@ -177,11 +189,70 @@ class BusinessViewModel @Inject constructor(
         }
     }
 
-
-    fun loadPostData() {
+    fun getAllPosts() {
         viewModelScope.launch {
-            val businessId = authRepository.currentUser?.uid!!
-            postsRepository.fetchPostsByBusinessId(businessId)
+            getAllPostsUseCase.execute(null,
+                { list ->
+                    _postsState.value = UiState.Success(list.map { it.toEntity() })
+                },
+                {
+                    _postsState.value = UiState.Error(it)
+
+                })
+        }
+    }
+
+    fun getPostsByBusinessId(businessId: String) {
+        viewModelScope.launch {
+            getPostsByBusinessIdUseCase.execute(
+                GetPostsByBusinessIdUseCaseArgs(businessId = businessId), { list ->
+                    _postsByBusinessIdState.value = UiState.Success(list.map { it.toEntity() })
+                },
+                {
+                    _postsByBusinessIdState.value = UiState.Error(it)
+
+                })
+        }
+    }
+
+    fun getPostById(postId: Int) {
+        viewModelScope.launch {
+            getPostByIdUseCase.execute(
+                GetPostByIdUseCaseArgs(postId = postId),
+                {
+                    _postByIdState.value = UiState.Success(it.toEntity())
+                },
+                {
+                    _postByIdState.value = UiState.Error(it)
+                }
+            )
+        }
+    }
+
+    fun getRequestsByBusinessId(businessId: String) {
+        viewModelScope.launch {
+            getRequestsByBusinessIdUseCase.execute(
+                GetRequestsByBusinessIdUseCaseArgs(businessId = businessId), { list ->
+                    _requestsByBusinessIdState.value = UiState.Success(list.map { it.toEntity() })
+                },
+                {
+                    _requestsByBusinessIdState.value = UiState.Error(it)
+
+                })
+        }
+    }
+
+    fun getAppointmentsByBusinessId(businessId: String) {
+        viewModelScope.launch {
+            getAppointmentsByBusinessIdUseCase.execute(
+                GetAppointmentsByBusinessIdUseCaseArgs(businessId = businessId), { list ->
+                    _appointmentsByBusinessIdState.value =
+                        UiState.Success(list.map { it.toEntity() })
+                },
+                {
+                    _appointmentsByBusinessIdState.value = UiState.Error(it)
+
+                })
         }
     }
 
@@ -358,30 +429,9 @@ class BusinessViewModel @Inject constructor(
 
         viewModelScope.launch {
             addPost(title, description, images, price)
-            delay(2000L)
-            postResultState.collect {
-                when (it) {
-                    is UiState.Loading -> {}
-                    is UiState.Success -> {
-                        validationCreatePostEventChannel.send(ValidationEvent.Success)
-                    }
 
-                    is UiState.Error -> {
-                        validationCreatePostEventChannel.send(ValidationEvent.Failure)
-                    }
-                }
-            }
-            createPostState = createPostState.copy(
-                title = "",
-                titleError = null,
-                description = "",
-                descriptionError = null,
-                images = "",
-                imagesError = null,
-                price = "",
-                priceError = null
-            )
         }
+
     }
 
     private fun submitUpdatePostForm() {
@@ -412,33 +462,10 @@ class BusinessViewModel @Inject constructor(
 
         viewModelScope.launch {
             updatePost(id, title, description, images, price)
-            delay(2000L)
-            postResultState.collect {
-                when (it) {
-                    is UiState.Loading -> {}
-                    is UiState.Success -> {
-                        validationUpdatePostEventChannel.send(ValidationEvent.Success)
-                    }
-
-                    is UiState.Error -> {
-                        validationUpdatePostEventChannel.send(ValidationEvent.Failure)
-                    }
-                }
-            }
-            updatePostState = updatePostState.copy(
-                title = "",
-                titleError = null,
-                description = "",
-                descriptionError = null,
-                images = "",
-                imagesError = null,
-                price = "",
-                priceError = null
-            )
         }
     }
 
-    private fun addPost(
+    private suspend fun addPost(
         title: String,
         description: String,
         images: String,
@@ -451,7 +478,6 @@ class BusinessViewModel @Inject constructor(
             imagesList.forEach {
                 val randomNumber = System.currentTimeMillis()
                 val path = "$randomNumber.jpeg"
-                // pathList.add(path)
                 storageRef.child("$businessId/$path").putFile(Uri.parse(it))
                     .addOnSuccessListener { task ->
                         task.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
@@ -460,17 +486,27 @@ class BusinessViewModel @Inject constructor(
                     }.await()
                 delay(2000L)
             }
-            val post = OfferPost(
-                0,
-                businessId,
-                title,
-                description,
-                pathList,
-                price.toInt(),
-                Rating(0.0, 0)
-            )
-            postsRepository.addPost(post)
+            addPostUseCase.execute(
+                AddPostUseCaseArgs(
+                    OfferPost(
+                        0,
+                        businessId,
+                        title,
+                        description,
+                        pathList,
+                        price.toInt(),
+                        Rating(0.0, 0)
+                    )
+                ),
+                {
+                    _postResponseState.value = UiState.Success(it.toEntity())
+                    clearCreatePostForm()
+                    _postResponseState.value = UiState.Loading
+                },
+                {
+                    _postResponseState.value = UiState.Error(it)
 
+                })
         }
     }
 
@@ -487,10 +523,9 @@ class BusinessViewModel @Inject constructor(
             val imagesList = images.split(";").filter { it !in initialPhotos }
             val pathList = mutableListOf<String>()
             imagesList.forEach {
-                Log.d("IMAGEE", it)
+                Log.d("IMAGE", it)
                 val randomNumber = System.currentTimeMillis()
                 val path = "$randomNumber.jpeg"
-                // pathList.add(path)
                 storageRef.child("$businessId/$path").putFile(Uri.parse(it))
                     .addOnSuccessListener { task ->
                         task.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
@@ -501,29 +536,53 @@ class BusinessViewModel @Inject constructor(
                 delay(2000L)
             }
             pathList.addAll(pastImages)
-            postsRepository.updatePost(
-                id,
-                title,
-                description,
-                pathList.joinToString(";"),
-                price.toInt()
+            updatePostUseCase.execute(
+                UpdatePostUseCaseArgs(
+                    id = id,
+                    title = title,
+                    description = description,
+                    images = pathList.joinToString(";"),
+                    price = price.toInt()
+                ),
+                {
+                    _postResponseState.value = UiState.Success(it.toEntity())
+                    clearUpdatePostForm()
+                    _postResponseState.value = UiState.Loading
+                },
+                {
+                    _postResponseState.value = UiState.Error(it)
+                }
+            )
+
+        }
+    }
+
+    suspend fun deletePost(post: OfferPost) {
+        viewModelScope.launch {
+            deletePostUseCase.execute(
+                DeletePostUseCaseArgs(post),
+                {
+                    _postResponseState.value = UiState.Success(it.toEntity())
+                },
+                {
+                    _postResponseState.value = UiState.Error(it)
+                }
             )
         }
     }
 
-    fun deletePost(post: OfferPost) {
+    fun resetPostResponseState() {
         viewModelScope.launch {
-            postsRepository.deletePost(post)
-            delay(2000L)
+            _postResponseState.value = UiState.Loading
         }
     }
 
-    fun findPostById(id: Int) {
-        viewModelScope.launch {
-            postsRepository.fetchPostById(id)
-            delay(2000L)
-        }
-    }
+//    fun findPostById(id: Int) {
+//        viewModelScope.launch {
+//            postsRepository.fetchPostById(id)
+//            delay(2000L)
+//        }
+//    }
 
     fun setUpdatePostState(post: OfferPost) {
         viewModelScope.launch {
@@ -575,7 +634,7 @@ class BusinessViewModel @Inject constructor(
         )
     }
 
-    fun clearCreatePostForm() {
+    private fun clearCreatePostForm() {
         viewModelScope.launch {
             createPostState = createPostState.copy(
                 title = "",

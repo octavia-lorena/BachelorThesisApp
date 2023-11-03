@@ -39,10 +39,10 @@ import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 @Composable
 fun EventDetailsFrontLayerContent(
     businessState: UiState<List<BusinessEntity>> = UiState.Loading,
-    postsList: List<OfferPost> = listOf(),
     onBusinessClick: (String) -> Unit = {},
     onCityClicked: (String) -> Unit = {},
-    businessType: String = ""
+    businessType: String = "",
+    postsList: List<OfferPost> = listOf(),
 ) {
     val citiesList = enumValues<Cities>().toList().map { it.name }
     val items = mutableListOf("-")
@@ -119,8 +119,8 @@ fun EventDetailsFrontLayerContent(
                     val business = businessList[index]
                     EventDetailsBusinessCard(
                         business = business,
-                        postsList = postsList.filter { it.businessId == business.id },
-                        onBusinessClick = onBusinessClick
+                        onBusinessClick = onBusinessClick,
+                        postsList = postsList
                     )
 
 

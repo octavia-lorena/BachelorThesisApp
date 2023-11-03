@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.bachelorthesisapp.R
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.data.model.BusinessType
@@ -59,7 +60,7 @@ fun EventDetailsBusinessCard(
         ""
     ),
     postsList: List<OfferPost> = listOf(),
-    onBusinessClick: (String) -> Unit = {}
+    onBusinessClick: (String) -> Unit = {},
 ) {
     Card(
         modifier = Modifier

@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,7 +67,7 @@ fun TodayAppointmentsCard(
             .wrapContentHeight()
             .fillMaxWidth()
             .padding(top = 10.dp),
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.surface,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp)
     ) {
@@ -89,7 +90,7 @@ fun TodayAppointmentsCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "TODAY", style = Typography.h1, color = Color.Black)
+                            Text(text = "TODAY", style = Typography.h1, color = MaterialTheme.colors.primaryVariant)
                             Spacer(modifier = Modifier.width(20.dp))
                             Box(
                                 modifier = Modifier
@@ -170,7 +171,7 @@ fun TodayAppointmentElement(
                 Text(
                     text = event.name,
                     style = Typography.h3,
-                    color = Color.Black,
+                    color = MaterialTheme.colors.primaryVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -210,13 +211,13 @@ fun TodayAppointmentElement(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_access_time_24),
                     contentDescription = "",
-                    tint = Color.Gray
+                    tint = MaterialTheme.colors.onSurface
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = "${timeLeft.hour}h ${timeLeft.minute}min left",
                     style = Typography.caption,
-                    color = Color.Gray
+                    color = MaterialTheme.colors.onSurface
                 )
             }
             Spacer(modifier = Modifier.height(3.dp))

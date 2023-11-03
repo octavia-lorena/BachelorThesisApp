@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -51,7 +52,7 @@ fun RequestsCard(
             .height(130.dp)
             .width(180.dp)
             .clickable { onCardClick() },
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.surface,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp)
     ) {
@@ -65,7 +66,7 @@ fun RequestsCard(
                     .size(50.dp)
                     .aspectRatio(1f)
                     .padding(top = 0.dp)
-                    .background(Color.White, shape = CircleShape)
+                    .background(MaterialTheme.colors.surface, shape = CircleShape)
                     .border(
                         width = 1.dp,
                         brush = Brush.horizontalGradient(
@@ -96,7 +97,7 @@ fun RequestsCard(
                 Text(
                     text = "REQUESTS",
                     style = Typography.h1.copy(fontSize = 16.sp),
-                    color = Color.Black
+                    color = MaterialTheme.colors.primaryVariant
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Box(

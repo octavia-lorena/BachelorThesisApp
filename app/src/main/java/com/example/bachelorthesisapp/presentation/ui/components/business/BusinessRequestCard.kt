@@ -24,6 +24,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -262,7 +263,7 @@ fun BusinessRequestCard(
             expandedState = !expandedState
         },
         elevation = 10.dp,
-        backgroundColor = Color.White
+        backgroundColor =  MaterialTheme.colors.surface
     ) {
         Column(
             modifier = Modifier
@@ -286,7 +287,7 @@ fun BusinessRequestCard(
                     maxLines = 1,
                     modifier = Modifier.weight(5f),
                     style = Typography.body2,
-                    color = Color.DarkGray
+                    color =  MaterialTheme.colors.onSurface
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 IconButton(
@@ -300,7 +301,7 @@ fun BusinessRequestCard(
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "Drop-Down Arrow",
-                        tint = Color.DarkGray
+                        tint =  MaterialTheme.colors.onSurface
                     )
                 }
             }
@@ -313,15 +314,18 @@ fun BusinessRequestCard(
                 Text(
                     text = event.type.name,
                     style = Typography.caption,
+                    color =  MaterialTheme.colors.onSurface
                 )
                 Spacer(modifier = Modifier.width(3.dp))
-                Text(text = "\u2022")
+                Text(text = "\u2022",
+                color =  MaterialTheme.colors.onSurface)
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(
                     text = "organized by ${client.username}",
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     style = Typography.caption,
+                    color = MaterialTheme.colors.onSurface
                 )
 
             }
@@ -336,8 +340,8 @@ fun BusinessRequestCard(
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     style = Typography.caption,
+                    color = MaterialTheme.colors.onSurface
                 )
-
             }
             Spacer(modifier = Modifier.height(5.dp))
             // BUTTONS ROW
@@ -401,25 +405,25 @@ fun BusinessRequestCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_calendar_today_24),
                             contentDescription = "",
-                            tint = CoralAccent
+                            tint = MaterialTheme.colors.secondary
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = "${event.date}",
                             style = Typography.caption,
-                            color = Color.Black
+                            color = MaterialTheme.colors.onSurface
                         )
                         Spacer(modifier = Modifier.width(15.dp))
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_access_time_24),
                             contentDescription = "",
-                            tint = CoralAccent
+                            tint = MaterialTheme.colors.secondary
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = event.time,
                             style = Typography.caption,
-                            color = Color.Black
+                            color = MaterialTheme.colors.onSurface
                         )
                     }
                     Spacer(modifier = Modifier.height(5.dp))
@@ -431,25 +435,25 @@ fun BusinessRequestCard(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_alternate_email_24),
                             contentDescription = "",
-                            tint = CoralAccent
+                            tint = MaterialTheme.colors.secondary
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = client.email,
                             style = Typography.caption,
-                            color = Color.Black
+                            color = MaterialTheme.colors.onSurface
                         )
                         Spacer(modifier = Modifier.width(15.dp))
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_phone_24),
                             contentDescription = "",
-                            tint = CoralAccent
+                            tint = MaterialTheme.colors.secondary
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = client.phoneNumber!!,
                             style = Typography.caption,
-                            color = Color.Black
+                            color = MaterialTheme.colors.onSurface
                         )
                     }
                 }

@@ -1,25 +1,32 @@
 package com.example.bachelorthesisapp.presentation.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = Color.DarkGray,
+    primaryVariant = Color.White,
+    secondary = CoralLight,
+    background = Color.DarkGray,
+    surface = GrayDarker,
+    onSurface = Color.White
 )
 
+@SuppressLint("ConflictingOnColor")
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
-
-    /* Other default colors to override
+    primary = Color.White,
+    primaryVariant = Color.DarkGray,
+    secondary = CoralAccent,
     background = Color.White,
     surface = Color.White,
+    onSurface = Color.Gray
+
+    /* Other default colors to override
     onPrimary = Color.White,
     onSecondary = Color.Black,
     onBackground = Color.Black,

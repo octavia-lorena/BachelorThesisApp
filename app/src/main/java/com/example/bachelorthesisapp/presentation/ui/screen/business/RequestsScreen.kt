@@ -3,6 +3,7 @@ package com.example.bachelorthesisapp.presentation.ui.screen.business
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessH
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
 import com.example.bachelorthesisapp.core.presentation.UiState
+import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
@@ -32,13 +34,14 @@ fun RequestsScreen(
     uid: String,
     authViewModel: AuthViewModel,
     clientViewModel: ClientViewModel,
+    businessViewModel: BusinessViewModel,
     navHostController: NavHostController,
 ) {
 
     val requestsState =
-        clientViewModel.requestsState.collectAsStateWithLifecycle(UiState.Loading)
+        businessViewModel.requestsByBusinessIdState.collectAsStateWithLifecycle()
     val appointmentsState =
-        clientViewModel.appointmentsState.collectAsStateWithLifecycle(UiState.Loading)
+        businessViewModel.appointmentsByBusinessIdState.collectAsStateWithLifecycle()
     val businessState =
         clientViewModel.businessResultState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val loadingState by clientViewModel.isLoading.collectAsState()
@@ -46,7 +49,7 @@ fun RequestsScreen(
     val eventsState =
         clientViewModel.eventState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val postsState =
-        clientViewModel.postBusinessState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+        businessViewModel.postsByBusinessIdState.collectAsStateWithLifecycle()
     val clientsState =
         clientViewModel.clientsState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
 
@@ -55,10 +58,11 @@ fun RequestsScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = context) {
-        clientViewModel.loadRequests(uid)
+        businessViewModel.getRequestsByBusinessId(uid)
+        businessViewModel.getPostsByBusinessId(uid)
+       // businessViewModel.getAppointmentsByBusinessId(uid)
         clientViewModel.findBusinessById(uid)
         clientViewModel.loadAllEvents()
-        clientViewModel.findPostsByBusinessId(uid)
         clientViewModel.loadAllClients()
     }
 
@@ -87,13 +91,13 @@ fun RequestsScreen(
             )
         },
         drawerGesturesEnabled = true,
-        backgroundColor = Color.White
+        backgroundColor = MaterialTheme.colors.background
     ) { innerPadding ->
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = {
                 scope.launch {
-                    clientViewModel.loadRequests(uid)
+                    businessViewModel.getRequestsByBusinessId(uid)
                     clientViewModel.findBusinessById(uid)
                 }
             }

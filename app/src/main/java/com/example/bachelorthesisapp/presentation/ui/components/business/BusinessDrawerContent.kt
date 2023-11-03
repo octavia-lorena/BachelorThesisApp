@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +32,11 @@ fun BusinessDrawerContent(
     authVM: AuthViewModel,
     navController: NavHostController
 ) {
-    Box(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colors.surface)
+    ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -41,37 +46,51 @@ fun BusinessDrawerContent(
                 modifier = Modifier
                     .padding(30.dp),
                 style = Typography.h3,
-                color = Color.DarkGray
+                color = MaterialTheme.colors.primaryVariant
             )
             Divider()
             Row(
                 modifier = Modifier
                     .height(60.dp)
-                    // .align(Alignment.CenterHorizontally)
+                    .padding(20.dp)
+                    .clickable {
+                        navController.navigate("settings_screen/${authVM.currentUser?.uid}")
+                    }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_settings_24),
+                    contentDescription = "",
+                    tint = MaterialTheme.colors.primaryVariant
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "SETTINGS",
+                    style = Typography.h3,
+                    color = MaterialTheme.colors.primaryVariant
+                )
+            }
+            Divider()
+            Row(
+                modifier = Modifier
+                    .height(60.dp)
                     .padding(20.dp)
                     .clickable {
                         authVM.signOut()
-//                        navController.navigate("login_screen"){
-//                            popUpTo(navController.graph.id){
-//                                inclusive = true
-//                            }
-//                        }
                         navController.popBackStack("login_screen", inclusive = false)
                     }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_logout_24),
                     contentDescription = "",
-                    tint = Color.DarkGray
+                    tint = MaterialTheme.colors.primaryVariant
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "LOGOUT",
                     style = Typography.h3,
-                    color = Color.DarkGray
+                    color = MaterialTheme.colors.primaryVariant
                 )
             }
-            Divider()
         }
     }
 }
@@ -81,7 +100,11 @@ fun ClientDrawerContent(
     authVM: AuthViewModel,
     navController: NavHostController
 ) {
-    Box(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colors.surface)
+    ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -91,37 +114,51 @@ fun ClientDrawerContent(
                 modifier = Modifier
                     .padding(30.dp),
                 style = Typography.h3,
-                color = Color.DarkGray
+                color = MaterialTheme.colors.primaryVariant
             )
             Divider()
             Row(
                 modifier = Modifier
                     .height(60.dp)
-                    // .align(Alignment.CenterHorizontally)
+                    .padding(20.dp)
+                    .clickable {
+                        navController.navigate("settings_screen/${authVM.currentUser?.uid}")
+                    }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_settings_24),
+                    contentDescription = "",
+                    tint = MaterialTheme.colors.primaryVariant
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "SETTINGS",
+                    style = Typography.h3,
+                    color = MaterialTheme.colors.primaryVariant
+                )
+            }
+            Divider()
+            Row(
+                modifier = Modifier
+                    .height(60.dp)
                     .padding(20.dp)
                     .clickable {
                         authVM.signOut()
-//                        navController.navigate("login_screen"){
-//                            popUpTo(navController.graph.id){
-//                                inclusive = true
-//                            }
-//                        }
                         navController.popBackStack("login_screen", inclusive = false)
                     }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_logout_24),
                     contentDescription = "",
-                    tint = Color.DarkGray
+                    tint = MaterialTheme.colors.primaryVariant
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "LOGOUT",
                     style = Typography.h3,
-                    color = Color.DarkGray
+                    color = MaterialTheme.colors.primaryVariant
                 )
             }
-            Divider()
         }
     }
 }

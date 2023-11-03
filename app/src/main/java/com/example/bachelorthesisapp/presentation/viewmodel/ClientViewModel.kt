@@ -31,6 +31,9 @@ import com.example.bachelorthesisapp.data.appointment_requests.AppointmentReques
 import com.example.bachelorthesisapp.data.businesses.BusinessRepository
 import com.example.bachelorthesisapp.data.events.EventsRepository
 import com.example.bachelorthesisapp.data.posts.OfferPostsRepository
+import com.example.bachelorthesisapp.data.posts.remote.dto.toEntity
+import com.example.bachelorthesisapp.domain.usecase.business.GetPostsByBusinessIdUseCase
+import com.example.bachelorthesisapp.domain.usecase.business.GetPostsByBusinessIdUseCaseArgs
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -40,6 +43,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -55,6 +59,7 @@ class ClientViewModel @Inject constructor(
     private val requestsRepository: AppointmentRequestsRepository,
     private val businessRepository: BusinessRepository,
     private val authRepository: AuthRepository,
+    private val getPostsByBusinessIdUseCase: GetPostsByBusinessIdUseCase
 ) : ViewModel() {
 
     val database: DatabaseReference =
@@ -64,8 +69,8 @@ class ClientViewModel @Inject constructor(
         viewModelScope.launch {
             loadAllEventsByOrganizerId()
             loadBusinesses()
-            loadPostsByBusinessId()
-            loadAllRequests()
+            //loadPostsByBusinessId()
+            // loadAllRequests()
             loadAllEvents()
         }
 
@@ -97,7 +102,7 @@ class ClientViewModel @Inject constructor(
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(eventEntities.exception)
+                    UiState.Error(eventEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -107,7 +112,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(eventEntities.data)
+                    UiState.Success(eventEntities.value)
                 }
             }
         }
@@ -118,7 +123,7 @@ class ClientViewModel @Inject constructor(
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(eventEntities.exception)
+                    UiState.Error(eventEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -128,7 +133,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(eventEntities.data)
+                    UiState.Success(eventEntities.value)
                 }
             }
         }
@@ -139,7 +144,7 @@ class ClientViewModel @Inject constructor(
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(eventEntities.exception)
+                    UiState.Error(eventEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -149,7 +154,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(eventEntities.data)
+                    UiState.Success(eventEntities.value)
                 }
             }
         }
@@ -160,7 +165,7 @@ class ClientViewModel @Inject constructor(
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(eventEntities.exception)
+                    UiState.Error(eventEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -170,7 +175,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(eventEntities.data)
+                    UiState.Success(eventEntities.value)
                 }
             }
         }
@@ -181,7 +186,7 @@ class ClientViewModel @Inject constructor(
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(eventEntities.exception)
+                    UiState.Error(eventEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -191,7 +196,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(eventEntities.data)
+                    UiState.Success(eventEntities.value)
                 }
             }
         }
@@ -202,7 +207,7 @@ class ClientViewModel @Inject constructor(
             when (eventEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(eventEntities.exception)
+                    UiState.Error(eventEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -212,7 +217,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(eventEntities.data)
+                    UiState.Success(eventEntities.value)
                 }
             }
         }
@@ -235,7 +240,7 @@ class ClientViewModel @Inject constructor(
             when (eventResult) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(eventResult.exception)
+                    UiState.Error(eventResult.cause)
                 }
 
                 is Resource.Loading -> {
@@ -245,7 +250,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(eventResult.data)
+                    UiState.Success(eventResult.value)
                 }
             }
         }
@@ -256,7 +261,7 @@ class ClientViewModel @Inject constructor(
             when (businessEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(businessEntities.exception)
+                    UiState.Error(businessEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -266,7 +271,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(businessEntities.data)
+                    UiState.Success(businessEntities.value)
                 }
             }
         }
@@ -277,7 +282,7 @@ class ClientViewModel @Inject constructor(
             when (businessEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(businessEntities.exception)
+                    UiState.Error(businessEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -287,7 +292,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(businessEntities.data)
+                    UiState.Success(businessEntities.value)
                 }
             }
         }
@@ -298,7 +303,7 @@ class ClientViewModel @Inject constructor(
             when (businessEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(businessEntities.exception)
+                    UiState.Error(businessEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -308,7 +313,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(businessEntities.data)
+                    UiState.Success(businessEntities.value)
                 }
             }
         }
@@ -317,9 +322,9 @@ class ClientViewModel @Inject constructor(
     val businessResultState: Flow<UiState<BusinessEntity>> =
         businessRepository.businessResultFlow.map { eventResult ->
             when (eventResult) {
-                is Resource.Error -> UiState.Error(eventResult.exception)
+                is Resource.Error -> UiState.Error(eventResult.cause)
                 is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(eventResult.data)
+                is Resource.Success -> UiState.Success(eventResult.value)
             }
         }
 
@@ -329,7 +334,7 @@ class ClientViewModel @Inject constructor(
             when (postEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(postEntities.exception)
+                    UiState.Error(postEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -339,13 +344,12 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(postEntities.data)
+                    UiState.Success(postEntities.value)
                 }
             }
         }
 
     // POST BY ID STATE
-    val postState = postsRepository.postFlow
 //        when (clientRepository.postFlow.value) {
 //        is Resource.Loading -> {
 //            UiState.Loading
@@ -367,7 +371,7 @@ class ClientViewModel @Inject constructor(
             when (requestEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(requestEntities.exception)
+                    UiState.Error(requestEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -377,7 +381,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(requestEntities.data)
+                    UiState.Success(requestEntities.value)
                 }
             }
         }
@@ -388,7 +392,7 @@ class ClientViewModel @Inject constructor(
             when (requestEntities) {
                 is Resource.Error -> {
                     _isLoading.value = false
-                    UiState.Error(requestEntities.exception)
+                    UiState.Error(requestEntities.cause)
                 }
 
                 is Resource.Loading -> {
@@ -398,7 +402,7 @@ class ClientViewModel @Inject constructor(
 
                 is Resource.Success -> {
                     _isLoading.value = false
-                    UiState.Success(requestEntities.data)
+                    UiState.Success(requestEntities.value)
                 }
             }
         }
@@ -407,9 +411,9 @@ class ClientViewModel @Inject constructor(
     val requestResultState: Flow<UiState<AppointmentRequest>> =
         requestsRepository.requestResultFlow.map { requestResult ->
             when (requestResult) {
-                is Resource.Error -> UiState.Error(requestResult.exception)
+                is Resource.Error -> UiState.Error(requestResult.cause)
                 is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(requestResult.data)
+                is Resource.Success -> UiState.Success(requestResult.value)
             }
         }
 
@@ -417,18 +421,18 @@ class ClientViewModel @Inject constructor(
     val clientState: Flow<UiState<ClientEntity>> =
         clientRepository.clientFlow.map { result ->
             when (result) {
-                is Resource.Error -> UiState.Error(result.exception)
+                is Resource.Error -> UiState.Error(result.cause)
                 is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(result.data)
+                is Resource.Success -> UiState.Success(result.value)
             }
         }
 
     val deletedEventState: Flow<UiState<Event>> =
         eventsRepository.deletedEventFlow.map { result ->
             when (result) {
-                is Resource.Error -> UiState.Error(result.exception)
+                is Resource.Error -> UiState.Error(result.cause)
                 is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(result.data)
+                is Resource.Success -> UiState.Success(result.value)
             }
         }
 
@@ -436,32 +440,16 @@ class ClientViewModel @Inject constructor(
     val clientsState: Flow<UiState<List<ClientEntity>>> =
         clientRepository.clientsFlow.map { result ->
             when (result) {
-                is Resource.Error -> UiState.Error(result.exception)
+                is Resource.Error -> UiState.Error(result.cause)
                 is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(result.data)
+                is Resource.Success -> UiState.Success(result.value)
             }
         }
 
-    // ALL POSTS STATE
-    val postsState: Flow<UiState<List<OfferPost>>> =
-        postsRepository.postsFlow.map { result ->
-            when (result) {
-                is Resource.Error -> {
-                    _isLoading.value = false
-                    UiState.Error(result.exception)
-                }
 
-                is Resource.Loading -> {
-                    _isLoading.value = true
-                    UiState.Loading
-                }
-
-                is Resource.Success -> {
-                    _isLoading.value = false
-                    UiState.Success(result.data)
-                }
-            }
-        }
+    private val _postsByBusinessIdState: MutableStateFlow<UiState<List<OfferPost>>> =
+        MutableStateFlow(UiState.Loading)
+    val postsByBusinessIdState: StateFlow<UiState<List<OfferPost>>> = _postsByBusinessIdState
 
 
     suspend fun loadAllEventsByOrganizerId() {
@@ -488,32 +476,32 @@ class ClientViewModel @Inject constructor(
         }
     }
 
-    suspend fun loadAllPosts() {
-        viewModelScope.launch {
-            postsRepository.fetchAllPosts()
-            delay(2000L)
-        }
-    }
+//    suspend fun loadAllPosts() {
+//        viewModelScope.launch {
+//            postsRepository.fetchAllPosts()
+//            delay(2000L)
+//        }
+//    }
 
-    private suspend fun loadPostsByBusinessId() {
-        viewModelScope.launch {
-            val clientId = authRepository.currentUser?.uid
-            delay(2000L)
-            if (clientId != null) {
-                postsRepository.fetchPostsByBusinessId(clientId)
-            }
-        }
-    }
+//    private suspend fun loadPostsByBusinessId() {
+//        viewModelScope.launch {
+//            val clientId = authRepository.currentUser?.uid
+//            delay(2000L)
+//            if (clientId != null) {
+//                postsRepository.fetchPostsByBusinessId(clientId)
+//            }
+//        }
+//    }
 
-    private suspend fun loadAllRequests() {
-        viewModelScope.launch {
-            val clientId = authRepository.currentUser?.uid
-            delay(2000L)
-            if (clientId != null) {
-                requestsRepository.fetchRequestsByBusinessId(clientId)
-            }
-        }
-    }
+//    private suspend fun loadAllRequests() {
+//        viewModelScope.launch {
+//            val clientId = authRepository.currentUser?.uid
+//            delay(2000L)
+//            if (clientId != null) {
+//                requestsRepository.fetchRequestsByBusinessId(clientId)
+//            }
+//        }
+//    }
 
 
     fun findEventById(id: Int) {
@@ -523,17 +511,23 @@ class ClientViewModel @Inject constructor(
         }
     }
 
-    suspend fun findPostsByBusinessId(businessId: String) {
-        viewModelScope.launch {
-            postsRepository.fetchPostsByBusinessId(businessId)
-            delay(2000L)
-        }
-    }
+//    suspend fun findPostsByBusinessId(businessId: String) {
+//        viewModelScope.launch {
+//            postsRepository.fetchPostsByBusinessId(businessId)
+//            delay(2000L)
+//        }
+//    }
 
-    fun findPostById(id: Int) {
+    fun loadPostData(uid: String) {
         viewModelScope.launch {
-            postsRepository.fetchPostById(id)
-            delay(2000L)
+            getPostsByBusinessIdUseCase.execute(
+                GetPostsByBusinessIdUseCaseArgs(businessId = uid), { list ->
+                    _postsByBusinessIdState.value = UiState.Success(list.map { it.toEntity() })
+                },
+                {
+                    _postsByBusinessIdState.value = UiState.Error(it)
+
+                })
         }
     }
 
@@ -572,19 +566,13 @@ class ClientViewModel @Inject constructor(
         }
     }
 
-    suspend fun loadRequests(businessId: String) {
-        viewModelScope.launch {
-            requestsRepository.fetchRequestsByBusinessId(businessId)
-            delay(2000L)
-        }
-    }
+//    suspend fun loadRequests(businessId: String) {
+//        viewModelScope.launch {
+//            requestsRepository.fetchRequestsByBusinessId(businessId)
+//            delay(2000L)
+//        }
+//    }
 
-    suspend fun loadAppointments(businessId: String) {
-        viewModelScope.launch {
-            requestsRepository.fetchAppointmentsByBusinessId(businessId)
-            delay(2000L)
-        }
-    }
 
     fun onCreateEventEvent(event: CreateEventEvent) {
         when (event) {
@@ -1024,7 +1012,7 @@ class ClientViewModel @Inject constructor(
                     }
                 }
             }
-         //   validationCreateEventEventChannel.send(ValidationEvent.Success)
+            //   validationCreateEventEventChannel.send(ValidationEvent.Success)
             createEventState = createEventState.copy(
                 title = "",
                 titleError = null,
@@ -1339,7 +1327,7 @@ class ClientViewModel @Inject constructor(
         }
     }
 
-    fun setPastEvents(){
+    fun setPastEvents() {
         viewModelScope.launch {
             eventsRepository.setPastEvents()
             Log.d("PAST_SET", "DONE")

@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BackdropScaffold
 import androidx.compose.material.BackdropValue
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -47,7 +48,7 @@ fun RequestsScreenBackdrop(
         frontLayerShape = RoundedCornerShape(30.dp),
         frontLayerScrimColor = Color.Unspecified,
         frontLayerBackgroundColor = OffWhite,
-        backLayerBackgroundColor = Color.White,
+        backLayerBackgroundColor =  MaterialTheme.colors.background,
         peekHeight = 50.dp,
         stickyFrontLayer = false,
         frontLayerElevation = 20.dp,

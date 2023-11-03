@@ -1,8 +1,8 @@
 package com.example.bachelorthesisapp.core.resources
 
-sealed class Resource<T> {
+sealed class Resource<out T: Any> {
 
-    class Success<T>(val data: T) : Resource<T>()
-    class Error<T>(val exception: Exception, val data: T? = null) : Resource<T>()
-    class Loading<T>(val data: T? = null) : Resource<T>()
+    data class Success<out T: Any>(val value: T) : Resource<T>()
+    data class Error(val cause: Exception) : Resource<Nothing>()
+    data class Loading<out T: Any>(val data: T? = null) : Resource<T>()
 }

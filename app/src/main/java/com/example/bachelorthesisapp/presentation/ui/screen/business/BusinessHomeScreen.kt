@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -59,30 +60,34 @@ fun BusinessHomeScreen(
     clientViewModel: ClientViewModel,
     businessViewModel: BusinessViewModel
 ) {
-    askNotificationPermissionCall()
     authViewModel.subscribeToTopic(uid)
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
 
     val requestsState =
-        clientViewModel.requestsState.collectAsStateWithLifecycle(UiState.Loading)
+        businessViewModel.requestsByBusinessIdState.collectAsStateWithLifecycle()
     val appointmentsState =
-        clientViewModel.appointmentsState.collectAsStateWithLifecycle(UiState.Loading)
+        businessViewModel.appointmentsByBusinessIdState.collectAsStateWithLifecycle()
     val eventsState =
         clientViewModel.eventState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val postsState =
-        clientViewModel.postsState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+        businessViewModel.postsByBusinessIdState.collectAsStateWithLifecycle()
     val loadingState by clientViewModel.isLoading.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState)
     val scope = rememberCoroutineScope()
 
 
+    LaunchedEffect(Unit) {
+        askNotificationPermissionCall()
+    }
+
     LaunchedEffect(key1 = context) {
-        clientViewModel.loadRequests(uid)
-        clientViewModel.loadAllPosts()
+        businessViewModel.getRequestsByBusinessId(uid)
+        businessViewModel.getAppointmentsByBusinessId(uid)
+        businessViewModel.getPostsByBusinessId(uid)
         clientViewModel.loadAllEvents()
         businessViewModel.clearUpdatePostForm()
-        businessViewModel.clearCreatePostForm()
+       // businessViewModel.clearCreatePostForm()
     }
 
     Scaffold(
@@ -92,7 +97,12 @@ fun BusinessHomeScreen(
                 easing = LinearOutSlowInEasing
             )
         ),
-        topBar = { BusinessHomeAppBar(title = "Welcome, ${authViewModel.currentUser?.displayName}", scaffoldState = scaffoldState) },
+        topBar = {
+            BusinessHomeAppBar(
+                title = "Welcome, ${authViewModel.currentUser?.displayName}",
+                scaffoldState = scaffoldState
+            )
+        },
         bottomBar = {
             BottomNavigationBarBusiness(
                 navController = navHostController,
@@ -114,12 +124,12 @@ fun BusinessHomeScreen(
             )
         },
         drawerGesturesEnabled = true,
-        backgroundColor = Color.White
+        backgroundColor = MaterialTheme.colors.background
     ) { innerPadding ->
         SwipeRefresh(state = swipeRefreshState, onRefresh = {
             scope.launch {
-                clientViewModel.loadRequests(uid)
-                clientViewModel.loadAllPosts()
+                businessViewModel.getRequestsByBusinessId(uid)
+                businessViewModel.getPostsByBusinessId(uid)
                 clientViewModel.loadAllEvents()
             }
         }) {
@@ -142,7 +152,6 @@ fun BusinessHomeScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun BusinessHomeScreenContent(

@@ -1,5 +1,6 @@
 package com.example.bachelorthesisapp.di
 
+import com.example.bachelorthesisapp.core.remote.RemoteDataSource
 import com.example.bachelorthesisapp.data.businesses.remote.BusinessRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.clients.remote.ClientRemoteDataSourceImpl
 import com.example.bachelorthesisapp.data.events.remote.EventRemoteDataSourceImpl
@@ -26,7 +27,7 @@ abstract class RemoteModule {
 
     @Binds
     @Singleton
-    abstract fun bindPostRemoteDataSource(remoteDataSourceImpl: PostRemoteDataSourceImpl): PostRemoteDataSource
+    abstract fun bindPostRemoteDataSource(remoteDataSourceImpl: PostRemoteDataSourceImpl): RemoteDataSource
 
     @Binds
     @Singleton
@@ -34,7 +35,7 @@ abstract class RemoteModule {
 
     @Binds
     @Singleton
-    abstract fun bindRequestRemoteDataSource(remoteDataSourceImpl: RequestRemoteDataSourceImpl): RequestRemoteDataSource
+    abstract fun bindRequestRemoteDataSource(remoteDataSourceImpl: RequestRemoteDataSourceImpl): RemoteDataSource
     @Binds
     @Singleton
     abstract fun bindClientRemoteDataSource(remoteDataSourceImpl: ClientRemoteDataSourceImpl): ClientRemoteDataSource

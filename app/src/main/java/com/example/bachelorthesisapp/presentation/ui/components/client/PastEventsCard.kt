@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +45,7 @@ fun PastEventsCard(contentEventsPast: UiState<List<Event>> = UiState.Loading) {
         modifier = Modifier
             .height(130.dp)
             .width(180.dp),
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.surface,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp)
     ) {
@@ -89,7 +90,7 @@ fun PastEventsCard(contentEventsPast: UiState<List<Event>> = UiState.Loading) {
                 Text(
                     text = "PAST EVENTS",
                     style = Typography.h1.copy(fontSize = 16.sp),
-                    color = Color.Black
+                    color = MaterialTheme.colors.primaryVariant
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Box(
@@ -116,7 +117,7 @@ fun PastEventsCard(contentEventsPast: UiState<List<Event>> = UiState.Loading) {
                             Text(
                                 modifier = Modifier.padding(1.dp),
                                 text = "${contentEventsPast.value.size}",
-                                color = Color.White,
+                                color = MaterialTheme.colors.primaryVariant,
                                 textAlign = TextAlign.Center,
                                 fontSize = 10.sp
                             )

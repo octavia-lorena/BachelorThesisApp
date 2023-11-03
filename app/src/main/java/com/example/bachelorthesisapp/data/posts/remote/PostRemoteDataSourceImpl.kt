@@ -1,54 +1,82 @@
 package com.example.bachelorthesisapp.data.posts.remote
 
-import android.util.Log
-import com.example.bachelorthesisapp.data.notifications.NotificationApi
-import com.example.bachelorthesisapp.core.remote.ApiResponse
-import com.example.bachelorthesisapp.core.remote.NetworkCallException
+import com.example.bachelorthesisapp.core.remote.RemoteDataSource
+import com.example.bachelorthesisapp.core.resources.RemoteResource
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.data.posts.remote.api.PostApi
 import com.example.bachelorthesisapp.data.posts.remote.dto.OfferPostDto
 import com.example.bachelorthesisapp.data.model.toModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import retrofit2.Response
 
 class PostRemoteDataSourceImpl @Inject constructor(
     private val api: PostApi,
-    private val notificationApi: NotificationApi,
-) : PostRemoteDataSource {
+) : RemoteDataSource() {
 
-    private suspend fun <T> handleApiResponse(execute: suspend () -> Response<T>): ApiResponse<T> =
-        try {
-            val response = execute()
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    ApiResponse.Success(it)
-                } ?: ApiResponse.SuccessWithoutBody
-            } else {
-                ApiResponse.Error(NetworkCallException(response.code().toString()))
+    suspend fun getAllPosts(): RemoteResource<List<OfferPostDto>> {
+        return withContext(Dispatchers.IO) {
+            makeCall {
+                api.getPosts()
             }
-        } catch (ex: Exception) {
-            Log.e(PostRemoteDataSourceImpl::class.simpleName, ex.stackTraceToString())
-            ApiResponse.Error(exception = ex)
         }
+    }
 
+    suspend fun getPostById(postId: Int): RemoteResource<OfferPostDto> {
+        return withContext(Dispatchers.IO) {
+            makeCall {
+                api.getPostById(postId)
+            }
+        }
+    }
 
-    override suspend fun getAllPost(): List<OfferPostDto> = api.getPostsData()
+    //     suspend fun getPostByBusinessId(businessId: String): List<OfferPostDto> =
+//        api.getPostsByBusinessId(businessId)
+    suspend fun getPostsByBusinessId(businessId: String): RemoteResource<List<OfferPostDto>> {
+        return withContext(Dispatchers.IO) {
+            makeCall {
+                api.getPostsByBusinessId(businessId)
+            }
+        }
+    }
 
-    override suspend fun getPostById(postId: Int): OfferPostDto = api.getPostsDataById(postId)
-    override suspend fun getPostByBusinessId(businessId: String): List<OfferPostDto> =
-        api.getPostsByBusinessId(businessId)
+    suspend fun addPost(post: OfferPost): RemoteResource<OfferPostDto> {
+        return withContext(Dispatchers.IO) {
+            makeCall {
+                api.addPost(post.toModel())
+            }
+        }
+    }
 
-    override suspend fun addPost(post: OfferPost): OfferPostDto = api.addPost(post.toModel())
-    override suspend fun deletePost(id: Int): OfferPostDto = api.deletePost(id)
-    override suspend fun updatePost(
+    suspend fun deletePost(id: Int): RemoteResource<OfferPostDto> {
+        return withContext(Dispatchers.IO) {
+            makeCall {
+                api.deletePost(id)
+            }
+        }
+    }
+
+    suspend fun updatePost(
         id: Int,
         title: String,
         description: String,
         photos: String,
         price: Int
-    ): OfferPostDto = api.updatePost(id, title, description, photos, price)
+    ): RemoteResource<OfferPostDto> {
+        return withContext(Dispatchers.IO) {
+            makeCall {
+                api.updatePost(
+                    id = id,
+                    title = title,
+                    description = description,
+                    photos = photos,
+                    price = price
+                )
+            }
+        }
+    }
 
-    override suspend fun ratePost(id: Int, ratingValue: Int): OfferPostDto =
+    suspend fun ratePost(id: Int, ratingValue: Int): OfferPostDto =
         api.updatePostRating(id, ratingValue)
 
 }

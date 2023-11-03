@@ -1,7 +1,17 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.authentication
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -10,7 +20,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,13 +30,7 @@ import androidx.navigation.NavHostController
 import com.example.bachelorthesisapp.R
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
-import com.example.bachelorthesisapp.presentation.ui.theme.NavyBlue
-import com.example.bachelorthesisapp.presentation.ui.theme.Ochre
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
-import com.example.bachelorthesisapp.presentation.ui.theme.OffWhite
-import com.example.bachelorthesisapp.presentation.ui.theme.Purple200
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
 
 @Composable
 fun MainRegisterScreen(navController: NavHostController) {

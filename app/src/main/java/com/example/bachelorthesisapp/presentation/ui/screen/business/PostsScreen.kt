@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
@@ -21,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -50,13 +50,12 @@ fun BusinessPostsHomeScreen(
     navHostController: NavHostController,
     cardsViewModel: CardSwipeViewModel
 ) {
-    val postBusinessState =
-        businessViewModel.postBusinessState.collectAsStateWithLifecycle(UiState.Loading)
+    val posts = businessViewModel.postsByBusinessIdState.collectAsStateWithLifecycle()
     val scaffoldState = rememberScaffoldState()
-    //val listState = rememberLazyListState()
+    val listState = rememberLazyListState()
     val expandedFab by remember {
         derivedStateOf {
-            false
+            listState.firstVisibleItemIndex == 0
         }
     }
     val loadingState by businessViewModel.isLoading.collectAsState()
@@ -64,7 +63,7 @@ fun BusinessPostsHomeScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
-        businessViewModel.loadPostData()
+        businessViewModel.getPostsByBusinessId(uid)
     }
 
     Scaffold(
@@ -98,13 +97,13 @@ fun BusinessPostsHomeScreen(
             )
         },
         drawerGesturesEnabled = true,
-        backgroundColor = Color.White
+        backgroundColor = MaterialTheme.colors.background
     ) { innerPadding ->
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = {
                 scope.launch {
-                    businessViewModel.loadPostData()
+                    businessViewModel.getPostsByBusinessId(uid)
                 }
             }
         ) {
@@ -114,10 +113,10 @@ fun BusinessPostsHomeScreen(
                     .padding(bottom = innerPadding.calculateBottomPadding() + 10.dp, top = 0.dp)
             ) {
                 BusinessPostsHomeScreenContent(
-                    contentPosts = postBusinessState.value,
+                    contentPosts = posts.value,
                     businessViewModel = businessViewModel,
                     cardsViewModel = cardsViewModel,
-                   // listState = listState
+                    listState = listState
                 ) { post ->
                     businessViewModel.setUpdatePostState(post)
                     navHostController.navigate("update_post/${post.id}")
@@ -132,7 +131,7 @@ fun BusinessPostsHomeScreenContent(
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
     businessViewModel: BusinessViewModel,
     cardsViewModel: CardSwipeViewModel,
-   // listState: LazyListState,
+    listState: LazyListState,
     onEditClicked: (OfferPost) -> Unit,
 ) {
     val revealedCardIds by cardsViewModel.revealedCardIdsList.collectAsStateWithLifecycle()
@@ -159,12 +158,15 @@ fun BusinessPostsHomeScreenContent(
                 val postsList = contentPosts.value.reversed()
                 Log.d("POSTS", postsList.toString())
                 LazyColumn(
-                 //   state = listState,
+                    state = listState,
                     modifier = Modifier
                         .padding(5.dp)
                         .fillMaxSize(),
                 ) {
-                    items(postsList.size) { index ->
+                    items(postsList.size,
+                        key = { index ->
+                            postsList[index].id
+                        }) { index ->
                         val post = postsList[index]
                         PostItem(
                             post = post,

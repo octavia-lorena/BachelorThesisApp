@@ -4,6 +4,7 @@ import com.example.bachelorthesisapp.presentation.ui.screen.business.BusinessPos
 import EventsScreen
 import android.Manifest
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -35,6 +36,7 @@ import androidx.work.WorkManager
 import com.example.bachelorthesisapp.data.authentication.AuthRepository
 import com.example.bachelorthesisapp.data.authentication.await
 import com.example.bachelorthesisapp.data.notifications.FirebaseMessageService
+import com.example.bachelorthesisapp.presentation.ui.components.common.SettingsScreenContent
 import com.example.bachelorthesisapp.presentation.ui.components.common.TransparentStatusBarHandler
 import com.example.bachelorthesisapp.presentation.ui.navigation.Routes
 import com.example.bachelorthesisapp.presentation.ui.screen.authentication.BusinessRegisterStep1Screen
@@ -44,11 +46,13 @@ import com.example.bachelorthesisapp.presentation.ui.screen.authentication.Login
 import com.example.bachelorthesisapp.presentation.ui.screen.authentication.MainRegisterScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.business.AppointmentsScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.business.BusinessHomeScreen
+import com.example.bachelorthesisapp.presentation.ui.screen.business.BusinessSettingsScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.business.CreateOfferPostScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.business.RequestsScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.business.UpdateOfferPostScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.client.BusinessProfileScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.client.ClientHomeScreen
+import com.example.bachelorthesisapp.presentation.ui.screen.client.ClientProfileScreen
 import com.example.bachelorthesisapp.presentation.ui.screen.client.CreateEventsStep1Screen
 import com.example.bachelorthesisapp.presentation.ui.screen.client.CreateEventsStep2Screen
 import com.example.bachelorthesisapp.presentation.ui.screen.client.EventDetailsScreen
@@ -80,20 +84,43 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    //var darkThemeChecked = mutableStateOf(false)
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences =
+            applicationContext.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
+        val darkThemeChecked = mutableStateOf(
+            sharedPreferences.getBoolean(
+                "darkTheme",
+                false
+            )
+        )
         setContent {
-            EventPlannerProjectTheme {
-                EventPlannerProjectDirection(askNotificationPermissionCall = { askNotificationPermission() })
+            EventPlannerProjectTheme(darkTheme = darkThemeChecked.value) {
+                EventPlannerProjectDirection(
+                    askNotificationPermissionCall = { askNotificationPermission() },
+                    darkThemeChecked = darkThemeChecked.value,
+                    onThemeChange = { darkTheme ->
+                        darkThemeChecked.value = darkTheme
+                        with(editor) {
+                            putBoolean("darkTheme", darkTheme)
+                            commit()
+                        }
+                    }
+                )
             }
         }
         TransparentStatusBarHandler.initTransparentStatusBar(window)
-        FirebaseMessageService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+        FirebaseMessageService.sharedPref = sharedPreferences
 
     }
 
     private fun askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
@@ -112,7 +139,11 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
+fun EventPlannerProjectDirection(
+    askNotificationPermissionCall: () -> Unit,
+    darkThemeChecked: Boolean,
+    onThemeChange: (Boolean) -> Unit
+) {
     val authViewModel = hiltViewModel<AuthViewModel>()
     val navController: NavHostController = rememberNavController()
     val businessViewModel = hiltViewModel<BusinessViewModel>()
@@ -120,9 +151,6 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
     val cardsViewModel = hiltViewModel<CardSwipeViewModel>()
     var database: DatabaseReference = Firebase.database.getReference("users")
 
-//    LaunchedEffect(key1 = Unit) {
-//
-//    }
 
     var startDestination by remember {
         mutableStateOf(Routes.LoginScreen.route)
@@ -166,7 +194,7 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
 
     if (startDestination != "") {
         NavHost(navController = navController, startDestination = startDestination) {
-            if (startDestination == ""){
+            if (startDestination == "") {
 
             }
             composable(route = Routes.LoginScreen.route) {
@@ -286,7 +314,8 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
                 EventDetailsScreen(
                     eventId = backStackEntry.arguments?.getInt("eventId")!!,
                     navHostController = navController,
-                    clientViewModel = clientViewModel
+                    clientViewModel = clientViewModel,
+                    businessViewModel = businessViewModel
                 )
             }
             composable(
@@ -298,7 +327,8 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
                     businessId = backStackEntry.arguments?.getString("uid")!!,
                     eventId = backStackEntry.arguments?.getInt("eventId")!!,
                     navHostController = navController,
-                    clientViewModel = clientViewModel
+                    clientViewModel = clientViewModel,
+                    businessViewModel = businessViewModel
                 )
             }
             composable(
@@ -309,6 +339,7 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
                     uid = backStackEntry.arguments?.getString("uid")!!,
                     authViewModel = authViewModel,
                     clientViewModel = clientViewModel,
+                    businessViewModel = businessViewModel,
                     navHostController = navController
                 )
             }
@@ -334,7 +365,26 @@ fun EventPlannerProjectDirection(askNotificationPermissionCall: () -> Unit) {
                     navHostController = navController
                 )
             }
-
+            composable(
+                route = "settings_screen/{uid}",
+                arguments = listOf(navArgument("uid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                BusinessSettingsScreen(
+                    navHostController = navController,
+                    darkThemeChecked = darkThemeChecked,
+                    onThemeChanged = onThemeChange
+                )
+            }
+            composable(
+                route = "client_profile/{uid}",
+                arguments = listOf(navArgument("uid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                ClientProfileScreen(
+                    clientId = backStackEntry.arguments?.getString("uid")!!,
+                    clientViewModel = clientViewModel,
+                    navHostController = navController
+                )
+            }
         }
     }
 }

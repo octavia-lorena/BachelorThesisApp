@@ -1,8 +1,8 @@
 package com.example.bachelorthesisapp.presentation.ui.screen.business
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,9 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -37,7 +35,6 @@ import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessS
 import com.example.bachelorthesisapp.presentation.ui.components.common.ErrorText
 import com.example.bachelorthesisapp.presentation.ui.components.common.FormTextField
 import com.example.bachelorthesisapp.presentation.ui.components.common.GalleryImagePicker
-import com.example.bachelorthesisapp.presentation.ui.components.common.SubmitButton
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
@@ -50,9 +47,9 @@ fun CreateOfferPostScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(Unit) {
-        businessViewModel.clearCreatePostForm()
-    }
+//    LaunchedEffect(Unit) {
+//        businessViewModel.clearCreatePostForm()
+//    }
 
     Scaffold(
         topBar = {
@@ -90,54 +87,61 @@ fun CreateOfferPostScreenContent(
     val state = businessViewModel.createPostState
     val context = LocalContext.current
     val postResultState =
-        businessViewModel.postResultState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+        businessViewModel.postResponseState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = context) {
+    LaunchedEffect(postResultState.value) {
         when (postResultState.value) {
             is UiState.Success -> {
+                Log.d("NEW_POST", "Success")
                 Toast.makeText(
                     context,
                     "Offer posted successfully!",
                     Toast.LENGTH_SHORT
                 )
                     .show()
-                businessViewModel.clearCreatePostForm()
                 navController.popBackStack()
             }
 
-            is UiState.Loading ->
+            is UiState.Loading -> {
+                Log.d("NEW_POST", "Loading")
                 Toast.makeText(
                     context, "Loading...", Toast.LENGTH_SHORT
                 ).show()
+            }
 
 
-            is UiState.Error -> Toast.makeText(
-                context, "Something went wrong!\n Check your internet connection or try again.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        businessViewModel.validationCreatePostEvents.collect { event ->
-            when (event) {
-                is BusinessViewModel.ValidationEvent.Success -> {
-                    Toast.makeText(
-                        context,
-                        "Offer posted successfully!",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                    navController.popBackStack()
-                }
-
-                is BusinessViewModel.ValidationEvent.Failure -> {
-                    Toast.makeText(
-                        context,
-                        "Something went wrong!\n Check your internet connection or try again.",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
+            is UiState.Error -> {
+                Log.d("NEW_POST", "Error ")
+                Toast.makeText(
+                    context, "Something went wrong!\n Check your internet connection or try again.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
+//        businessViewModel.validationCreatePostEvents.collect { event ->
+//            when (event) {
+//                is BusinessViewModel.ValidationEvent.Success -> {
+//                    Toast.makeText(
+//                        context,
+//                        "Offer posted successfully!",
+//                        Toast.LENGTH_SHORT
+//                    )
+//                        .show()
+//                    navController.popBackStack()
+//                }
+//
+//                is BusinessViewModel.ValidationEvent.Failure -> {
+//                    Toast.makeText(
+//                        context,
+//                        "Something went wrong!\n Check your internet connection or try again.",
+//                        Toast.LENGTH_SHORT
+//                    )
+//                        .show()
+//                }
+//
+//                else -> {}
+//            }
+//        }
     }
 
     LazyColumn(
@@ -227,7 +231,10 @@ fun CreateOfferPostScreenContent(
         }
         // IMAGES PICKER ITEM
         item {
-            GalleryImagePicker {
+            val imageList = state.images.split(";").toList()
+            GalleryImagePicker(
+                initialValues = if (imageList.isEmpty()) imageList else emptyList()
+            ) {
                 businessViewModel.onCreatePostEvent(
                     CreatePostEvent.ImagesChanged(
                         it

@@ -38,7 +38,7 @@ class ClientRepository @Inject constructor(
             _clientsFlow.emit(
                 when (clients) {
                     is Resource.Error -> {
-                        Resource.Error<Exception>(clients.exception)
+                        Resource.Error(clients.cause)
                         val clientsLocal =
                             clientLocalDataSource.getAllEntities()
                         Resource.Success(clientsLocal)
@@ -46,7 +46,7 @@ class ClientRepository @Inject constructor(
 
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
-                        Resource.Success(clients.data.map { it.toEntity() })
+                        Resource.Success(clients.value.map { it.toEntity() })
                     }
                 }
             )
@@ -68,7 +68,7 @@ class ClientRepository @Inject constructor(
             _clientFlow.emit(
                 when (client) {
                     is Resource.Error -> {
-                        Resource.Error<Exception>(client.exception)
+                        Resource.Error(client.cause)
                         val clientLocal =
                             clientLocalDataSource.getEntity(clientId)
                         Resource.Success(clientLocal!!)
@@ -76,7 +76,7 @@ class ClientRepository @Inject constructor(
 
                     is Resource.Loading -> Resource.Loading()
                     is Resource.Success -> {
-                        Resource.Success(client.data.toEntity())
+                        Resource.Success(client.value.toEntity())
                     }
                 }
             )

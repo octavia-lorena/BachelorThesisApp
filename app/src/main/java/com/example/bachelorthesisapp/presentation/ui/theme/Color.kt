@@ -41,6 +41,7 @@ val RoseDark = Color(0xFFEE7B7C)
 val Coral = Color(0xFFF27F7F)
 val CoralLight = Color(0xFFF6AC89)
 val CoralAccent = Color(0xFFFF6F5D)
+val GrayDarker = Color(0xFF3D3D3D)
 
 val WhiteTransparent = Color(0xC6FFFFFF)
 val Green = Color(0xFF4BF054)

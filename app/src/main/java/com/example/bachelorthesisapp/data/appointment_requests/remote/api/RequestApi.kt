@@ -2,6 +2,8 @@ package com.example.bachelorthesisapp.data.appointment_requests.remote.api
 
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
 import com.example.bachelorthesisapp.data.appointment_requests.remote.dto.AppointmentRequestDto
+import com.example.bachelorthesisapp.data.posts.remote.dto.OfferPostDto
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
@@ -26,7 +28,7 @@ interface RequestApi {
             encoded = true
         )
         businessId: String
-    ): List<AppointmentRequestDto>
+    ): Response<List<AppointmentRequestDto>>
 
     @DELETE("/request/{id}")
     suspend fun deleteRequest(

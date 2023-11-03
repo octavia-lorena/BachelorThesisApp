@@ -33,17 +33,7 @@ fun RequestsBackLayerContent(
     contentEvents: UiState<List<Event>> = UiState.Loading,
     contentPosts: UiState<List<OfferPost>> = UiState.Loading,
     contentClients: UiState<List<ClientEntity>> = UiState.Loading,
-    contentRequests: UiState<List<AppointmentRequest>> = UiState.Success(
-        listOf(
-            AppointmentRequest(
-                11, 11, 5, RequestStatus.Pending
-            ),
-            AppointmentRequest(
-                15, 10, 6, RequestStatus.Pending
-            )
-        )
-    )
-
+    contentRequests: UiState<List<AppointmentRequest>> = UiState.Loading
 ) {
     val context = LocalContext.current
 

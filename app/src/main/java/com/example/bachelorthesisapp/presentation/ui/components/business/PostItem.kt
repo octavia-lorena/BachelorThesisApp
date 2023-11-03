@@ -19,9 +19,11 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.theme.Coral
 import com.example.bachelorthesisapp.presentation.ui.theme.Typography
@@ -38,6 +42,8 @@ import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.CardSwipeViewModel
 import com.example.bachelorthesisapp.core.resources.Resource
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun PostItem(
@@ -47,11 +53,35 @@ fun PostItem(
     revealedCards: List<Int>,
     onEditClicked: (OfferPost) -> Unit = {}
 ) {
-    val postState = businessViewModel.postState1
+    val postState = businessViewModel.postByIdState.collectAsStateWithLifecycle()
+    val deletedPostState = businessViewModel.postResponseState.collectAsStateWithLifecycle()
+
     var isDialogOpen by remember {
         mutableStateOf(false)
     }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(deletedPostState.value) {
+        when (deletedPostState.value) {
+            is UiState.Success -> {
+                Toast.makeText(context, "Post deleted successfully.", Toast.LENGTH_SHORT)
+                    .show()
+                businessViewModel.resetPostResponseState()
+            }
+
+            is UiState.Error -> {
+                Toast.makeText(context, "Error deleting post.", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            is UiState.Loading -> {
+                Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
     if (isDialogOpen) {
         Dialog(
             onDismissRequest = { isDialogOpen = false },
@@ -66,8 +96,7 @@ fun PostItem(
                 backgroundColor = Color.White
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize(1f),
+                    modifier = Modifier.fillMaxSize(1f),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
@@ -89,51 +118,43 @@ fun PostItem(
                             border = BorderStroke(
                                 width = 1.dp, brush = Brush.horizontalGradient(
                                     listOf(
-                                        Color.Gray,
-                                        Color.LightGray,
-                                        Color.Gray
+                                        Color.Gray, Color.LightGray, Color.Gray
                                     )
                                 )
                             )
                         ) {
                             Text(
-                                text = "Cancel",
-                                style = Typography.button,
-                                color = Color.DarkGray
+                                text = "Cancel", style = Typography.button, color = Color.DarkGray
                             )
                         }
                         Spacer(modifier = Modifier.padding(15.dp))
                         Button(
                             onClick = {
                                 isDialogOpen = false
-                                try {
+                                scope.launch {
                                     businessViewModel.deletePost(post)
-                                    Toast.makeText(
-                                        context,
-                                        "Post successfully deleted.",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                } catch (error: RuntimeException) {
-                                    Toast.makeText(context, error.message, Toast.LENGTH_SHORT)
-                                        .show()
                                 }
+//                                try {
+//
+//                                    Toast.makeText(
+//                                        context, "Post successfully deleted.", Toast.LENGTH_SHORT
+//                                    ).show()
+//                                } catch (error: RuntimeException) {
+//                                    Toast.makeText(context, error.message, Toast.LENGTH_SHORT)
+//                                        .show()
+//                                }
                             },
                             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                             border = BorderStroke(
                                 width = 1.dp, brush = Brush.horizontalGradient(
                                     listOf(
-                                        CoralAccent,
-                                        Coral,
-                                        CoralAccent
+                                        CoralAccent, Coral, CoralAccent
                                     )
                                 )
                             )
                         ) {
                             Text(
-                                text = "Delete",
-                                style = Typography.button,
-                                color = Color.DarkGray
+                                text = "Delete", style = Typography.button, color = Color.DarkGray
                             )
                         }
                     }
@@ -147,34 +168,39 @@ fun PostItem(
             .fillMaxWidth()
             .height(330.dp),
     ) {
-        ActionsRow(
-            actionIconSize = 56.dp,
-            onDelete = {
-                isDialogOpen = true
-                cardsViewModel.reset()
-            },
-            onEdit = {
-                Log.d("EDIT", "requested by $post")
-                when (postState.value) {
-                    is Resource.Loading -> {}
-                    is Resource.Error -> {}
-                    is Resource.Success -> {
-                        cardsViewModel.reset()
-                        onEditClicked(post)
-                    }
+        ActionsRow(actionIconSize = 56.dp, onDelete = {
+            isDialogOpen = true
+            cardsViewModel.reset()
+        }, onEdit = {
+            businessViewModel.getPostById(post.id)
+            Log.d("EDIT", "requested by ${post.id}")
+            when (val postValue = postState.value) {
+                is UiState.Error -> {
+                    Log.d("EDIT", "Error ${post.id}")
+
                 }
 
+                is UiState.Success -> {
+                    val posst = postValue.value
+                    Log.d("EDIT", "Success ${post.id}")
+                    cardsViewModel.reset()
+                    onEditClicked(post)
+                }
+
+                else -> {
+                }
             }
-        )
-        PostDraggableCard(
-            post = post,
+
+        })
+        PostDraggableCard(post = post,
             isRevealed = revealedCards.contains(post.id),
             cardOffset = -300f,
             onExpand = {
+                Log.d("EXPAND", post.id.toString())
                 cardsViewModel.onItemExpanded(post.id)
-                businessViewModel.findPostById(post.id)
+                businessViewModel.getPostById(post.id)
                 businessViewModel.setUpdatePostState(post)
-            }
-        ) { cardsViewModel.onItemCollapsed(post.id) }
+            },
+            onCollapse = { cardsViewModel.onItemCollapsed(post.id) })
     }
 }

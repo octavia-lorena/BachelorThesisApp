@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -85,7 +86,7 @@ fun PostDraggableCard(
         label = "cardBgColorTransition",
         transitionSpec = { tween(durationMillis = ANIMATION_DURATION) },
         targetValueByState = {
-            if (isRevealed) OffWhite else Color.White
+            if (isRevealed) OffWhite else MaterialTheme.colors.surface
         }
     )
     val offsetTransition by transition.animateFloat(
@@ -140,7 +141,7 @@ fun PostDraggableCard(
                             modifier = Modifier.weight(6f),
                             text = post.title,
                             style = Typography.body2,
-                            color = Color.DarkGray
+                            color = MaterialTheme.colors.onSurface
                         )
                         Spacer(modifier = Modifier.width(15.dp))
 
@@ -178,11 +179,11 @@ fun PostDraggableCard(
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_star_24),
                                 contentDescription = null,
-                                tint = Color.DarkGray
+                                tint = MaterialTheme.colors.onSurface
                             )
                             Text(
                                 text = "${post.rating.value}",
-                                color = Color.DarkGray,
+                                color = MaterialTheme.colors.onSurface,
                                 style = Typography.caption
                             )
 
@@ -195,11 +196,11 @@ fun PostDraggableCard(
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_attach_money_24),
                                 contentDescription = null,
-                                tint = Color.DarkGray
+                                tint = MaterialTheme.colors.onSurface
                             )
                             Text(
                                 text = "${post.price}",
-                                color = Color.DarkGray,
+                                color = MaterialTheme.colors.onSurface,
                                 style = Typography.caption
                             )
 
@@ -214,7 +215,8 @@ fun PostDraggableCard(
                         Text(
                             text = post.description, style = Typography.caption,
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
+                            maxLines = 1,
+                            color = MaterialTheme.colors.onSurface
                         )
                     }
 
@@ -242,7 +244,7 @@ fun ActionsRow(
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_delete_24),
-                    tint = Color.Gray,
+                    tint = MaterialTheme.colors.onSurface,
                     contentDescription = "delete action",
                 )
             }
@@ -253,7 +255,7 @@ fun ActionsRow(
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_edit_24),
-                    tint = Color.Gray,
+                    tint = MaterialTheme.colors.onSurface,
                     contentDescription = "edit action",
                 )
             },

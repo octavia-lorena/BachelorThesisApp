@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Text
@@ -21,33 +22,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.example.bachelorthesisapp.core.presentation.UiState
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
 import com.example.bachelorthesisapp.data.businesses.local.entity.BusinessEntity
 import com.example.bachelorthesisapp.data.clients.local.entity.ClientEntity
 import com.example.bachelorthesisapp.data.events.local.entity.Event
-import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
+import com.example.bachelorthesisapp.data.model.EventStatus
 import com.example.bachelorthesisapp.data.model.RequestStatus
+import com.example.bachelorthesisapp.data.posts.local.entity.OfferPost
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessAppointmentCard
-import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarBusiness
 import com.example.bachelorthesisapp.presentation.ui.components.business.BusinessDrawerContent
+import com.example.bachelorthesisapp.presentation.ui.components.common.BottomNavigationBarBusiness
 import com.example.bachelorthesisapp.presentation.ui.components.common.BusinessHomeAppBar
+import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
 import com.example.bachelorthesisapp.presentation.ui.theme.CoralLight
-import com.example.bachelorthesisapp.presentation.ui.theme.Rose
+import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.example.bachelorthesisapp.presentation.viewmodel.AuthViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.BusinessViewModel
 import com.example.bachelorthesisapp.presentation.viewmodel.ClientViewModel
-import com.example.bachelorthesisapp.core.presentation.UiState
-import com.example.bachelorthesisapp.data.model.EventStatus
-import com.example.bachelorthesisapp.presentation.ui.theme.CoralAccent
-import com.example.bachelorthesisapp.presentation.ui.theme.Typography
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
@@ -61,29 +59,28 @@ fun AppointmentsScreen(
 ) {
 
     val appointmentsState =
-        clientViewModel.appointmentsState.collectAsStateWithLifecycle(UiState.Loading)
+        businessViewModel.appointmentsByBusinessIdState.collectAsStateWithLifecycle()
     val businessState =
         clientViewModel.businessResultState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val loadingState by clientViewModel.isLoading.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState)
     val eventsState =
         clientViewModel.eventState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
-    val postsState =
-        clientViewModel.postBusinessState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     val clientsState =
         clientViewModel.clientsState.collectAsStateWithLifecycle(initialValue = UiState.Loading)
+    val posts = businessViewModel.postsByBusinessIdState.collectAsStateWithLifecycle()
+
 
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
-        clientViewModel.loadRequests(uid)
+        //  businessViewModel.getRequestsByBusinessId(uid)
+        businessViewModel.getAppointmentsByBusinessId(uid)
+        businessViewModel.getPostsByBusinessId(uid)
         clientViewModel.findBusinessById(uid)
         clientViewModel.loadAllEvents()
-        clientViewModel.findPostsByBusinessId(uid)
         clientViewModel.loadAllClients()
-        //  clientViewModel.loadAppointments(uid)
     }
 
     Scaffold(
@@ -111,16 +108,16 @@ fun AppointmentsScreen(
             )
         },
         drawerGesturesEnabled = true,
-        backgroundColor = Color.White
+        backgroundColor = MaterialTheme.colors.background
     ) { innerPadding ->
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = {
                 scope.launch {
-                    clientViewModel.loadRequests(uid)
+                    businessViewModel.getRequestsByBusinessId(uid)
                     clientViewModel.findBusinessById(uid)
                     clientViewModel.loadAllEvents()
-                    clientViewModel.findPostsByBusinessId(uid)
+                    businessViewModel.getPostsByBusinessId(uid)
                 }
             }
         ) {
@@ -135,7 +132,7 @@ fun AppointmentsScreen(
                     contentBusiness = businessState.value,
                     businessViewModel = businessViewModel,
                     contentEvents = eventsState.value,
-                    contentPosts = postsState.value,
+                    contentPosts = posts.value,
                     contentClients = clientsState.value
                 )
             }
@@ -177,7 +174,6 @@ fun AppointmentsScreenContent(
                     color = CoralAccent,
                 )
             }
-
         }
 
         is UiState.Success -> {
@@ -198,17 +194,17 @@ fun AppointmentsScreenContent(
                     appointmentsList =
                         appointmentsList.filter { it.eventId in eventIds }
                     val list = mutableListOf<AppointmentRequest>()
-                    var j =1
-                    for (j in eventIds){
+                    var j = 1
+                    for (j in eventIds) {
                         appointmentsList.filter { it.eventId == j }.forEach { list.add(it) }
                     }
-                   // appointmentsList = list
+                    // appointmentsList = list
                     // business' posts
                     val posts = contentPosts.value.filter { it.businessId == uid }
                     items(list.size) { index ->
                         val appointment =
                             list[index]
-                        Log.d("APPOINTMEN", appointment.toString())
+                        Log.d("APPOINTMENT", appointment.toString())
                         val post = posts.first { it.id == appointment.postId }
                         val event = eventsList.first { it.id == appointment.eventId }
                         val client =
@@ -222,7 +218,7 @@ fun AppointmentsScreenContent(
                                 Text(
                                     text = event.date.format(DateTimeFormatter.ofPattern("d MMM uuuu")),
                                     style = Typography.body2,
-                                    color = Color.Gray
+                                    color = MaterialTheme.colors.onSurface
                                 )
                                 Spacer(modifier = Modifier.height(20.dp))
                             }
@@ -235,7 +231,7 @@ fun AppointmentsScreenContent(
                                     Text(
                                         text = event.date.format(DateTimeFormatter.ofPattern("d MMM uuuu")),
                                         style = Typography.body2,
-                                        color = Color.Gray
+                                        color = MaterialTheme.colors.onSurface
                                     )
                                 Spacer(modifier = Modifier.height(20.dp))
                             }

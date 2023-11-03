@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -50,7 +51,7 @@ fun CompletedAppointmentsCard(
         modifier = Modifier
             .height(130.dp)
             .width(180.dp),
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.surface,
         elevation = 10.dp,
         shape = RoundedCornerShape(30.dp)
     ) {
@@ -64,7 +65,7 @@ fun CompletedAppointmentsCard(
                     .size(50.dp)
                     .aspectRatio(1f)
                     .padding(top = 0.dp)
-                    .background(Color.White, shape = CircleShape)
+                    .background(color = MaterialTheme.colors.surface, shape = CircleShape)
                     .border(
                         width = 1.dp,
                         brush = Brush.horizontalGradient(
@@ -95,7 +96,7 @@ fun CompletedAppointmentsCard(
                 Text(
                     text = "COMPLETED",
                     style = Typography.h1.copy(fontSize = 16.sp),
-                    color = Color.Black
+                    color = MaterialTheme.colors.primaryVariant
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Box(

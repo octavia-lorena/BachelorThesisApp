@@ -3,11 +3,14 @@ package com.example.bachelorthesisapp.data.appointment_requests
 import android.util.Log
 import com.example.bachelorthesisapp.core.remote.networkCall
 import com.example.bachelorthesisapp.core.resources.Resource
+import com.example.bachelorthesisapp.core.resources.toResource
 import com.example.bachelorthesisapp.data.appointment_requests.local.RequestsLocalDataSource
 import com.example.bachelorthesisapp.data.appointment_requests.local.entity.AppointmentRequest
 import com.example.bachelorthesisapp.data.appointment_requests.remote.RequestRemoteDataSourceImpl
+import com.example.bachelorthesisapp.data.appointment_requests.remote.dto.AppointmentRequestDto
 import com.example.bachelorthesisapp.data.appointment_requests.remote.dto.toEntity
 import com.example.bachelorthesisapp.data.model.RequestStatus
+import com.example.bachelorthesisapp.data.posts.remote.dto.OfferPostDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
@@ -42,82 +45,86 @@ class AppointmentRequestsRepository @Inject constructor(
         }
     )
 
-    suspend fun fetchRequestsByBusinessId(businessId: String) = networkCall(
-        localSource = { requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId) },
-        remoteSource = { requestRemoteDataSource.getRequestsByBusinessId(businessId) },
-        compareData = { _, _ ->
-            fetchAllRequests()
-        },
-        onResult = { requests ->
-            _requestFlow.emit(
-                when (requests) {
-                    is Resource.Success -> {
-                        Resource.Success(requests.data.map { it.toEntity() }
-                            .filter { it.status == RequestStatus.Pending })
-                    }
+//    suspend fun fetchRequestsByBusinessId(businessId: String) = networkCall(
+//        localSource = { requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId) },
+//        remoteSource = { requestRemoteDataSource.getRequestsByBusinessId(businessId) },
+//        compareData = { _, _ ->
+//            fetchAllRequests()
+//        },
+//        onResult = { requests ->
+//            _requestFlow.emit(
+//                when (requests) {
+//                    is Resource.Success -> {
+//                        Resource.Success(requests.value.map { it.toEntity() }
+//                            .filter { it.status == RequestStatus.Pending })
+//                    }
+//
+//                    is Resource.Loading -> {
+//                        Resource.Loading()
+//                    }
+//
+//                    is Resource.Error -> {
+//                        Resource.Error(requests.cause)
+//                        val requestsLocal =
+//                            requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId)
+//                        Resource.Success(requestsLocal.filter { it.status == RequestStatus.Pending })
+//                    }
+//                }
+//            )
+//            _appointmentFlow.emit(
+//                when (requests) {
+//                    is Resource.Success -> {
+//                        Resource.Success(requests.value.map { it.toEntity() }
+//                            .filter { it.status == RequestStatus.Accepted })
+//                    }
+//
+//                    is Resource.Loading -> {
+//                        Resource.Loading()
+//                    }
+//
+//                    is Resource.Error -> {
+//                        Resource.Error(requests.cause)
+//                        val requestsLocal =
+//                            requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId)
+//                        Resource.Success(requestsLocal.filter { it.status == RequestStatus.Accepted })
+//                    }
+//                }
+//            )
+//        }
+//    )
 
-                    is Resource.Loading -> {
-                        Resource.Loading()
-                    }
+//    suspend fun fetchAppointmentsByBusinessId(businessId: String) = networkCall(
+//        localSource = { requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId) },
+//        remoteSource = { requestRemoteDataSource.getRequestsByBusinessId(businessId) },
+//        compareData = { _, _ ->
+//            fetchAllRequests()
+//        },
+//        onResult = { requests ->
+//            _appointmentFlow.emit(
+//                when (requests) {
+//                    is Resource.Success -> {
+//                        Resource.Success(requests.value.map { it.toEntity() }
+//                            .filter { it.status == RequestStatus.Accepted })
+//                    }
+//
+//                    is Resource.Loading -> {
+//                        Resource.Loading()
+//                    }
+//
+//                    is Resource.Error -> {
+//                        Resource.Error(requests.cause)
+//                        val requestsLocal =
+//                            requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId)
+//                        Resource.Success(requestsLocal.filter { it.status == RequestStatus.Accepted })
+//                    }
+//                }
+//            )
+//        }
+//    )
 
-                    is Resource.Error -> {
-                        Resource.Error<Exception>(requests.exception)
-                        val requestsLocal =
-                            requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId)
-                        Resource.Success(requestsLocal.filter { it.status == RequestStatus.Pending })
-                    }
-                }
-            )
-            _appointmentFlow.emit(
-                when (requests) {
-                    is Resource.Success -> {
-                        Resource.Success(requests.data.map { it.toEntity() }
-                            .filter { it.status == RequestStatus.Accepted })
-                    }
-
-                    is Resource.Loading -> {
-                        Resource.Loading()
-                    }
-
-                    is Resource.Error -> {
-                        Resource.Error<Exception>(requests.exception)
-                        val requestsLocal =
-                            requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId)
-                        Resource.Success(requestsLocal.filter { it.status == RequestStatus.Accepted })
-                    }
-                }
-            )
-        }
-    )
-
-    suspend fun fetchAppointmentsByBusinessId(businessId: String) = networkCall(
-        localSource = { requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId) },
-        remoteSource = { requestRemoteDataSource.getRequestsByBusinessId(businessId) },
-        compareData = { _, _ ->
-            fetchAllRequests()
-        },
-        onResult = { requests ->
-            _appointmentFlow.emit(
-                when (requests) {
-                    is Resource.Success -> {
-                        Resource.Success(requests.data.map { it.toEntity() }
-                            .filter { it.status == RequestStatus.Accepted })
-                    }
-
-                    is Resource.Loading -> {
-                        Resource.Loading()
-                    }
-
-                    is Resource.Error -> {
-                        Resource.Error<Exception>(requests.exception)
-                        val requestsLocal =
-                            requestsLocalDataSource.getRequestsByBusinessId(businessId = businessId)
-                        Resource.Success(requestsLocal.filter { it.status == RequestStatus.Accepted })
-                    }
-                }
-            )
-        }
-    )
+    suspend fun getRequestsByBusinessId(businessId: String): Resource<List<AppointmentRequestDto>> {
+        return requestRemoteDataSource.getRequestsByBusinessId(businessId).toResource()
+    }
 
     suspend fun createRequest(appointmentRequest: AppointmentRequest) {
         try {

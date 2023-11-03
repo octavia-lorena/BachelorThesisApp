@@ -12,7 +12,6 @@ import com.example.bachelorthesisapp.data.model.Rating
 import com.example.bachelorthesisapp.core.presentation.UiState
 import java.time.LocalDate
 
-@Preview(showSystemUi = true)
 @Composable
 fun EventDetailsScreenContent(
     event: Event = Event(
@@ -47,11 +46,7 @@ fun EventDetailsScreenContent(
     onEditClick: (Int) -> Unit = {},
     onPublishClick: (Int) -> Unit = {},
     onCollaborationCanceledClicked: (Int) -> Unit = {},
-    postsList: List<OfferPost> = listOf(
-        OfferPost(1, "", "Cake", "", emptyList(), 200, Rating(4.4, 1)),
-        OfferPost(2, "", "Decor", "", emptyList(), 200, Rating(4.4, 1)),
-        OfferPost(3, "", "Photo", "", emptyList(), 200, Rating(4.4, 1))
-    )
+    postsList: UiState<List<OfferPost>>,
 ) {
     EventDetailsBackdrop(
         event = event,

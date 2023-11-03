@@ -11,6 +11,7 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -45,7 +46,9 @@ fun BusinessHomeAppBar(
 ) {
     val scope = rememberCoroutineScope()
     TopAppBar(
-        modifier = Modifier.height(120.dp), backgroundColor = Color.White, elevation = 15.dp
+        modifier = Modifier.height(120.dp),
+        backgroundColor = MaterialTheme.colors.background,
+        elevation = 15.dp
     ) {
         Row(
             modifier = Modifier
@@ -67,7 +70,7 @@ fun BusinessHomeAppBar(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_menu_24),
                     contentDescription = "Menu icon",
-                    tint = Color.DarkGray
+                    tint = MaterialTheme.colors.primaryVariant
                 )
             })
             Text(
@@ -77,7 +80,8 @@ fun BusinessHomeAppBar(
                     .align(Alignment.Top),
                 text = title,
                 textAlign = TextAlign.Left,
-                style = Typography.h1
+                style = Typography.h1,
+                color = MaterialTheme.colors.primaryVariant
             )
         }
     }
@@ -177,7 +181,7 @@ fun BusinessProfileAppBar(title: String, navController: NavHostController) {
 fun BottomNavigationBarBusiness(
     navController: NavController,
     modifier: Modifier = Modifier,
-    onItemClick: (NavigationItemBusiness) -> Unit
+    onItemClick: (NavigationItemBusiness) -> Unit,
 ) {
     val backStackEntry = navController.currentBackStackEntryAsState()
     val items = listOf(
@@ -189,22 +193,32 @@ fun BottomNavigationBarBusiness(
 
     BottomNavigation(
         modifier = modifier
-            .height(50.dp)
+            .height(60.dp)
             .fillMaxSize(),
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.background,
         elevation = 0.dp
     ) {
         items.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route
             BottomNavigationItem(icon = {
-                Icon(painterResource(id = item.icon), contentDescription = item.title)
+                Icon(
+                    painterResource(id = item.icon),
+                    contentDescription = item.title
+                )
             },
-                selectedContentColor = CoralAccent,
-                unselectedContentColor = Color.Gray,
+                selectedContentColor = MaterialTheme.colors.secondary,
+                unselectedContentColor = MaterialTheme.colors.primaryVariant,
                 alwaysShowLabel = true,
                 selected = selected,
                 onClick = { onItemClick(item) },
-                label = { Text(text = item.title, fontSize = 10.sp, style = Typography.caption) })
+                label = {
+                    Text(
+                        text = item.title,
+                        fontSize = 10.sp,
+                        style = Typography.caption,
+                        color = MaterialTheme.colors.primaryVariant
+                    )
+                })
         }
 
     }
@@ -226,7 +240,7 @@ fun BottomNavigationBarClient(
         modifier = modifier
             .height(60.dp)
             .fillMaxSize(),
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.background,
         elevation = 0.dp
     ) {
         items.forEach { item ->
@@ -237,12 +251,19 @@ fun BottomNavigationBarClient(
                     contentDescription = item.title
                 )
             },
-                selectedContentColor = CoralAccent,
-                unselectedContentColor = Color.Gray,
+                selectedContentColor = MaterialTheme.colors.secondary,
+                unselectedContentColor = MaterialTheme.colors.primaryVariant,
                 alwaysShowLabel = true,
                 selected = selected,
                 onClick = { onItemClick(item) },
-                label = { Text(text = item.title, fontSize = 12.sp, style = Typography.caption) })
+                label = {
+                    Text(
+                        text = item.title,
+                        fontSize = 10.sp,
+                        style = Typography.caption,
+                        color = MaterialTheme.colors.primaryVariant
+                    )
+                })
         }
 
     }

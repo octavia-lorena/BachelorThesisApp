@@ -4,12 +4,16 @@ Moreover, it includes awesome tools for vendors to showcase their services and h
 
 ## Screenshots
 ### Client Flow
-<img src="screenshots/login_screen.png" width="100" height="150">
-![Register Screen](screenshots/client_register_screen.png)
-![Client Home Screen](screenshots/client_home_scren.png)
-![Upcoming Events Screen]screenshots/client_events_screen.png()
-![Planning Events Screen](screenshots/client_planning_events_screen.png)
-![Event Details Screen](screenshots/client_event_details.png)
-![Business Profile Screen](screenshots/business_profile.png)
-### Business Flow
+<img src="screenshots/login_screen.png" width="150" height="200">
+<img src="screenshots/client_register_screen.png" width="150" height="200">
+<img src="screenshots/client_home_scren.png" width="150" height="200">
+<img src="screenshots/client_events_screen.png" width="150" height="200">
+<img src="screenshots/client_planning_events_screen.png" width="150" height="200">
+<img src="screenshots/client_event_details.png" width="150" height="200">
+<img src="screenshots/business_profile.png" width="150" height="200">
 
+### Business Flow
+<img src="screenshots/business_register_screen_1.png" width="150" height="200">
+<img src="screenshots/business_home_screen.png" width="150" height="200">
+<img src="screenshots/business_requests_expanded.png" width="150" height="200">
+<img src="screenshots/business_appointments_expanded.png" width="150" height="200">

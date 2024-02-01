@@ -4,7 +4,7 @@ Moreover, it includes awesome tools for vendors to showcase their services and h
 
 ## Screenshots
 ### Client Flow
-![Login Screen](screenshots/login_screen.png | width=250)
+<img src="screenshots/login_screen.png" width="100" height="150">
 ![Register Screen](screenshots/client_register_screen.png)
 ![Client Home Screen](screenshots/client_home_scren.png)
 ![Upcoming Events Screen]screenshots/client_events_screen.png()
